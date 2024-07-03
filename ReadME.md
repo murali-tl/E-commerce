@@ -745,6 +745,7 @@ Body:
 
 ```js
 {
+"product_id": "String",
  "title" : "String",
  "description": "String",
  "rating": "String"
