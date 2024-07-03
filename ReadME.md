@@ -175,10 +175,18 @@ Body:
 fetch list of products by Category or all products
 
 ### `Parameters`:
+Query Params:
+
+```
 page: Number,
+
 limit: Number,
+
 search : String, //name of product
+
 sort_by: String //price, rating, recent
+```
+
 Body:
 
 ```js
