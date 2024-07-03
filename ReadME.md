@@ -175,14 +175,15 @@ Body:
 fetch list of products by Category or all products
 
 ### `Parameters`:
-
+page: Number,
+limit: Number,
+search : String, //name of product
+sort_by: String //price, rating, recent
 Body:
 
 ```js
 {
     'category_name': "String[]", //[] list of categories
-    'limit' : "Number",
-    'start_from': "Number' //
 }
 ```
 
@@ -194,7 +195,6 @@ Body:
 
 ```js
 { status: true, message: 'Products list fetched.', data:{'category':'category_name',
-    'ended_at': 'Number',
     products:[
         {
             "product_id" : "String",
@@ -211,8 +211,11 @@ Body:
         },
 
         ...
-    ]
-    }
+    ],
+    total_pages: "Number",
+    current_page: "Number",
+    total_products: "Number"
+    
 }//successful operation
 {status: false, message: 'Error while fetching', data:{reason: ""}} //failure
 ```
