@@ -906,7 +906,16 @@ $~~~~~~~~~$
 fetch all order details from database
 
 ### `Parameters`:
+Query Params:
 
+```
+page: Number,
+
+limit: Number,
+
+search : String, //user_id or order_id
+
+```
 Body:
 
 ```js
@@ -926,14 +935,12 @@ $~~~~~~~~~$
     orders: [
         {
             "order_id"; "String",
-            "user_id": "String",
-            "products": [Objects],
-            "cretaed_at": "timestamp",
-            "delivery_date": "timestamp",
-            "payment_status" : "String",
-            "delivery_status": "String"
+            "user_id": "String"
         }
-    ]
+    ],
+total_pages: "Number",
+    current_page: "Number",
+    total_orders: "Number"
 }}//successful operation
 { status: false, message: 'Error while fetching orders...', data:{reason: ""}} //failure
 ```
@@ -948,8 +955,7 @@ fetch deatils of a specific order
 
 ```js
 {
- "order_id":"String",
- "user_id": "String"
+ "order_id":"String"
 }
 ```
 
@@ -975,13 +981,17 @@ $~~~~~~~~~$
 400 $~~~~~~~~~$ order not found
 <br><br>
 
-## `GET` /admin/order-status/:order-id
+## `GET` /admin/order-status
 
 fetch status of a particular order
 
 ### `Parameters`:
-order_id : String
 
+```js
+{
+ "order_id":"String"
+}
+```
 ### `Response`
 
 ### code $~~~~~~~~~$ Description
