@@ -25,7 +25,7 @@ Body:
 $~~~~~~~~~$
 
 ```js
-{status: true, message: 'user found', data:{role: "String", email: "String", 'access_token': "String", "refresh_token": "String"} }//user exist
+{status: true, message: 'user found', data:{role: "String", 'access_token': "String", "refresh_token": "String"} }//user exist
 {status: false, message: 'user not found', data: {}} //user not registered
 ```
 
@@ -79,8 +79,8 @@ verify OTP sent and update password
 default $~~~~~~~~~$ successful operation
 
 ```js
-{status:true, message:'Password updated',data: {}} //if valid OTP
-{ status:false, message: 'Password reset failed', data: { reason: 'OTP do not match'}} //if OTP invalid or incorrect
+{status:true, message:'New Password updated',data: {}} //if valid OTP
+{ status:false, message: 'Email or OTP is incorrect', data: {}} //if OTP invalid or incorrect
 ```
 
 <br><br>
@@ -132,7 +132,7 @@ Body:
 200 $~~~~~~~~~$ successful operation
 
 ```js
-{status: true, message: 'User created',data:{'user_id':'String'}}
+{status: true, message: 'User registered',data:{'user_id':'String'}}
 ```
 
 500 $~~~~~~~~~$ Internal Server Error
@@ -148,7 +148,7 @@ Body:
 
 ```js
 {
- limit : "Number"
+ 
 }
 ```
 
@@ -160,8 +160,7 @@ Body:
 
 ```js
 { status: true, message: 'Home page data fetched.', data:{
-    'banner_images': 'String[]',
-    "product_images": "String[]"
+    "products": "[objects]"
     }
 }//successful operation
 {status: false, message: 'Error while fetching', data:{reason: ""}} //failure
@@ -202,7 +201,7 @@ Body:
 200 $~~~~~~~~~$ successful operation
 
 ```js
-{ status: true, message: 'Products list fetched.', data:{'category':'category_name',
+{ status: true, message: 'Products list fetched.', data:{
     products:[
         {
             "product_id" : "String",
@@ -403,11 +402,8 @@ $~~~~~~~~~$
             "product_id" : "String",
             "product_name": "String",
             "images": "String[]",
-            "available_sizes":"String[]",
-            "available_colours": "String[]",
             "price": "Float",
             "category": "String",
-            "rating": "Float"
         },
         {
 
@@ -491,7 +487,7 @@ $~~~~~~~~~$
 
 ## `GET` /user/calculate-order-amount
 
-calculate amount based on products, coupon codes, and shipping type
+calculate amount based on products, and shipping type
 
 ### `Parameters`:
 
@@ -499,7 +495,6 @@ Body:
 
 ```js
 {
-    "coupon_code": "String",
     "shipping_type": "String",
     "product_ids": String[]
 }
@@ -725,7 +720,8 @@ $~~~~~~~~~$
         "3stars": "Number",
         "4stars": "Number",
         "5stars": "Number",
-    }
+    },
+average_rating: "Float"
 }}//successful operation
 {status: false, message: 'Error while fetching', data: {reason: ""}} //failure
 ```
@@ -769,7 +765,7 @@ $~~~~~~~~~$
 <br><br>
 
 ## `PATCH` /user/mark-review
-will be called when user clicks on "useful" button or "flg as inappropriate"
+will be called when user clicks on "useful" button or "flag as inappropriate"
 
 ### `Parameters`:
 
