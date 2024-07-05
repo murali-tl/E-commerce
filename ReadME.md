@@ -397,6 +397,13 @@ $~~~~~~~~~$
 
 ```js
 { status: true, message: 'Cart details fetched.', data:{
+    user_id: "String",
+    product_details: [ { product_id: "String",
+                         size: "String",
+                         quantity: "Number"
+                       }
+                       ...
+                      ],
     products:[
         {
             "product_id" : "String",
@@ -508,6 +515,7 @@ Body:
 
 ```js
 { status: true, message: 'Amount calculated.', data:{
+    "sub_amount": "Float",
     "total_amount": "Float"
     }
 }//successful operation
