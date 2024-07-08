@@ -609,9 +609,9 @@ $~~~~~~~~~$
 <br><br>
 
 
-## `POST` /user/make-payment
+## `POST` /user/createOrder
 
-make payment and trigger create order if payment successful
+create order
 
 ### `Parameters`:
 
@@ -619,11 +619,11 @@ Body:
 
 ```js
 {
- "card_holder_name":"String",
- "card_number":"String",
- "month":"String",
- "year":"String",
- "cvv":"String"
+ "amount":"Float",
+ "currency":"String",
+ "shipping_type": "String",
+ "address": "json",
+ "product_details":"String[]",  // [{product_id: ,size: , quantity: , colour:}]
 }
 ```
 
@@ -634,11 +634,45 @@ Body:
 200 $~~~~~~~~~$ successful operation
 
 ```js
-{ status: true, message: 'payment successful and order created', data:{
+{ status: true, message: 'order created', data:{
     "order_id": "String"
     }  
 }//successful operation
-{ status: false, message: 'Payment failed', data:{reason: ""}} //failure
+{ status: false, message: 'Order creation failed', data:{reason: ""}} //failure
+```
+
+<br><br>
+
+## `POST` /payment/verify
+
+verify payment signature and send response to user
+
+### `Parameters`:
+
+Headers:
+
+```js
+{'x-razorpay-signature': "String" }
+```
+
+Body:
+
+```js
+{
+ "order_id":"String",
+ "payment_id":"String"
+}
+```
+
+### `Response`
+
+### code $~~~~~~~~~$ Description
+
+200 $~~~~~~~~~$ successful operation
+
+```js
+{ status: true, message: 'Signature valid', data:{}}//successful operation
+{ status: false, message: 'Invalid signature', data:{reason: ""}} //failure
 ```
 
 <br><br>
