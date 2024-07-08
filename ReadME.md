@@ -609,9 +609,9 @@ $~~~~~~~~~$
 <br><br>
 
 
-## `POST` /user/createOrder
+## `POST` /user/create-order
 
-create order
+create order 
 
 ### `Parameters`:
 
@@ -643,12 +643,12 @@ Body:
 
 <br><br>
 
-## `POST` /payment/verify
+## `POST` /user/verify-payment
 
 verify payment signature and send response to user
 
 ### `Parameters`:
-
+customerController.createReview
 Headers:
 
 ```js
