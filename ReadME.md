@@ -117,10 +117,8 @@ Body:
 
 ```js
 {
- "first_name":"String",
- "last_name":"String",
+ "full_name":"String",
  "email":"String",
- "mobile_number":"String",
  "password":"String"
 }
 ```
