@@ -409,6 +409,9 @@ $~~~~~~~~~$
             "images": "String[]",
             "price": "Float",
             "category": "String",
+            size: "String",
+            quantity: "Number",
+            "colour": "String"
         },
         {
 
