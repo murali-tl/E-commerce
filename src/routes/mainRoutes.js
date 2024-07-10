@@ -11,10 +11,10 @@ router.post('/login',loginController.login);
 router.post('/refresh-auth',refreshToken);
 router.post('/generate-otp', loginController.generateOTP);
 router.patch('/reset-password', loginController.resetPassword);
+router.get('/home', authenticate, productController.fetchRecentProducts);
 router.get('/list-products', authenticate, productController.fetchProducts);  //add authenticate from here
 router.get('/products/:product_id', authenticate, productController.fetchProduct);
 router.get('/product/reviews', authenticate, productController.fetchReviews);
-router.get('/home', authenticate, productController.fetchRecentProducts);
 
 router.use('/user', require('./users.js'));
 router.use('/admin', require('./admin.js'));

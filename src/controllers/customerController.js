@@ -1,14 +1,20 @@
 const { Response } = require("../services/constants");
 const { createUser, getWishListDetails, getCartDetails } = require('../services/userServices');
-const {insertIntoWishList, deleteFromWishList} = require('../services/wishListServices');
-const {insertIntoCart, deleteFromCart, orderSummary} = require('../services/cartServices');
-const {addReview, updateReview} = require('../services/reviewServices');
-const {getAdresses, createAddress} = require('../services/addressServices');
-const {viewFilterOrders} = require('../services/orderServices');
+const { insertIntoWishList, deleteFromWishList } = require('../services/wishListServices');
+const { insertIntoCart, deleteFromCart, orderSummary } = require('../services/cartServices');
+const { addReview, updateReview } = require('../services/reviewServices');
+const { getAdresses, createAddress } = require('../services/addressServices');
+const { viewFilterOrders } = require('../services/orderServices');
+const { validateUser } = require('../services/validations');
 
 const registerUser = async (req, res,) => {
   console.info('/user/create-user called');
-  const result = await createUser(req);
+  const { full_name, email, password } = req?.body;
+  const validated = validateUser(req?.body);
+  if (validated?.error) {
+    return res.status(400).send(new Response(false, 'Invalid details', { "error": validated?.error }));
+  }
+  const result = await createUser({ full_name, email, password });
   //console.log(result);
   if (result?.error) {
     return res.status(500).send(new Response(false, 'Error while registering user', { "error": result.error }));
@@ -35,7 +41,7 @@ const addToWishList = async (req, res) => {
   if (result?.error) {
     return res.status(500).send(new Response(false, 'Error while adding product to wishlist', { "error": result.error }));
   }
-  return res.status(200).send(new Response(true, result?.status , {}));
+  return res.status(200).send(new Response(true, result?.status, {}));
 }
 
 const removeFromWishList = async (req, res) => {
@@ -44,7 +50,7 @@ const removeFromWishList = async (req, res) => {
   if (result?.error) {
     return res.status(500).send(new Response(false, 'Error while removing product from wishlist', { "error": result.error }));
   }
-  return res.status(200).send(new Response(true, result?.status , {}));
+  return res.status(200).send(new Response(true, result?.status, {}));
 }
 
 const fetchCart = async (req, res) => {
@@ -66,7 +72,7 @@ const addToCart = async (req, res) => {
   if (result?.error) {
     return res.status(500).send(new Response(false, 'Error while adding product to cart', { "error": result.error }));
   }
-  return res.status(200).send(new Response(true, result?.status , {}));
+  return res.status(200).send(new Response(true, result?.status, {}));
 }
 
 const removeFromCart = async (req, res) => {
@@ -75,7 +81,7 @@ const removeFromCart = async (req, res) => {
   if (result?.error) {
     return res.status(500).send(new Response(false, 'Error while removing product from cart', { "error": result.error }));
   }
-  return res.status(200).send(new Response(true, result?.status , {}));
+  return res.status(200).send(new Response(true, result?.status, {}));
 }
 
 const createReview = async (req, res) => {
@@ -84,7 +90,7 @@ const createReview = async (req, res) => {
   if (result?.error) {
     return res.status(500).send(new Response(false, 'Error while saving review', { "error": result.error }));
   }
-  return res.status(result?.status).send(new Response(result?.success, result?.message , result?.data));
+  return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));
 }
 
 const markReview = async (req, res) => {
@@ -93,7 +99,7 @@ const markReview = async (req, res) => {
   if (result?.error) {
     return res.status(500).send(new Response(false, 'Error while updating review', { "error": result.error }));
   }
-  return res.status(result?.status).send(new Response(result?.success, result?.message , result?.data));
+  return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));
 }
 
 const fetchAddresses = async (req, res) => {
@@ -102,7 +108,7 @@ const fetchAddresses = async (req, res) => {
   if (result?.error) {
     return res.status(500).send(new Response(false, 'Error while fetchin addresses', { "error": result.error }));
   }
-  return res.status(result?.status).send(new Response(result?.success, result?.message , result?.data));
+  return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));
 }
 
 const addAddress = async (req, res) => {
@@ -111,7 +117,7 @@ const addAddress = async (req, res) => {
   if (result?.error) {
     return res.status(500).send(new Response(false, 'Error while saving address', { "error": result.error }));
   }
-  return res.status(result?.status).send(new Response(result?.success, result?.message , result?.data));
+  return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));
 }
 
 const viewFilterUserOrders = async (req, res) => {
@@ -120,7 +126,7 @@ const viewFilterUserOrders = async (req, res) => {
   if (result?.error) {
     return res.status(500).send(new Response(false, 'Error while fetching orders', { "error": result.error }));
   }
-  return res.status(result?.status).send(new Response(result?.success, result?.message , result?.data));
+  return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));
 }
 
 const calculateOrderAmount = async (req, res) => {
@@ -129,7 +135,7 @@ const calculateOrderAmount = async (req, res) => {
   if (result?.error) {
     return res.status(500).send(new Response(false, 'Error while calculating order summary', { "error": result.error }));
   }
-  return res.status(200).send(new Response(true, 'Order summary calculated' , result));
+  return res.status(200).send(new Response(true, 'Order summary calculated', result));
 }
 
 module.exports = {

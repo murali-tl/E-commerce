@@ -106,7 +106,8 @@ const createProduct = async (req) => {
             price: req?.body?.price,
             colours: req?.body?.colours,
             category: req?.body?.category,
-            product_status: "available"
+            product_status: "available",
+            created
         })
         return { success: true, status: 200, message: 'Product created', data: {} }; //should we need to send product_details
     }

@@ -1,5 +1,5 @@
 var nodemailer = require('nodemailer');
-const {user} = require('../models/index');
+const { user } = require('../models/index');
 require('dotenv').config({ path: '../.env' });
 const { otp_notification } = require('../models/index');
 const crypto = require('crypto');
@@ -21,40 +21,43 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-const sendOTP = async (req) => {
-    console.info('/generate-otp called');
-    let generatedOTP = generateOTP(6);
-    let userDetails = await user.findOne({
-        where:{
-            email: req?.body?.email
-        }
-    });
-    //console.log(userDetails?.full_name);
-    const mailOptions = {
-        from: process.env.EMAIL_USER_NAME,
-        to: req?.body?.email,
-        subject: 'Reset password for Ecommerce',
-        //text: `Following is your OTP to reset password : ${generatedOTP}`,
-        html: `<p>Following is your OTP to reset password : ${generatedOTP}</p>
-        <p><a href="http://localhost:3000/reset-password/${userDetails?.user_id}">Reset Password</a></p>`
-    };
-    console.log(process.env.EMAIL_USER_NAME, process.env.EMAIL_PASSWORD);
+const sendOTP = async (email) => {
     try {
-        if(req?.body?.email && userDetails){
+        console.info('/generate-otp called');
+        if(!email || typeof(email) !== 'string'){
+            return {status: false};
+        }
+        let generatedOTP = generateOTP(6);
+        let userDetails = await user.findOne({
+            where: {
+                email: email
+            }
+        });
+        //console.log(userDetails?.full_name);
+        const mailOptions = {
+            from: process.env.EMAIL_USER_NAME,
+            to: email,
+            subject: 'Reset password for Ecommerce',
+            //text: `Following is your OTP to reset password : ${generatedOTP}`,
+            html: `<p>Following is your OTP to reset password : ${generatedOTP}</p>
+        <p><a href="http://localhost:3000/reset-password/${userDetails?.user_id}">Reset Password</a></p>`
+        };
+        console.log(process.env.EMAIL_USER_NAME, process.env.EMAIL_PASSWORD);
+        if (email && userDetails) {
             let info = await transporter.sendMail(mailOptions);
-        await otp_notification.create({  //implement here
-            email: req?.body?.email,
-            otp_hash: crypto.createHash('md5').update(generatedOTP).digest('hex')
-        })
-        return info;
-    }
-    else{
-        return {status: false};
-    }
+            await otp_notification.create({  //implement here
+                email: email,
+                otp_hash: crypto.createHash('md5').update(generatedOTP).digest('hex')
+            })
+            return { success: true, data: info };
+        }
+        else {
+            return { status: false };
+        }
     }
     catch (err) {
         console.log(err);
-        return false;
+        return { status: false };
     }
 }
 

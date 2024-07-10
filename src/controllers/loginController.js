@@ -1,23 +1,25 @@
-const {Response} = require('../services/constants');
+const { Response } = require('../services/constants');
 const refreshTokens = require('../database/refreshToken.json');
-const {getUser, verifyOTP, generateAccessToken} = require('../services/loginServices');
+const { getUser, verifyOTP, generateAccessToken } = require('../services/loginServices');
 const jwt = require("jsonwebtoken");
 const fs = require('fs');
 const { user } = require('../models/index');
-const {sendOTP} = require('../services/otpServices.js');
+const { sendOTP } = require('../services/otpServices.js');
 require('dotenv').config({ path: '../.env' });
-const {isAdmin} = require('../services/validations.js')
+const { isAdmin } = require('../services/validations.js')
 
 const login = async (req, res) => {
-    const response = await getUser(req);
+    console.info('/login called');
+    const { email, password } = req?.body;
+    const response = await getUser({email, password});
     if (response?.length) {
         const user = { user_id: response[0].user_id };
         const accessToken = generateAccessToken(user);
         const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d' });
         refreshTokens.push(refreshToken);
-        let role = (await isAdmin(user?.user_id))? 'admin': 'customer'
-        fs.writeFileSync(__dirname+'/../database/refreshToken.json', JSON.stringify(refreshTokens));
-        return res.status(200).send(new Response(true, 'Tokens Generated', {role: role, accessToken: accessToken, refreshToken: refreshToken }));
+        let role = (await isAdmin(user?.user_id)) ? 'admin' : 'customer'
+        fs.writeFileSync(__dirname + '/../database/refreshToken.json', JSON.stringify(refreshTokens));
+        return res.status(200).send(new Response(true, 'Tokens Generated', { role: role, accessToken: accessToken, refreshToken: refreshToken }));
     }
     else {
         return res.status(400).send(new Response(false, 'User not found', {}));
@@ -25,11 +27,13 @@ const login = async (req, res) => {
 }
 
 const resetPassword = async (req, res) => {
-    const lastRow = await verifyOTP(req);
+    console.info('/resetPassword called');
+    let { email, otp, new_password } = req?.body;
+    if(!email || !otp || !new_password){
+        return res.status(400).send(new Response(false, 'Invalid details', {}));
+    }
+    const lastRow = await verifyOTP({email, otp, new_password});
     if (lastRow) {
-        await user.update({
-            password: new_password
-        });
         return res.status(200).send(new Response(true, 'New password updated', {}));
     }
     else {
@@ -38,14 +42,16 @@ const resetPassword = async (req, res) => {
 }
 
 const generateOTP = async (req, res) => {
-    const isSent = await sendOTP(req);
-    if(isSent.status === false){
+    console.info('/generate-otp called');
+    let { email } = req?.body;
+    if(!email || typeof(email) !== 'string'){
+        return res.status(400).send(new Response(false, 'Email not provided', {}));
+    }
+    const isSent = await sendOTP(email);
+    if (!isSent.status) {
         return res.status(400).send(new Response(true, 'Invalid email or user does not exist', {}));
     }
-    if(isSent){
-        return res.status(200).send(new Response(true, 'OTP sent', isSent.response));
-    }
-    return res.send(new Response(false, 'Error while sending', { ERROR: err }));
+    return res.status(200).send(new Response(true, 'OTP sent', isSent.data));
 }
 
 module.exports = {

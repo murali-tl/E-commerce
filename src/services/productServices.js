@@ -33,7 +33,6 @@ const getProducts = async (req) => {
         offset: offset,
     });
     return { products: products, totalPages: totalPages, current_page: page, total_orders: totalCount};
-    
 }
 
 const getProduct = async (req) => {
@@ -58,7 +57,7 @@ const getProduct = async (req) => {
 
 
 
-const getRecentProducts = async (req) => {
+const getRecentProducts = async () => {
     try {
         let products = await product.findAll(
             {

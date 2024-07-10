@@ -13,9 +13,8 @@ function generateAccessToken(user_details) {
     return jwt.sign(user_details, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '60m' });
 }
 
-const getUser = async (req) => {
-    console.info('/login called');
-    const { email, password } = req?.body;
+const getUser = async (data) => {
+    const { email, password } = data;
     let passwordHash = crypto.createHash('md5').update(password).digest('hex');
     let response = await user.findAll({
         where: {
@@ -28,9 +27,9 @@ const getUser = async (req) => {
     //return res.status(200).send(response);
 }
 
-const verifyOTP = async (req) => {
+const verifyOTP = async (data) => {
     try {
-        let { email, otp, new_password } = req?.body;
+        let { email, otp, new_password } = data;
         let lastRow = await otp_notification.findOne({
             where: {
                 email: email,
@@ -40,13 +39,13 @@ const verifyOTP = async (req) => {
         });
         let userDetails = await user.findOne({
             where:{
-                email: req?.body?.email
+                email: email
             }
         });
         //return lastRow;
         if(lastRow && userDetails){
             await user.update({
-                password: new_password
+                password: crypto.createHash('md5').update(new_password).digest('hex') // hash it  ---
             },
             {
                 where: {

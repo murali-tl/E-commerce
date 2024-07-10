@@ -15,12 +15,12 @@ const fetchProducts = async (req, res) => {
 const fetchProduct = async (req, res) => {
     //console.log('hello');
     console.info('/products/:product_id called');
-    const product = await productService.getProduct(req);
-    if (product?.error) {
-        return res.status(500).send(new Response(false, 'Error while fetching data', { error: product.error }));
+    const products = await productService.getProduct(req);
+    if (products?.error) {
+        return res.status(500).send(new Response(false, 'Error while fetching data', { error: products.error }));
     }
-    if (product.length) {
-        return res.status(200).send(new Response(true, 'Product details fetched', result[0]));
+    if (products.length) {
+        return res.status(200).send(new Response(true, 'Product details fetched', products[0]));
     }
 
     return res.status(400).send(new Response(false, 'Product not found', {}));
@@ -39,7 +39,7 @@ const fetchReviews = (req, res) => {
 }
 
 const fetchRecentProducts = async (req, res) => {
-    const products = await productService.getRecentProducts(req);
+    const products = await productService.getRecentProducts();
     if (products?.error) {
         return res.status(500).send(new Response(false, 'Error while fetching data', { error: products.error }));
     }

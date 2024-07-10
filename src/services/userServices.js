@@ -2,15 +2,13 @@ const { user, wishlist, cart, product, role } = require('../models/index');
 require('dotenv').config({ path: '../.env' });
 const crypto = require('crypto');
 const { validateUser } = require('../services/validations');
-const { attempt } = require('joi');
 
-const createUser = async (req) => {
-
-    const { full_name, email, password } = req?.body;
-    const validated = validateUser(req?.body);
+const createUser = async (data) => {
+    const { full_name, email, password } = data;
+    //const validated = validateUser(data);
     if (validated.error) {
         return { "error": validated?.error.details };
-        }
+    }
     try {
         const roleDetails = await role.findOne({
             where: {
@@ -44,7 +42,7 @@ const createUser = async (req) => {
         if (err.name === 'SequelizeUniqueConstraintError') {
             return { "error": 'User already exist' };
         }
-        console.log(err);
+        console.error(err);
         return { "error": err };
     }
 }
@@ -82,10 +80,15 @@ const getCartDetails = async (req) => {
         const productIds = cartDetails.product_details.map(item => item.product_id);
         const products = await product.findAll({
             where: { product_id: productIds },
-            attributes: ['product_name', 'images', 'price', 'category']
+            attributes: ['product_id', 'product_name', 'images', 'price', 'category']
+        });
+        cartDetails.product_detail.forEach((element, index) => {
+            products[index]['size'] = element?.size;
+            products[index]['quantity'] = element?.quantity;
+            products[index]['colour'] = element?.colour;
         });
         cartDetails["products"] = products
-        return cartDetails ;
+        return cartDetails;
     }
     catch (err) {
         console.log(err);
