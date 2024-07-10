@@ -204,6 +204,7 @@ Body:
         {
             "product_id" : "String",
             "product_name": "String",
+            "description": "String",
             "images": "String[]",
             "available_sizes":"String[]",
             "available_colours": "String[]",
@@ -253,6 +254,7 @@ $~~~~~~~~~$
 { status: true, message: 'Products details fetched.', data:{
             "product_id" : "String",
             "product_name": "String",
+            "description": "String",
             "images": "String[]",
             "available_sizes":"String[]",
             "available_colours": "String[]",
