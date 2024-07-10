@@ -204,7 +204,7 @@ Body:
         {
             "product_id" : "String",
             "product_name": "String",
-            "images": "String",
+            "images": "String[]",
             "available_sizes":"String[]",
             "available_colours": "String[]",
             "price": "Float",
@@ -253,7 +253,7 @@ $~~~~~~~~~$
 { status: true, message: 'Products details fetched.', data:{
             "product_id" : "String",
             "product_name": "String",
-            "images": "String",
+            "images": "String[]",
             "available_sizes":"String[]",
             "available_colours": "String[]",
             "price": "Float",
@@ -294,7 +294,7 @@ $~~~~~~~~~$
         {
             "product_id" : "String",
             "product_name": "String",
-            "images": "String",
+            "images": "String[]",
             "available_sizes":"String[]",
             "available_colours": "String[]",
             "price": "Float",
