@@ -210,7 +210,8 @@ Body:
             "available_colours": "String[]",
             "price": "Float",
             "category": "String",
-            "rating": "Float"
+            "rating": "Float",
+            "quantity": "Number"
         },
         {
 
@@ -260,7 +261,8 @@ $~~~~~~~~~$
             "available_colours": "String[]",
             "price": "Float",
             "category": "String",
-            "rating": "Float"
+            "rating": "Float",
+            "quantity": "Number"
         }
 }//successful operation
 {status: false, message: 'Error while fetching', data:{reason: ""}} //failure
