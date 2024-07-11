@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     size_ids: DataTypes.JSON,
     price: DataTypes.FLOAT,
     rating: DataTypes.FLOAT,
-    colors_ids: DataTypes.JSON,
+    color_ids: DataTypes.JSON,
     category_id: DataTypes.STRING,
     product_status: DataTypes.STRING,
     created_by: DataTypes.STRING,
