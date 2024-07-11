@@ -47,7 +47,7 @@ const fetchRecentProducts = async (req, res) => {
         return res.status(200).send(new Response(true, 'Products details fetched', {products: products}));
     }
 
-    return res.status(400).send(new Response(false, 'Products not found', {}));
+    return res.status(200).send(new Response(true, 'Products not found', {}));
 }
 
 
