@@ -53,15 +53,12 @@ const verifyOTP = async (data) => {
                 }
             }
         );
-        return res.status(200).send(new Response(true, 'Passsword updated', {}));
         }
-        else{
-            return res.status(400).send(new Response(false, 'User not found', {}));
-        }
+    return lastRow;
     }
     catch (err) {
         console.log(err);
-        return res.status(500).send(new Response(false, 'Error while resetting password', { ERROR: err }));
+        return  false;
     }
 }
 

@@ -42,14 +42,15 @@ const sendOTP = async (email) => {
             html: `<p>Following is your OTP to reset password : ${generatedOTP}</p>
         <p><a href="http://localhost:3000/reset-password/${userDetails?.user_id}">Reset Password</a></p>`
         };
-        console.log(process.env.EMAIL_USER_NAME, process.env.EMAIL_PASSWORD);
+        //console.log(process.env.EMAIL_USER_NAME, process.env.EMAIL_PASSWORD);
         if (email && userDetails) {
+            //console.log('hello')
             let info = await transporter.sendMail(mailOptions);
             await otp_notification.create({  //implement here
                 email: email,
                 otp_hash: crypto.createHash('md5').update(generatedOTP).digest('hex')
             })
-            return { success: true, data: info };
+            return { status: true, data: info };
         }
         else {
             return { status: false };

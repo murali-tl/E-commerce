@@ -3,12 +3,12 @@ const router = require('express').Router();
 const app = express();
 const loginController = require('../controllers/loginController.js');
 const productController = require('../controllers/productController.js');
-const {refreshToken} = require('../controllers/authController.js');
-const {authenticate} = require('../services/authServices.js');
+const { refreshToken } = require('../controllers/authController.js');
+const { authenticate } = require('../services/authServices.js');
 
 
-router.post('/login',loginController.login);
-router.post('/refresh-auth',refreshToken);
+router.post('/login', loginController.login);
+router.post('/refresh-auth', refreshToken);
 router.post('/generate-otp', loginController.generateOTP);
 router.patch('/reset-password', loginController.resetPassword);
 router.get('/home', authenticate, productController.fetchRecentProducts);
