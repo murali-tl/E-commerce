@@ -18,7 +18,7 @@ router.get('/home', authenticate, productController.fetchRecentProducts);
 router.get('/list-products', authenticate, productController.fetchProducts);  //add authenticate from here
 router.get('/products/:product_id', authenticate, productController.fetchProduct);
 router.get('/product/reviews', authenticate, productController.fetchReviews);
-router.get('/get-product-parameters',  productController.fetchProductParameters);
+router.get('/get-product-parameters', authenticate, productController.fetchProductParameters);
 
 router.use('/user', require('./users.js'));
 router.use('/admin', require('./admin.js'));
