@@ -2,13 +2,13 @@ const { review, product } = require('../models/index');
 const { sequelize } = require('../models/index');
 const { QueryTypes } = require('sequelize');
 
-const getReviews = async (req) => {  // instead of user_id send user_name
+const getReviews = async (productId) => {  // instead of user_id send user_name
     try {
         const query = `
       SELECT reviews.*, users.full_name AS user_full_name
       FROM reviews
       INNER JOIN users ON reviews.user_id = users.user_id
-      WHERE reviews.product_id = ${req?.body?.product_id}
+      WHERE reviews.product_id = ${productId}
     `;
 
         const [reviews, metadata] = await sequelize.query(query, {
@@ -23,7 +23,7 @@ const getReviews = async (req) => {  // instead of user_id send user_name
         // });
         let productDetails = await product.findOne({
             where: {
-                product_id: req?.body?.product_id
+                product_id: productId
             }
         });
         let avg_rating = productDetails.dataValues?.rating;
@@ -42,11 +42,11 @@ const getReviews = async (req) => {  // instead of user_id send user_name
         });
         //const userIds = reviews.map(item => item.user_id);
 
-        return [reviews, avg_rating, ratingCounts];
+        return {status:true, message: "Details fetched", data: [reviews, avg_rating, ratingCounts]};
     }
     catch (err) {
         console.log(err);
-        return { "error": err };
+        return { status:false, message: "Error while fetching product reviews"};
     }
 }
 

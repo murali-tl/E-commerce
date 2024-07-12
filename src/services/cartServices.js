@@ -33,7 +33,7 @@ const insertIntoCart = async (req) => {
                     return JSON.stringify(cartObj) === JSON.stringify(productObj)
 
                 });
-                console.log(foundProduct);
+                //console.log(foundProduct);
                 if (foundProduct.length) {
                     let otherProducts = product_details.filter(element => {
                         let { product_id, size, colour } = element;

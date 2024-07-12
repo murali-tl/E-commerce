@@ -1,11 +1,11 @@
 const { wishlist, product } = require('../models/index');
 // const wishlist = require('../models/wishlist');
 
-const insertIntoWishList = async (req) => {
+const insertIntoWishList = async (data) => {
     try {
         let wishList = await wishlist.findOne({
             where: {
-                user_id: req?.user?.user_id
+                user_id: data?.user_id
             }
         })
         if ((wishList.product_ids).includes(req?.body?.product_id)) {
@@ -14,32 +14,32 @@ const insertIntoWishList = async (req) => {
         else {
             const productDetails = product.findOne({
                 where: {
-                    product_id: req?.body?.product_id,
+                    product_id: data?.product_id,
                     product_status: 'available'
                 }
             });
             if (productDetails) {
                 let productIds = [...wishList['product_ids']];
-                productIds.push(req?.body?.product_id);
+                productIds.push(data?.product_id);
                 await wishlist.update(
                     {
                         product_ids: productIds
                     },
                     {
                         where: {
-                            user_id: req?.user?.user_id
+                            user_id: data?.user_id
                         },
                     },
                 );
-                return { status: 'updated product to wishList' };
+                return { status: true, message: 'updated product to wishList' };
             }
             else {
-                return { status: "Product not found" };
+                return { status: true, message: "Product not found" };
             }
         }
     }
     catch (err) {
-        return { "error": err };
+        return { status: false, message: "Error while inserting into wishlist" };
     }
 }
 

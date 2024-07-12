@@ -1,5 +1,5 @@
 const { Response } = require("../services/constants");
-const { getAllOrders , getOrderDetails, updateOrder, createProduct, removeProduct, updateProduct} = require('../services/adminServices');
+const { getAllOrders, getOrderDetails, updateOrder, createProduct, removeProduct, updateProduct } = require('../services/adminServices');
 const { isAdmin } = require('../services/validations');
 
 const fetchAllOrders = async (req, res) => {
@@ -29,7 +29,7 @@ const fetchSpecificOrder = async (req, res) => {
         if (result) {
             return res.status(200).send(new Response(true, 'Order details fetched', result));
         }
-        return res.status(400).send(new Response(false, 'Order not found', { }));
+        return res.status(400).send(new Response(false, 'Order not found', {}));
     }
     else {
         return res.status(403).send(new Response(false, 'User is Forbidden', {}));
@@ -51,16 +51,22 @@ const editOrder = async (req, res) => {
 }
 
 const addProduct = async (req, res) => {
-    if (await isAdmin(req?.user?.user_id)) {
-        console.info('/admin/add-product called');   //
-        const result = await createProduct(req);
-        if (result?.error) {
-            return res.status(500).send(new Response(false, 'Error while fetching orders', { "error": result.error }));
+    try {
+        if (await isAdmin(req?.user?.user_id)) {
+            console.info('/admin/add-product called');   //
+            const result = await createProduct(req?.body);
+            if (!result?.success) {
+                return res.status(500).send(new Response(false, 'Error while adding new productt', {}));
+            }
+            return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));
         }
-        return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));
+        else {
+            return res.status(403).send(new Response(false, 'User is Forbidden', {}));
+        }
     }
-    else {
-        return res.status(403).send(new Response(false, 'User is Forbidden', {}));
+    catch (e) {
+        console.error("Error occured in addProduct", e);
+        return res.status(500).send(new Response(false, 'Error while adding new product', { }));
     }
 }
 

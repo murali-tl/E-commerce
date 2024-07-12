@@ -13,7 +13,7 @@ const isAdmin = async (userId) => {
     if (!userDetails) {
       return 'User not found';
     }
-
+    //console.log(userDetails);
     const roleName = userDetails.role.role_name;
     if (roleName === 'admin') {
       return true;
@@ -55,10 +55,10 @@ function validateProduct(product) {
     description: Joi.string().min(1).max(1024).required(),
     images: Joi.array().items(Joi.string().base64()).required(),
     quantity: Joi.number().integer().min(0).required(),
-    sizes: Joi.array().items(Joi.string()).required(),
+    size_ids: Joi.array().items(Joi.string().uuid()).required(),
     price: Joi.number().precision(2).positive().required(),
-    colours: Joi.array().items(Joi.string()),
-    category: Joi.string().min(1).max(255).required()
+    color_ids: Joi.array().items(Joi.string().uuid()),
+    category_id: Joi.string().uuid().min(1).max(255).required()
   }).options({ abortEarly: false });
   return productSchema.validate(product);
 }

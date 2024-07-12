@@ -35,24 +35,24 @@ const createUser = async (data) => {
             user_id: currentUser?.user_id,
             product_details: []
         });
-        return currentUser;
+        return { status: true, data: currentUser };
     }
 
     catch (err) {
         if (err.name === 'SequelizeUniqueConstraintError') {
-            return { "error": 'User already exist' };
+            return { status: false, "message": 'User already exist' };
         }
         console.error(err);
-        return { "error": err };
+        return { status: false, message: "Error while registering user" };
     }
 }
 
-const getWishListDetails = async (req) => {
-    console.log(req?.user);
+const getWishListDetails = async (userId) => {
+    //console.log(req?.user);
     try {
         let result = await wishlist.findAll({
             where: {
-                user_id: req?.user?.user_id
+                user_id: userId
             }
         })
         let products = await product.findAll({
@@ -61,10 +61,10 @@ const getWishListDetails = async (req) => {
             }
         });
         result['products'] = products;
-        return result;
+        return {status: true, data: result};
     }
     catch (err) {
-        return { "error": err };
+        return { status: false, message: "Error occured while fetching Wishist details" };
     }
 }
 

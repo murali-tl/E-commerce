@@ -54,7 +54,7 @@ const getOrderDetails = async (req) => {
         return orderDetails;
     }
     catch (err) {
-        return { "error": err };
+        return { success: false,  "error": err };
     }
 }
 
@@ -91,28 +91,28 @@ const getOrderDetails = async (req) => {
 //     }
 // }
 
-const createProduct = async (req) => {
-    let result = validateProduct(req?.body);
+const createProduct = async (data) => {
+    let result = validateProduct(data);
     if (result.error) {
-        return { "error": result.error.details };
+        console.error('error occured in validating add product', result.error.details);
+        return { success: false, "error": result.error.details };
     }
     try {
         await product.create({
-            product_name: req?.body?.product_name,
-            description: req?.body?.description,
-            images: req?.body?.images,
-            quantity: req?.body?.quantity,
-            sizes: req?.body?.sizes,
-            price: req?.body?.price,
-            colours: req?.body?.colours,
-            category: req?.body?.category,
+            product_name: data?.product_name,
+            description: data?.description,
+            images: data?.images,
+            quantity: data?.quantity,
+            size_ids: data?.size_ids,
+            price: data?.price,
+            color_ids: data?.color_ids,
+            category_id: data?.category_id,
             product_status: "available",
-            created
         })
         return { success: true, status: 200, message: 'Product created', data: {} }; //should we need to send product_details
     }
     catch (err) {
-        return { "error": err };
+        return {  success: false, message: " Error while creating new prodct"};
     }
 }
 
@@ -169,7 +169,8 @@ const updateProduct = async (req) => { //check product quantity
     return { success: false, status: 400, message: 'Product not found', data: {} };
     }
     catch (err) {
-        return { "error": err };
+        console.error('error occurred while adding product', err)
+        return { "error": 'error occurred' };
     }
 }
 

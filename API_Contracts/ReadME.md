@@ -231,6 +231,10 @@ limit: Number,
 search : String, //name of product
 
 sort_by: String //price, rating, recent
+
+category_id: String
+
+color_id: string
 ```
 
 Body:
@@ -255,10 +259,10 @@ Body:
             "product_name": "String",
             "description": "String",
             "images": "String[]",
-            "available_sizes":"String[]",
-            "available_colours": "String[]",
+            "size_ids":"String[]",
+            "color_ids": "String[]",
             "price": "Float",
-            "category": "String",
+            "category_id": "String",
             "rating": "Float",
             "quantity": "Number"
         },
@@ -306,10 +310,10 @@ $~~~~~~~~~$
             "product_name": "String",
             "description": "String",
             "images": "String[]",
-            "available_sizes":"String[]",
-            "available_colours": "String[]",
+            "size_ids":"String[]",
+            "color_ids": "String[]",
             "price": "Float",
-            "category": "String",
+            "category_id": "String",
             "rating": "Float",
             "quantity": "Number"
         }
@@ -907,10 +911,10 @@ Body:
  "product_name":"String",
  "image_url":String[](Base 64 value),
  "quantity":"number",
- "available_sizes": String[],
+ "size_ids": String[],
  "price": "Number",
- "available_colours": String[],
- "category": "String",
+ "color_ids": String[],
+ "category_id": "String",
  "description": "String"
 }
 ```
