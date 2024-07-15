@@ -31,15 +31,15 @@ const insertIntoWishList = async (data) => {
                         },
                     },
                 );
-                return { status: true, message: 'updated product to wishList' };
+                return { success: true, message: 'updated product to wishList' };
             }
             else {
-                return { status: true, message: "Product not found" };
+                return { success: true, message: "Product not found" };
             }
         }
     }
     catch (err) {
-        return { status: false, message: "Error while inserting into wishlist" };
+        return { success: false, message: "Error while inserting into wishlist" };
     }
 }
 
@@ -72,19 +72,20 @@ const deleteFromWishList = async (req) => {
                         },
                     },
                 );
-                return { status: 'product removed from wishList' };
+                return { success:true, message:'product removed from wishList' };
             }
             else {
-                return { status: "Product not found" };
+                return { success:true, message: "Product not found" };
             }
         }
         else {
 
-            return { status: 'product does not exist in wishList' };
+            return { success:true, message:'product does not exist in wishList' };
         }
     }
     catch (err) {
-        return { "error": err };
+        console.error('Error occurred in deleting from wishList', e)
+        return { success: false, message: 'Error occurred in deleting from wishList' };
     }
 }
 

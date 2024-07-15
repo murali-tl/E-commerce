@@ -6,7 +6,7 @@ const YAML = require("yamljs");
 const path = require("path");
 // Create an Express app
 const app = express();
-const PORT = 3001;
+const PORT = 3000;
 
 const cors = require('cors')
 const myRoute = require('./routes/mainRoutes');

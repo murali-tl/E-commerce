@@ -1,14 +1,22 @@
-const { Response } = require('../services/constants');
-const Razorpay = require('razorpay');
-const { validateAddress, validateProductDetails } = require('../services/validations');
-require('dotenv').config({ path: './.env' });
-const { order, payment } = require('../models/index');
-const {Constants} = require('../services/constants');
+const { orderSummary } = require('../services/cartServices');
+// This is your test secret API key.
+const stripe = require("stripe")('sk_test_51Paw4TRrpeYldV0YLx1Zy1fd62mObPUpNBytFST6kTuWDL9qLThGQcSfJJaXmztZ0m1zvqHMjJvKpLhrsXPpqpI700Z7CA6wHH');
+const { order} = require('../models/index');
+const {ifPaymentSuccess} = require('../services/paymentServices');
+
+const calculateOrderAmount = (productIds) => {
+    let { sub_amount, total_amount } = orderSummary({
+        product_ids: productIds
+    })
+    return total_amount || 0;
+};
 
 const createOrder = async (req, res) => {
     try {
-        console.info('/user/createOrder called');
         const amount = req?.body?.amount;
+        const { product_details } = req.body;
+        const productIds = product_details.map(obj => { return obj?.product_id });
+        console.log(productIds);
         const validated = validateAddress(req?.body?.address);
         const productValidation = validateProductDetails(req?.body?.product_details);
         if (validated.error) {
@@ -20,40 +28,32 @@ const createOrder = async (req, res) => {
             //return { "error": validated?.error.details };
         }
         if (amount && typeof (amount) === 'number') {
-            const instance = new Razorpay(
-                {
-                    key_id: process.env.RAZORPAY_KEY_ID,
-                    key_secret: process.env.RAZORPAY_KEY_SECRET
-                }
-            )
-            const options = {
-                amount: amount * 100,
-                currency: "INR",
-                receipt: "rcp#1",
-            }
-            const myOrder = await instance.orders.create(options);
-            const currentDate = new Date();
-            const futureDate = new Date(currentDate);
-            if(req?.body?.shipping_type){
-                futureDate.setDate(currentDate.getDate() + Constants.SHIPPING_DETAILS?.shipping_type[1]); //sure_post or ground_shipping
-            }
-            futureDate.setDate(currentDate.getDate() + 4);
-            const futureTimestamp = futureDate.getTime();
-            // store data in database ??
-            await order.create({
-                order_id: myOrder?.id,
+            let createdOrder = await order.create({
                 user_id: req?.user?.user_id,
                 product_details: req?.body?.product_details,
                 amount: amount,
                 payment_status: 'pending',
-                order_status: 'placed',
+                order_status: 'created',
                 shipping_type: req?.body?.shipping_type,
                 address: req?.body?.address,
                 delivery_status: '',
-                estimated_delivery_date: futureTimestamp,
+                estimated_delivery_date: '',
                 delivered_at: ''
             });
-            return res.status(200).send(new Response(true, 'Order Created', myOrder));
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: calculateOrderAmount(productIds),
+                currency: "usd",
+                customer: req?.user?.user_id,
+                metadata: {
+                    order_id: createdOrder?.order_id
+                },
+                automatic_payment_methods: {
+                    enabled: true,
+                },
+
+            });
+
+            return res.status(200).send(new Response(true, 'Order Created', paymentIntent));
         }
         else {
             return res.status(400).send(new Response(false, 'Invalid amount', {}));
@@ -64,62 +64,51 @@ const createOrder = async (req, res) => {
     }
 };
 
+const confirmOrder = (request, response) => {
+    try{
+        let event = request.body;
 
-const verifyPaymentSignature = async (req, res) => {
-    try {
-        console.info('/payment/verify called');
-        const { order_id, payment_id } = req?.body;
-        const razorpay_signature = req.headers['x-razorpay-signature'];
-
-        if (order_id && payment_id && razorpay_signature) {
-            const key_secret = process.env.RAZORPAY_KEY_SECRET;
-
-
-            let hmac = crypto.createHmac('sha256', key_secret);
-
-            hmac.update(order_id + "|" + payment_id);
-
-            const generated_signature = hmac.digest('hex');
-
-
-            if (razorpay_signature === generated_signature) {
-                const razorpayResponse = await fetch(`https://api.razorpay.com/v1/payments/${payment_id}`, {
-                    headers: {
-                        'Authorization': `Basic ${Buffer.from(`${process.env.RAZORPAY_KEY_ID}:${process.env.RAZORPAY_KEY_SECRET}`).toString('base64')}`
-                    }
-                });
-                const razorpayData = await razorpayResponse.json();
-                const { contact, email, amount } = razorpayData;
-
-                await payment.create({
-                    payment_id: payment_id,
-                    order_id: order_id,
-                    payment_status: 'paid',
-                    user_id: req?.user?.user_id,
-                    amount: amount,
-                    contact: contact,
-                    email: email
-                });
-                await order.update({
-                    payment_status: 'paid'
-                },
-                    {
-                        where: {
-                            order_id: order_id
-                        }
-                    }
-                );
-                return res.json(new Response(true, "Payment has been verified", {}));
-            }
+    if (endpointSecret) {
+        // Get the signature sent by Stripe
+        const signature = request.headers['stripe-signature'];
+        try {
+            event = stripe.webhooks.constructEvent(
+                request.body,
+                signature,
+                endpointSecret
+            );
+        } catch (err) {
+            console.log(`⚠️  Webhook signature verification failed.`, err.message);
+            return response.sendStatus(400);
         }
-        return res.json(new Response(false, "Payment verification failed", {}));
     }
-    catch (err) {
-        console.log(err);
+
+    switch (event.type) {
+        case 'payment_intent.succeeded':
+            const paymentIntent = event.data.object;
+            //console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
+            ifPaymentSuccess(paymentIntent);
+            break;
+        case 'payment_method.attached':
+            const paymentMethod = event.data.object;
+            console.log('case2')
+            // Then define and call a method to handle the successful attachment of a PaymentMethod.
+            // handlePaymentMethodAttached(paymentMethod);
+            break;
+        default:
+            // Unexpected event type
+            console.log(`Unhandled event type ${event.type}.`);
     }
+
+    // Return a 200 response to acknowledge receipt of the event
+    response.send();
+}
+catch(e){
+    console.error('Error occurred in payment webhook', e);
+}
 };
 
 module.exports = {
     createOrder,
-    verifyPaymentSignature
+    confirmOrder
 }

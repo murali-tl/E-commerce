@@ -17,6 +17,6 @@ router.get('/addresses', authenticate, customerController.fetchAddresses);
 router.post('/add-address', authenticate, customerController.addAddress);
 router.get('/calculate-order-amount', authenticate, customerController.calculateOrderAmount);
 router.post('/create-order', authenticate, paymentController.createOrder);
-router.post('/verify-payment', authenticate, paymentController.verifyPaymentSignature);
+router.post('/webhook', authenticate, paymentController.confirmOrder);
 
 module.exports = router;

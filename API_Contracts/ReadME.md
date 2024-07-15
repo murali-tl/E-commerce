@@ -909,7 +909,7 @@ Body:
 ```js
 {
  "product_name":"String",
- "image_url":String[](Base 64 value),
+ "images":String[](Base 64 value),
  "quantity":"number",
  "size_ids": String[],
  "price": "Number",
@@ -945,12 +945,12 @@ Body:
 {
  "product_id":"String",
  "product_name":"String",
- "image_url":String[](Base 64 value),
+ "images":String[](Base 64 value),
  "quantity":"number",
- "available_sizes": String[],
+ "size_ids": String[],
  "price": "Number",
- "available_colours": String[],
- "category": "String",
+ "color_ids": String[],
+ "category_id": "String",
  "description": "String"
 }
 ```
@@ -1067,7 +1067,7 @@ $~~~~~~~~~$
             "order_id"; "String",
             "user_id": "String",
             "products": [Objects],
-            "cretaed_at": "timestamp",
+            "created_at": "timestamp",
             "delivery_date": "timestamp",
             "payment_status" : "String",
             "delivery_status": "String"

@@ -24,10 +24,7 @@ module.exports = {
       order_id: {
         type: Sequelize.STRING
       },
-      contact: {
-        type: Sequelize.STRING
-      },
-      email: {
+      payment_type: {
         type: Sequelize.STRING
       },
       created_at: {

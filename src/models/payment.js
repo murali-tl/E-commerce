@@ -21,8 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     user_id: DataTypes.UUID,
     amount: DataTypes.FLOAT,
     order_id: DataTypes.STRING,
-    contact: DataTypes.STRING,
-    email: DataTypes.STRING
+    payment_type: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'payment',

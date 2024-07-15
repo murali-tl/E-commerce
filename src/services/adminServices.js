@@ -38,11 +38,11 @@ const getAllOrders = async (req) => {
     }
 }
 
-const getOrderDetails = async (req) => {
+const getOrderDetails = async (orderId) => {
     try {
         const orderDetails = await order.findOne({
             where: {
-                order_id: req?.body?.order_id
+                order_id: orderId
             }
         });
         const productIds = cart.product_details.map(item => item.product_id);
@@ -54,7 +54,7 @@ const getOrderDetails = async (req) => {
         return orderDetails;
     }
     catch (err) {
-        return { success: false,  "error": err };
+        return { success: false, "error": err };
     }
 }
 
@@ -98,7 +98,7 @@ const createProduct = async (data) => {
         return { success: false, "error": result.error.details };
     }
     try {
-        await product.create({
+        const productAdded = await product.create({
             product_name: data?.product_name,
             description: data?.description,
             images: data?.images,
@@ -109,17 +109,17 @@ const createProduct = async (data) => {
             category_id: data?.category_id,
             product_status: "available",
         })
-        return { success: true, status: 200, message: 'Product created', data: {} }; //should we need to send product_details
+        return { success: true, status: 200, message: 'Product created', data: { product_id: productAdded?.product_id } }; //should we need to send product_details
     }
     catch (err) {
-        return {  success: false, message: " Error while creating new prodct"};
+        return { success: false, message: " Error while creating new prodct" };
     }
 }
 
-const removeProduct = async (req) => {
+const removeProduct = async (data) => {
     try {
-        const { product_id } = req?.body;
-        let validate = validateUUID(req?.body);
+        const { product_id } = data;
+        let validate = validateUUID(data);
         if (validate.error) {
             return { status: 400, message: 'Product_id invalid', success: false, data: {} }
         }
@@ -141,32 +141,32 @@ const removeProduct = async (req) => {
     }
 }
 
-const updateProduct = async (req) => { //check product quantity
-    let result = validateProduct(req?.body);
+const updateProduct = async (data) => { //check product quantity
+    let result = validateProduct(data);
     if (result.error) {
         return { "error": result.error.details };
     }
     try {
         let result = await product.update({
-            product_name: req?.body?.product_name,
-            description: req?.body?.description,
-            images: req?.body?.images,
-            quantity: req?.body?.quantity,
-            sizes: req?.body?.sizes,
-            price: req?.body?.price,
-            colours: req?.body?.colours,
-            category: req?.body?.category,
+            product_name: data?.product_name,
+            description: data?.description,
+            images: data?.images,
+            quantity: data?.quantity,
+            sizes: data?.sizes,
+            price: data?.price,
+            colours: data?.colours,
+            category: data?.category,
         },
             {
                 where: {
                     product_id: req?.body?.product_id
                 }
             }
-    );
-    if (result?.affectedRows > 0) {
-        return { success: true, status: 200, message: 'Product removed', data: {} };
-    }
-    return { success: false, status: 400, message: 'Product not found', data: {} };
+        );
+        if (result?.affectedRows > 0) {
+            return { success: true, status: 200, message: 'Product removed', data: {} };
+        }
+        return { success: false, status: 400, message: 'Product not found', data: {} };
     }
     catch (err) {
         console.error('error occurred while adding product', err)

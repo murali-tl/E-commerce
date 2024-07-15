@@ -6,14 +6,14 @@ const { Response } = require('../services/constants.js');
 const fetchProducts = async (req, res) => {
     try {
         const { page = 1, limit = 10, search, sort_by = 'rating', color_id, category_id } = req?.query;
-        const result = await productService.getProducts({ page: page, limit: limit, search: search, sort_by: sort_by, color_id: color_id, category: category });
+        const result = await productService.getProducts({ page: page, limit: limit, search: search, sort_by: sort_by, color_id: color_id, category_id: category_id });
         if (!result?.success) {
             return res.status(500).send(new Response(false, 'Error while fetching products', {}));
         }
         return res.status(200).send(new Response(true, 'Products fetched', result));
     }
     catch (e) {
-        console.error("Error occurred while fetching product", e)
+        console.error("Product Controller: Error occurred while fetching product", e)
         return res.status(500).send(new Response(false, 'Internal server Error', {}));
     }
 
@@ -32,7 +32,7 @@ const fetchProduct = async (req, res) => {
         }
         return res.status(200).send(new Response(true, product?.message, product.data));
     } catch (e) {
-        console.error("Error occurred while fetching product", e)
+        console.error("Product Controller: Error occurred while fetching product", e)
         return res.status(500).send(new Response(false, 'Internal server Error', {}));
     }
 }
@@ -48,7 +48,7 @@ const fetchReviews = (req, res) => {
         return res.status(200).send(new Response(true, 'Product reviews fetched', { average_rating: result[1], reviews: result[0], ratings_count: result[2] }));
     }
     catch (e) {
-        console.error("Error occurred while fetching Review", e)
+        console.error("Product Controller: Error occurred while fetching Review", e)
         return res.status(500).send(new Response(false, 'Internal server Error', {}));
     }
 }
@@ -67,7 +67,7 @@ const fetchRecentProducts = async (req, res) => {
         return res.status(200).send(new Response(true, 'Products not found', {}));
     }
     catch (e) {
-        console.error("Error occurred while fetching recent products", e)
+        console.error("Product Controller: Error occurred while fetching recent products", e)
         return res.status(500).send(new Response(false, 'Internal server Error', {}));
     }
 }
@@ -83,7 +83,7 @@ const fetchProductParameters = async (req, res) => {
         return res.status(200).send(new Response(true, 'Products parameters fetched', result?.data));
     }
     catch (e) {
-        console.error("Error occurred while fetching recent products", e)
+        console.error("Product Controller: Error occurred while fetching recent products", e)
         return res.status(500).send(new Response(false, 'Internal server Error', {}));
     }
 }

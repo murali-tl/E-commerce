@@ -91,7 +91,7 @@ const getCartDetails = async (req) => {
         return cartDetails;
     }
     catch (err) {
-        console.log(err);
+        console.error(err);
         return { "error": err };
     }
 }

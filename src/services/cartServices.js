@@ -68,17 +68,17 @@ const insertIntoCart = async (req) => {
                         },
                     },
                 );
-                return { status: "product added to cart" }
+                return { status: 200, message: "product added to cart" }
             }
             else {
-                return { status: "Product not found" };
+                return { status: 200, message: "Product not found" };
             }
         }
         else if (!cartDetails) {
-            return { status: "User does not exist" };
+            return { status: 400, message: "User does not exist" };
         }
         else {
-            return { status: "Invalid details" };
+            return { status: 400, message: "Invalid details" };
         }
     }
     catch (err) {
@@ -119,20 +119,20 @@ const deleteFromCart = async (req) => {
                             },
                         },
                     );
-                    return { status: "Product removed from cart" };
+                    return { status: 200, message: "Product removed from cart" };
                 }
 
-                return { status: "product does not exist in cart" };
+                return { status: 400, message: "product does not exist in cart" };
             }
             else {
-                return { status: "Product not found" };
+                return { status: 400, message: "Product not found" };
             }
         }
         else if (!cartDetails) {
-            return { status: "User does not exist" };
+            return { status: 400, message: "User does not exist" };
         }
         else {
-            return { status: "Invalid details" };
+            return { status: 400, message: "Invalid details" };
         }
     }
     catch (err) {
