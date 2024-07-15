@@ -42,70 +42,66 @@ const getReviews = async (productId) => {  // instead of user_id send user_name
         });
         //const userIds = reviews.map(item => item.user_id);
 
-        return {status:true, message: "Details fetched", data: [reviews, avg_rating, ratingCounts]};
+        return { status: true, message: "Details fetched", data: [reviews, avg_rating, ratingCounts] };
     }
     catch (err) {
         console.log(err);
-        return { status:false, message: "Error while fetching product reviews"};
+        return { status: false, message: "Error while fetching product reviews" };
     }
 }
 
-const addReview = async (req) => {
-    const { product_id, title, description, rating } = req?.body;
-    if (product_id && title && description && rating) {
-        try {
-            let productDetails = await product.findOne({
+const addReview = async (data, user_id) => {
+    try {
+        const { product_id, title, description, rating } = data;
+        let productDetails = await product.findOne({
+            where: {
+                product_id: product_id
+            }
+        });
+        let reviewDetails = checkReview(user_id, product_id);
+        if (productDetails && !reviewDetails) {
+            await review.create({
+                product_id: product_id,
+                user_id: user_id,
+                title: title,
+                description: description,
+                rating: rating,
+                useful_count: 0,
+                not_useful_count: 0,
+                inappropriate_flag_count: 0
+            });
+            const result = await review.findOne({
+                attributes: [
+                    [sequelize.fn('avg', sequelize.col('rating')), 'avg_rating']
+                ],
                 where: {
                     product_id: product_id
                 }
             });
-            let reviewDetails = checkReview(req?.user?.user_id, product_id);
-            if (productDetails && !reviewDetails) {
-                await review.create({
-                    product_id: product_id,
-                    user_id: req?.user?.user_id,
-                    title: title,
-                    description: description,
-                    rating: rating,
-                    useful_count: 0,
-                    not_useful_count: 0,
-                    inappropriate_flag_count: 0
-                });
-                const result = await review.findOne({
-                    attributes: [
-                        [sequelize.fn('avg', sequelize.col('rating')), 'avg_rating']
-                    ],
-                    where: {
-                        product_id: product_id
-                    }
-                });
 
-                const averageRating = result.dataValues.avg_rating || 0;
+            const averageRating = result.dataValues.avg_rating || 0;
 
-                await product.update(
-                    { rating: averageRating },
-                    { where: { id: product_id } }
-                );
+            await product.update(
+                { rating: averageRating },
+                { where: { id: product_id } }
+            );
 
-                let reviewDetails = checkReview(req?.user?.user_id, product_id);
-                return { success: true, status: 200, message: "Review added.", data: reviewDetails?.review_id };
-            }
-            else {
-                return { success: false, status: 400, message: "Product not found or review already exist", data: {} };
-            }
+            let reviewDetails = checkReview(user_id, product_id);
+            return { success: true, status: 200, message: "Review added.", data: reviewDetails?.review_id };
         }
-        catch (err) {
-            return { "error": err }
+        else {
+            return { success: false, status: 400, message: "Product not found or review already exist", data: {} };
         }
     }
-    else {
-        return { success: false, status: 400, message: "Insufficient details", data: {} };
+    catch (err) {
+        return { "error": err }
     }
+
 }
 
-const updateReview = async (req) => {
+const updateReview = async (data) => {
     try {
-        const { review_id, is_useful, inappropriate_flag = false } = req?.body;
+        const { review_id, is_useful, inappropriate_flag = false } = data;
         let reviewDetails = await review.findOne({
             where: {
                 review_id: review_id

@@ -1,4 +1,4 @@
-const { Response } = require('../services/constants');
+const { Response, Constants } = require('../services/constants');
 const refreshTokens = require('../database/refreshToken.json');
 const { getUser, verifyOTP, generateAccessToken } = require('../services/loginServices');
 const jwt = require("jsonwebtoken");
@@ -18,8 +18,8 @@ const login = async (req, res) => {
             const accessToken = generateAccessToken(user);
             const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d' });
             refreshTokens.push(refreshToken);
-            let role = (await isAdmin(user?.user_id)) ? 'admin' : 'customer'
-            fs.writeFileSync(__dirname + '/../database/refreshToken.json', JSON.stringify(refreshTokens));
+            let role = (await isAdmin(user?.user_id)) ? Constants?.ADMIN : Constants?.CUSTOMER;
+            fs.writeFileSync(__dirname + '/../database/refreshToken.json', JSON.stringify(refreshTokens)); //create table in database
             return res.status(200).send(new Response(true, 'Tokens Generated', { role: role, accessToken: accessToken, refreshToken: refreshToken }));
         }
         else {

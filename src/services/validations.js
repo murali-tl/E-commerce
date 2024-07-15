@@ -40,7 +40,7 @@ function validateUser(user) {
       .required(),
 
     password: Joi.string()
-      .pattern(new RegExp('^[a-zA-Z0-9]{8,30}$'))
+      .pattern(new RegExp('^[a-zA-Z0-9!@#$%^&*()-_+=]{8,30}$'))
       .required(),
 
   }).options({ abortEarly: false });
@@ -53,7 +53,7 @@ function validateProduct(product) {
     product_id: Joi.string().uuid(),
     product_name: Joi.string().min(1).max(255).required(),
     description: Joi.string().min(1).max(1024).required(),
-    images: Joi.array().items(Joi.string().base64()).required(),
+    images: Joi.array().items(Joi.string()).required(),
     quantity: Joi.number().integer().min(0).required(),
     size_ids: Joi.array().items(Joi.string().uuid()).required(),
     price: Joi.number().precision(2).positive().required(),
@@ -84,12 +84,32 @@ const productDetailSchema = Joi.object({
 });
 
 function validateProductDetails(product) {
-  const productDetailsArraySchema  = Joi.array().items(productDetailSchema).min(1).required();
+  const productDetailsArraySchema = Joi.array().items(productDetailSchema).min(1).required();
   return productDetailsArraySchema.validate(product);
 }
 
-function validateUUID(obj){
-  const schema =   Joi.object({product_id: Joi.string().uuid().required()});
+
+function validateCartDetails(product) {
+  const cartDetailSchema = Joi.object({
+    product_id: Joi.string().uuid().required(),
+    size_id: Joi.string().uuid().required(),
+    color_id: Joi.string().uuid.required(),
+    quantity: Joi.number().integer().min(1).required()
+  });
+  return cartDetailSchema.validate(product);
+}
+
+function validateReview(reviewObj) {
+  const schema = Joi.object({
+    product_id: Joi.string().uuid().required(),
+    title: Joi.string().required(),
+    description: Joi.string().required(),
+    rating: Joi.number().integer().min(1).required()
+  });
+  return schema.validate(reviewObj);
+}
+function validateUUID(obj) {
+  const schema = Joi.object({ product_id: Joi.string().uuid().required() });
   return schema.validate(obj);
 }
 
@@ -99,6 +119,8 @@ module.exports = {
   validateProduct,
   validateUUID,
   validateAddress,
-  validateProductDetails
+  validateProductDetails,
+  validateCartDetails,
+  validateReview
 }
 

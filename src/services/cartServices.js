@@ -1,34 +1,34 @@
 const { cart, product } = require('../models/index');
 const { Constants } = require('./constants');
 
-const insertIntoCart = async (req) => {
+const insertIntoCart = async (data) => {
     try {
         let cartDetails = await cart.findOne({
             where: {
-                user_id: req?.user?.user_id
+                user_id: data?.user_id
             }
         });
-        if (cartDetails && req?.body?.product_id && req?.body?.size && req?.body?.colour && req?.body?.quantity) {
+        if (cartDetails) {
             const productDetails = product.findOne({
                 where: {
-                    product_id: req?.body?.product_id,
-                    product_status: 'available'
+                    product_id: data?.product_id,
+                    product_status: Constants?.PRODUCT_STATUS[0]
                 }
             });
             if (productDetails) {
-                const { product_id, size, colour } = req?.body;
+                const { product_id, size_id, color_id } = data;
                 let productObj = {
                     product_id: product_id,
-                    size: size,
-                    colour: colour
+                    size_id: size_id,
+                    color_id: color_id
                 };
                 let product_details = [...cartDetails?.product_details];
                 let foundProduct = product_details.filter(element => {
-                    let { product_id, size, colour } = element;
+                    let { product_id, size_id, color_id } = element;
                     let cartObj = {
                         product_id: product_id,
-                        size: size,
-                        colour: colour
+                        size_id: size_id,
+                        color_id: color_id
                     };
                     return JSON.stringify(cartObj) === JSON.stringify(productObj)
 
@@ -36,16 +36,16 @@ const insertIntoCart = async (req) => {
                 //console.log(foundProduct);
                 if (foundProduct.length) {
                     let otherProducts = product_details.filter(element => {
-                        let { product_id, size, colour } = element;
+                        let { product_id, size_id, color_id } = element;
                         let cartObj = {
                             product_id: product_id,
-                            size: size,
-                            colour: colour
+                            size_id: size_id,
+                            color_id: color_id
                         };
                         return JSON.stringify(cartObj) !== JSON.stringify(productObj)
 
                     });
-                    let newQuantity = foundProduct[0]?.quantity + req?.body?.quantity;
+                    let newQuantity = foundProduct[0]?.quantity + data?.quantity;
                     productObj['quantity'] = newQuantity;
                     otherProducts.push(productObj);
                     await cart.update({
@@ -60,11 +60,11 @@ const insertIntoCart = async (req) => {
                 }
                 await cart.update(
                     {
-                        product_details: req?.body
+                        product_details: data
                     },
                     {
                         where: {
-                            user_id: req?.user?.user_id
+                            user_id: data.user_id
                         },
                     },
                 );
@@ -86,28 +86,41 @@ const insertIntoCart = async (req) => {
     }
 }
 
-const deleteFromCart = async (req) => {
+const deleteFromCart = async (data, user_id) => {
     try {
         let cartDetails = await cart.findOne({
             where: {
-                user_id: req?.user?.user_id
+                user_id: user_id
             }
-        })
-        if (cartDetails && req?.body?.product_id && req?.body?.size && req?.body?.colour && req?.body?.quantity) {
+        });
+
+        if (cartDetails) {
             const productDetails = product.findOne({
                 where: {
-                    product_id: req?.body?.product_id
+                    product_id: data?.product_id
                 }
             });
             if (productDetails) {
                 let { product_details } = [...cartDetails?.product_details];
                 let foundProduct = product_details.filter(element => {
-                    return JSON.stringify(element) === JSON.stringify(req?.body)
+                    let { product_id, size_id, color_id } = element;
+                    let cartObj = {
+                        product_id: product_id,
+                        size_id: size_id,
+                        color_id: color_id
+                    };
+                    return JSON.stringify(cartObj) === JSON.stringify(data)
 
                 });
                 if (foundProduct.length) {
                     product_details = product_details.filter(element => {
-                        return JSON.stringify(element) !== JSON.stringify(req?.body)
+                        let { product_id, size_id, color_id } = element;
+                        let cartObj = {
+                            product_id: product_id,
+                            size_id: size_id,
+                            color_id: color_id
+                        };
+                        return JSON.stringify(cartObj) !== JSON.stringify(data)
                     });
                     await cart.update(
                         {
@@ -115,7 +128,7 @@ const deleteFromCart = async (req) => {
                         },
                         {
                             where: {
-                                user_id: req?.user?.user_id
+                                user_id: user_id
                             },
                         },
                     );
@@ -145,7 +158,7 @@ const orderSummary = async (req) => {
         let { shipping_type, product_ids } = req?.body;
         let sub_amount = 0, total_amount = 0;
         let whereConditions = {};
-        if(product_ids?.length){
+        if (product_ids?.length) {
             whereConditions['product_id'] = [product_ids]
         }
         const product_prices = await product.findAll({

@@ -24,8 +24,8 @@ const transporter = nodemailer.createTransport({
 const sendOTP = async (email) => {
     try {
         console.info('/generate-otp called');
-        if(!email || typeof(email) !== 'string'){
-            return {status: false};
+        if (!email || typeof (email) !== 'string') {
+            return { status: false };
         }
         let generatedOTP = generateOTP(6);
         let userDetails = await user.findOne({

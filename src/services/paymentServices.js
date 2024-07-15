@@ -1,5 +1,5 @@
 const { order, payment } = require('../models/index');
-
+const { Constants } = require('./constants');
 const ifPaymentSuccess = async (paymentIntent) => {
     const currentDate = new Date();
     const futureDate = new Date(currentDate);
@@ -8,8 +8,8 @@ const ifPaymentSuccess = async (paymentIntent) => {
     }
     let futureTime = futureDate.setDate(currentDate.getDate() + 4);
     order.update({
-        order_status: 'placed',
-        payment_status: 'paid',
+        order_status: Constants?.ORDER_STATUS[1],
+        payment_status: Constants?.PAYMENT_STATUS[1],
         estimated_delivery_date: futureTime
     },
         {
@@ -20,12 +20,12 @@ const ifPaymentSuccess = async (paymentIntent) => {
     await payment.create({
         payment_id: paymentIntent?.id,
         user_id: paymentIntent?.customer,
-        payment_status: 'paid',
+        payment_status: Constants?.PAYMENT_STATUS[1],
         order_id: paymentIntent?.metadata?.order_id,
         amount: paymentIntent?.amount,
         payment_type: paymentIntent?.payment_method_types[0]
     });
-    return ;
+    return;
 }
 
 

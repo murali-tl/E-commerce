@@ -32,7 +32,7 @@ $~~~~~~~~~$
 400 $~~~~~~~~~$ Invalid email or password  
 <br><br>
 
-## `GET` /generate-otp
+## `POST` /generate-otp
 
 generates OTP and triggers email notification to user through Services
 
@@ -207,7 +207,21 @@ Body:
 
 ```js
 { status: true, message: 'Home page data fetched.', data:{
-    "products": "[objects]"
+    "products": [
+        {
+            "product_id" : "String",
+            "product_name": "String",
+            "description": "String",
+            "images": "String[]",
+            "size_ids":"String[]",
+            "color_ids": "String[]",
+            "price": "Float",
+            "category_id": "String",
+            "rating": "Float",
+            "quantity": "Number"
+        },
+        ...
+    ]
     }
 }//successful operation
 {status: false, message: 'Error while fetching', data:{reason: ""}} //failure
@@ -241,7 +255,6 @@ Body:
 
 ```js
 {
-    'category_name': "String[]", //[] list of categories
 }
 ```
 
@@ -276,7 +289,7 @@ Body:
     current_page: "Number",
     total_products: "Number"
     
-}//successful operation
+}}//successful operation
 {status: false, message: 'Error while fetching', data:{reason: ""}} //failure
 ```
 
@@ -498,8 +511,8 @@ Body:
 {
  "product_id": "String",
  "quantity": "number",
- "size": "String",
- "colour": "String"
+ "size_id": "String",
+ "color_id": "String"
 }
 ```
 
@@ -775,17 +788,18 @@ $~~~~~~~~~$
 ```
 <br><br>
 
-## `GET` /product/reviews
+## `GET` /product/reviews/:product_id
 
 fetch reviews of a product
 
 ### `Parameters`:
+product_id: String
 
 Body:
 
 ```js
 {
-    "product_id":"String"
+
 }
 ```
 

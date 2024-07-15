@@ -1,6 +1,7 @@
 const { Response } = require("../services/constants");
 const { getAllOrders, getOrderDetails, createProduct, removeProduct, updateProduct } = require('../services/adminServices');
 const { isAdmin } = require('../services/validations');
+const { validateProduct, validateUUID } = require('../services/validations');
 
 const fetchAllOrders = async (req, res) => {
     try {
@@ -67,6 +68,11 @@ const addProduct = async (req, res) => {
     try {
         if (await isAdmin(req?.user?.user_id)) {
             console.info('/admin/add-product called');   //
+            let validatedresult = validateProduct(req?.body);
+            if (validatedresult.error) {
+                console.error('error occured in validating add product', result.error.details);
+                return res.status(500).send(new Response(false, 'Error while adding new productt', { "err": result?.error }));
+            }
             const result = await createProduct(req?.body);
             if (!result?.success) {
                 return res.status(500).send(new Response(false, 'Error while adding new productt', {}));
@@ -79,7 +85,7 @@ const addProduct = async (req, res) => {
     }
     catch (e) {
         console.error("Admin Controller: Error occured in addProduct", e);
-        return res.status(500).send(new Response(false, 'Error while adding new product', {}));
+        return res.status(500).send(new Response(false, 'Error while adding new product', { "err": e }));
     }
 }
 

@@ -1,10 +1,11 @@
 const { orderSummary } = require('../services/cartServices');
+const { Constants } = require('../services/constants');
 require('dotenv').config({ path: '../.env' });
 
 // This is your test secret API key.
 const stripe = require("stripe")(process.env.STRIPE_SECRET_API_KEY);
-const { order} = require('../models/index');
-const {ifPaymentSuccess} = require('../services/paymentServices');
+const { order } = require('../models/index');
+const { ifPaymentSuccess } = require('../services/paymentServices');
 
 const calculateOrderAmount = (productIds) => {
     let { sub_amount, total_amount } = orderSummary({
@@ -34,8 +35,8 @@ const createOrder = async (req, res) => {
                 user_id: req?.user?.user_id,
                 product_details: req?.body?.product_details,
                 amount: amount,
-                payment_status: 'pending',
-                order_status: 'created',
+                payment_status: Constants?.PAYMENT_STATUS[0],
+                order_status: Constants?.ORDER_STATUS[0],
                 shipping_type: req?.body?.shipping_type,
                 address: req?.body?.address,
                 delivery_status: '',
@@ -67,47 +68,47 @@ const createOrder = async (req, res) => {
 };
 
 const confirmOrder = (request, response) => {
-    try{
+    try {
         let event = request.body;
 
-    if (endpointSecret) {
-        // Get the signature sent by Stripe
-        const signature = request.headers['stripe-signature'];
-        try {
-            event = stripe.webhooks.constructEvent(
-                request.body,
-                signature,
-                endpointSecret
-            );
-        } catch (err) {
-            console.log(`⚠️  Webhook signature verification failed.`, err.message);
-            return response.sendStatus(400);
+        if (endpointSecret) {
+            // Get the signature sent by Stripe
+            const signature = request.headers['stripe-signature'];
+            try {
+                event = stripe.webhooks.constructEvent(
+                    request.body,
+                    signature,
+                    endpointSecret
+                );
+            } catch (err) {
+                console.log(`⚠️  Webhook signature verification failed.`, err.message);
+                return response.sendStatus(400);
+            }
         }
-    }
 
-    switch (event.type) {
-        case 'payment_intent.succeeded':
-            const paymentIntent = event.data.object;
-            //console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
-            ifPaymentSuccess(paymentIntent);
-            break;
-        case 'payment_method.attached':
-            const paymentMethod = event.data.object;
-            console.log('case2')
-            // Then define and call a method to handle the successful attachment of a PaymentMethod.
-            // handlePaymentMethodAttached(paymentMethod);
-            break;
-        default:
-            // Unexpected event type
-            console.log(`Unhandled event type ${event.type}.`);
-    }
+        switch (event.type) {
+            case 'payment_intent.succeeded':
+                const paymentIntent = event.data.object;
+                //console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
+                ifPaymentSuccess(paymentIntent);
+                break;
+            case 'payment_method.attached':
+                const paymentMethod = event.data.object;
+                console.log('case2')
+                // Then define and call a method to handle the successful attachment of a PaymentMethod.
+                // handlePaymentMethodAttached(paymentMethod);
+                break;
+            default:
+                // Unexpected event type
+                console.log(`Unhandled event type ${event.type}.`);
+        }
 
-    // Return a 200 response to acknowledge receipt of the event
-    response.send();
-}
-catch(e){
-    console.error('Error occurred in payment webhook', e);
-}
+        // Return a 200 response to acknowledge receipt of the event
+        response.send();
+    }
+    catch (e) {
+        console.error('Error occurred in payment webhook', e);
+    }
 };
 
 module.exports = {

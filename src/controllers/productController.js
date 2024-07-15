@@ -5,6 +5,7 @@ const { Response } = require('../services/constants.js');
 
 const fetchProducts = async (req, res) => {
     try {
+        console.info(`/list-products called`);
         const { page = 1, limit = 10, search, sort_by = 'rating', color_id, category_id } = req?.query;
         const result = await productService.getProducts({ page: page, limit: limit, search: search, sort_by: sort_by, color_id: color_id, category_id: category_id });
         if (!result?.success) {
@@ -39,7 +40,7 @@ const fetchProduct = async (req, res) => {
 
 const fetchReviews = (req, res) => {
     try {
-        const { productId } = req?.body?.product_id;
+        const { productId } = req?.params?.product_id;
         console.info(`/reviews of ${productId} called`);
         const result = reviewService.getReviews(productId);
         if (!result?.status) {
@@ -58,10 +59,11 @@ const fetchRecentProducts = async (req, res) => {
         console.info(`/home called`);
         const products = await productService.getRecentProducts();
         if (!products?.success) {
+            console.log()
             return res.status(500).send(new Response(false, 'Error while fetching recent products', {}));
         }
-        if (products.length) {
-            return res.status(200).send(new Response(true, 'Products details fetched', { products: products }));
+        if (products?.products.length) {
+            return res.status(200).send(new Response(true, 'Products details fetched', { products: products?.products }));
         }
 
         return res.status(200).send(new Response(true, 'Products not found', {}));

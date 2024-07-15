@@ -6,9 +6,9 @@ const { validateUser } = require('../services/validations');
 const createUser = async (data) => {
     const { full_name, email, password } = data;
     //const validated = validateUser(data);
-    if (validated.error) {
-        return { "error": validated?.error.details };
-    }
+    // if (validated.error) {
+    //     return { "error": validated?.error.details };
+    // }
     try {
         const roleDetails = await role.findOne({
             where: {
@@ -35,12 +35,12 @@ const createUser = async (data) => {
             user_id: currentUser?.user_id,
             product_details: []
         });
-        return { status: true, data: currentUser };
+        return { statusCode: 200, status: true, message: 'User registered', data: { user_id: currentUser?.user_id } };
     }
 
     catch (err) {
         if (err.name === 'SequelizeUniqueConstraintError') {
-            return { status: false, "message": 'User already exist' };
+            return { statusCode: 409, status: true, "message": 'User already exist', data: {} };
         }
         console.error(err);
         return { status: false, message: "Error while registering user" };
@@ -61,19 +61,19 @@ const getWishListDetails = async (userId) => {
             }
         });
         result['products'] = products;
-        return {status: true, data: result};
+        return { status: true, data: result };
     }
     catch (err) {
         return { status: false, message: "Error occured while fetching Wishist details" };
     }
 }
 
-const getCartDetails = async (req) => {
+const getCartDetails = async (user_id) => {
     //console.log(req?.user);
     try {
         const cartDetails = await cart.findOne({
             where: {
-                user_id: req?.user?.user_id
+                user_id: user_id
             }
         });
         //console.log(cartDetails);

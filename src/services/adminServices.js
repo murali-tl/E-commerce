@@ -1,5 +1,6 @@
 const { order, product } = require('../models/index');
 const { validateProduct, validateUUID } = require('./validations');
+const { Constants } = require('./constants');
 
 const getAllOrders = async (req) => {
     try {
@@ -107,7 +108,7 @@ const createProduct = async (data) => {
             price: data?.price,
             color_ids: data?.color_ids,
             category_id: data?.category_id,
-            product_status: "available",
+            product_status: Constants?.PRODUCT_STATUS[0],
         })
         return { success: true, status: 200, message: 'Product created', data: { product_id: productAdded?.product_id } }; //should we need to send product_details
     }
@@ -124,7 +125,7 @@ const removeProduct = async (data) => {
             return { status: 400, message: 'Product_id invalid', success: false, data: {} }
         }
         let result = product.update({
-            product_status: 'deleted'
+            product_status: Constants?.PRODUCT_STATUS[1]
         },
             {
                 where: {

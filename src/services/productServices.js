@@ -1,5 +1,7 @@
 const { Op } = require('sequelize');
 const { product, color, size, category } = require('../models/index');
+const { Constants } = require('./constants');
+
 const getProducts = async (data) => {
     //const categories = req?.body?.categories; //get categories as array
     try {
@@ -21,7 +23,7 @@ const getProducts = async (data) => {
                 sort_by = 'created_at';
             }
         }
-        whereConditions.product_status = 'available';
+        whereConditions.product_status = Constants?.PRODUCT_STATUS[0];
         const offset = (page - 1) * limit;
         const totalCount = await product.count({ where: whereConditions });
         const totalPages = Math.ceil(totalCount / limit);
@@ -45,11 +47,11 @@ const getProduct = async (productId) => {
         let result = await product.findAll({
             where: {
                 product_id: productId,
-                product_status: 'available'
+                product_status: Constants?.PRODUCT_STATUS[0]
             }
         });
         if (!result.length) {
-            return { "success": true, message: "product not found", "data": result };
+            return { success: true, message: "product not found", data: result };
         }
         let colorIds = result[0]?.color_ids;
         let sizeIds = result[0]?.size_ids;
@@ -89,12 +91,12 @@ const getProduct = async (productId) => {
         resultObj['category'] = categoryy.dataValues;
         //console.log(resultObj)
         if (result?.length) {
-            return { "success": true, message: "product details fetched", "data": result };
+            return { success: true, message: "product details fetched", data: result };
         }
     }
     catch (err) {
         console.error("Exception occurred in get products ", err);
-        return { "success": false, "message": "Error occurred while fetching product" };
+        return { success: false, message: "Error occurred while fetching product" };
     }
 }
 
@@ -111,11 +113,11 @@ const getRecentProducts = async () => {
                 limit: 3
             }
         )
-        return products;
+        return { success: true, products: products };
     }
     catch (err) {
         console.log(err);
-        return { "success": false, "message": "Error occurred while fetching recent products" };
+        return { success: false, message: "Error occurred while fetching recent products" };
     }
 }
 
@@ -132,7 +134,7 @@ const getProductParameters = async () => {
         });
         //console.log(colors, sizes, categories);
         return {
-            "success": true, "message": "product parameters fetched", data: {
+            success: true, message: "product parameters fetched", data: {
                 colors: colors,
                 sizes: sizes,
                 categories: categories
@@ -142,7 +144,7 @@ const getProductParameters = async () => {
     }
     catch (e) {
         console.error(e);
-        return { "success": false, "message": "Error occurred while fetching product parameters" };
+        return { success: false, message: "Error occurred while fetching product parameters" };
 
     }
 }

@@ -1,4 +1,5 @@
 const { wishlist, product } = require('../models/index');
+const { Constants } = require('./constants');
 // const wishlist = require('../models/wishlist');
 
 const insertIntoWishList = async (data) => {
@@ -8,14 +9,14 @@ const insertIntoWishList = async (data) => {
                 user_id: data?.user_id
             }
         })
-        if ((wishList.product_ids).includes(req?.body?.product_id)) {
+        if ((wishList.product_ids).includes(data?.product_id)) {
             return { status: 'product already exist' };
         }
         else {
             const productDetails = product.findOne({
                 where: {
                     product_id: data?.product_id,
-                    product_status: 'available'
+                    product_status: Constants?.PRODUCT_STATUS[0]
                 }
             });
             if (productDetails) {
@@ -43,24 +44,24 @@ const insertIntoWishList = async (data) => {
     }
 }
 
-const deleteFromWishList = async (req) => {
+const deleteFromWishList = async (data) => {
     try {
         let wishList = await wishlist.findOne({
             where: {
-                user_id: req?.user?.user_id
+                user_id: data?.user_id
             }
         })
-        if ((wishList.product_ids).includes(req?.body?.product_id)) {
+        if ((wishList.product_ids).includes(data?.product_id)) {
             const productDetails = product.findOne({
                 where: {
-                    product_id: req?.body?.product_id,
-                    product_status: 'available'
+                    product_id: data?.product_id,
+                    product_status: Constants?.PRODUCT_STATUS[0]
                 }
             });
             if (productDetails) {
                 let productIds = [...wishList['product_ids']];
                 productIds = productIds.filter((item) => {
-                    return item !== req?.body?.product_id;
+                    return item !== data?.product_id;
                 })
                 await wishList.update(
                     {
@@ -68,19 +69,19 @@ const deleteFromWishList = async (req) => {
                     },
                     {
                         where: {
-                            user_id: req?.user?.user_id
+                            user_id: data?.user_id
                         },
                     },
                 );
-                return { success:true, message:'product removed from wishList' };
+                return { success: true, message: 'product removed from wishList' };
             }
             else {
-                return { success:true, message: "Product not found" };
+                return { success: true, message: "Product not found" };
             }
         }
         else {
 
-            return { success:true, message:'product does not exist in wishList' };
+            return { success: true, message: 'product does not exist in wishList' };
         }
     }
     catch (err) {

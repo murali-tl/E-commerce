@@ -12,7 +12,13 @@ class Constants {
         'sure_post': [5, 7],
         'ground_shipping': [3, 5]
     }
+    static ADMIN = 'admin';
+    static CUSTOMER = 'customer';
+    static PAYMENT_STATUS = ['pending', 'paid'];
+    static ORDER_STATUS = ['created', 'placed'];
+    static PRODUCT_STATUS = ['available', 'deleted'];
 }
+
 
 module.exports = {
     Constants,
