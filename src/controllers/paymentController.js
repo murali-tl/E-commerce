@@ -1,6 +1,8 @@
 const { orderSummary } = require('../services/cartServices');
+require('dotenv').config({ path: '../.env' });
+
 // This is your test secret API key.
-const stripe = require("stripe")('sk_test_51Paw4TRrpeYldV0YLx1Zy1fd62mObPUpNBytFST6kTuWDL9qLThGQcSfJJaXmztZ0m1zvqHMjJvKpLhrsXPpqpI700Z7CA6wHH');
+const stripe = require("stripe")(process.env.STRIPE_SECRET_API_KEY);
 const { order} = require('../models/index');
 const {ifPaymentSuccess} = require('../services/paymentServices');
 
