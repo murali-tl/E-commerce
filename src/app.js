@@ -1,10 +1,8 @@
-// api/index.js
 const express = require("express");
-// const serverless = require("serverless-http");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 const path = require("path");
-// Create an Express app
+
 const app = express();
 const PORT = 3001;
 
@@ -18,16 +16,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
     cors({
       origin: "*",
-      methods: ["GET"],
+      methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     })
   );
 app.use('/', myRoute);
 
 app.get('/', async (req, res) => {
-    // let colors = await color.findAll({});
-    //     let sizes = await size.findAll({});
-    //     let categories = await category.findAll({});
-    //     console.log(colors, sizes, categories);
     console.info("/health api called at", new Date().toISOString());
     res.status(200).send("Welcome to health URL of Server");
 });
@@ -35,9 +29,6 @@ app.get('/', async (req, res) => {
 // Swagger setup
 const swaggerDocument = YAML.load(path.join(__dirname, '../openapi.yaml'));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-// Export the handler for serverless functions
-//module.exports.handler = serverless(app);
 
 
 app.listen(PORT, (error) => {

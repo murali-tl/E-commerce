@@ -33,20 +33,17 @@ const sendOTP = async (email) => {
                 email: email
             }
         });
-        //console.log(userDetails?.full_name);
         const mailOptions = {
             from: process.env.EMAIL_USER_NAME,
             to: email,
             subject: 'Reset password for Ecommerce',
-            //text: `Following is your OTP to reset password : ${generatedOTP}`,
             html: `<p>Following is your OTP to reset password : ${generatedOTP}</p>
         <p><a href="http://localhost:3000/reset-password/${userDetails?.user_id}">Reset Password</a></p>`
         };
         //console.log(process.env.EMAIL_USER_NAME, process.env.EMAIL_PASSWORD);
         if (email && userDetails) {
-            //console.log('hello')
             let info = await transporter.sendMail(mailOptions);
-            await otp_notification.create({  //implement here
+            await otp_notification.create({ 
                 email: email,
                 otp_hash: crypto.createHash('md5').update(generatedOTP).digest('hex')
             })

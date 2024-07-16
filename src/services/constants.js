@@ -17,6 +17,7 @@ class Constants {
     static PAYMENT_STATUS = ['pending', 'paid'];
     static ORDER_STATUS = ['created', 'placed'];
     static PRODUCT_STATUS = ['available', 'deleted'];
+    static PRODUCT_DETAILS = ['product_id', 'product_name', 'description'];
 }
 
 

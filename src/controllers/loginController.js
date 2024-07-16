@@ -1,5 +1,5 @@
 const { Response, Constants } = require('../services/constants');
-const refreshTokens = require('../database/refreshToken.json');
+// const refreshTokens = require('../database/refreshToken.json');
 const { getUser, verifyOTP, generateAccessToken } = require('../services/loginServices');
 const jwt = require("jsonwebtoken");
 const fs = require('fs');
@@ -14,37 +14,38 @@ const login = async (req, res) => {
         const { email, password } = req?.body;
         const response = await getUser({ email: email, password: password });
         if (response?.length) {
+            console.log('MilliSeconds:',Date.parse(response[0]?.createdAt));
             const user = { user_id: response[0].user_id };
             const accessToken = generateAccessToken(user);
             const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d' });
-            refreshTokens.push(refreshToken);
+            //refreshTokens.push(refreshToken);
             let role = (await isAdmin(user?.user_id)) ? Constants?.ADMIN : Constants?.CUSTOMER;
-            fs.writeFileSync(__dirname + '/../database/refreshToken.json', JSON.stringify(refreshTokens)); //create table in database
-            return res.status(200).send(new Response(true, 'Tokens Generated', { role: role, accessToken: accessToken, refreshToken: refreshToken }));
+            //fs.writeFileSync(__dirname + '/../database/refreshToken.json', JSON.stringify(refreshTokens)); //create table in database
+            return res.status(200).send(new Response(true, 'Tokens Generated', { role: role,email: response[0]?.email, full_name: response[0]?.full_name, accessToken: accessToken, refreshToken: refreshToken }));
         }
         else {
-            return res.status(400).send(new Response(false, 'User not found', {}));
+            return res.status(400).send(new Response(false, 'Invalid email or password', {}));
         }
     }
     catch (e) {
         console.error('Login Controller: Error occurred during login', e);
-        return res.status(500).send(new Response(false, 'Internal server Error', {}));
+        return res.status(500).send(new Response(false, 'Internal server Error',{}));
     }
 }
 
 const resetPassword = async (req, res) => {
     try {
         console.info('/resetPassword called');
-        let { email, otp, new_password } = req?.body;
-        if (!email || !otp || !new_password) {
+        let { user_id, otp, new_password } = req?.body;
+        if (!user_id || !otp || !new_password) {
             return res.status(400).send(new Response(false, 'Invalid details', {}));
         }
-        const lastRow = await verifyOTP({ email, otp, new_password });
+        const lastRow = await verifyOTP({ user_id, otp, new_password });
         if (lastRow) {
             return res.status(200).send(new Response(true, 'New password updated', {}));
         }
         else {
-            return res.status(400).send(new Response(false, 'Email or OTP is incorrect', {}));
+            return res.status(400).send(new Response(false, 'User details or OTP is incorrect', {}));
         }
     }
     catch (e) {

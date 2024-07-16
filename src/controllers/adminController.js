@@ -12,9 +12,6 @@ const fetchAllOrders = async (req, res) => {
                 return res.status(500).send(new Response(false, 'Error while fetching orders', {}));
             }
             return res.status(200).send(new Response(true, 'Orders fetched', result));
-            // if (result?.orders?.length) {
-            // }
-            // return res.status(400).send(new Response(false, 'Orders empty!!', { orders: []}));
         }
         else {
             return res.status(403).send(new Response(false, 'User is Forbidden', {}));
@@ -70,8 +67,8 @@ const addProduct = async (req, res) => {
             console.info('/admin/add-product called');   //
             let validatedresult = validateProduct(req?.body);
             if (validatedresult.error) {
-                console.error('error occured in validating add product', result.error.details);
-                return res.status(500).send(new Response(false, 'Error while adding new productt', { "err": result?.error }));
+                console.error('error occured in validating add product', validatedresult.error.details);
+                return res.status(500).send(new Response(false, 'Error while adding new product', { "err": validatedresult?.error.details }));
             }
             const result = await createProduct(req?.body);
             if (!result?.success) {
@@ -114,6 +111,11 @@ const editProduct = async (req) => {
     try {
         if (await isAdmin(req?.user?.user_id)) {
             console.info('/admin/delete-product called');   //
+            let validatedresult = validateProduct(req?.body);
+            if (validatedresult.error) {
+                console.error('error occured in validating add product', validatedresult.error.details);
+                return res.status(500).send(new Response(false, 'Error while updating product', { "err": validatedresult?.error.details }));
+            }
             const result = await updateProduct(req?.body);
             if (result?.error) {
                 return res.status(500).send(new Response(false, 'Error while updating product', {}));

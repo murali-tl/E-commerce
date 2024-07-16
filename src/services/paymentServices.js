@@ -1,5 +1,6 @@
-const { order, payment } = require('../models/index');
+const { order, payment, product } = require('../models/index');
 const { Constants } = require('./constants');
+const { updateProductQuantity } = require('./utils');
 const ifPaymentSuccess = async (paymentIntent) => {
     const currentDate = new Date();
     const futureDate = new Date(currentDate);
@@ -17,14 +18,26 @@ const ifPaymentSuccess = async (paymentIntent) => {
                 order_id: paymentIntent?.metadata?.order_id
             }
         });
-    await payment.create({
-        payment_id: paymentIntent?.id,
-        user_id: paymentIntent?.customer,
-        payment_status: Constants?.PAYMENT_STATUS[1],
-        order_id: paymentIntent?.metadata?.order_id,
-        amount: paymentIntent?.amount,
-        payment_type: paymentIntent?.payment_method_types[0]
+    // update quantity in db
+    const orderDetails = order.findOne({
+        where: {
+            order_id: paymentIntent?.metadata?.order_id
+        }
     });
+    if (orderDetails) {
+        const productsDetails = orderDetails?.product_details;
+        productsDetails.forEach(element => {
+            updateProductQuantity(element?.product_id, element?.quantity);
+        });
+        await payment.create({
+            payment_id: paymentIntent?.id,
+            user_id: paymentIntent?.customer,
+            payment_status: Constants?.PAYMENT_STATUS[1],
+            order_id: paymentIntent?.metadata?.order_id,
+            amount: paymentIntent?.amount,
+            payment_type: paymentIntent?.payment_method_types[0]
+        });
+    }
     return;
 }
 

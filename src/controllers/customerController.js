@@ -102,7 +102,6 @@ const fetchCart = async (req, res) => {
   }
 }
 
-//destructure from here
 const addToCart = async (req, res) => {
   try {
     console.info('/user/add-to-cart called.');

@@ -53,7 +53,7 @@ const insertIntoCart = async (data) => {
                     },
                         {
                             where: {
-                                user_id: req?.user?.user_id
+                                user_id: data?.user_id
                             }
                         });
                     return { status: "Product already exist... quantity updated" };

@@ -93,11 +93,6 @@ const getOrderDetails = async (orderId) => {
 // }
 
 const createProduct = async (data) => {
-    let result = validateProduct(data);
-    if (result.error) {
-        console.error('error occured in validating add product', result.error.details);
-        return { success: false, "error": result.error.details };
-    }
     try {
         const productAdded = await product.create({
             product_name: data?.product_name,
@@ -113,7 +108,7 @@ const createProduct = async (data) => {
         return { success: true, status: 200, message: 'Product created', data: { product_id: productAdded?.product_id } }; //should we need to send product_details
     }
     catch (err) {
-        return { success: false, message: " Error while creating new prodct" };
+        return { success: false, message: " Error while creating new prodct" , err};
     }
 }
 
@@ -160,7 +155,7 @@ const updateProduct = async (data) => { //check product quantity
         },
             {
                 where: {
-                    product_id: req?.body?.product_id
+                    product_id: data?.product_id
                 }
             }
         );

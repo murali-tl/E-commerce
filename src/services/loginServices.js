@@ -5,9 +5,7 @@ const jwt = require("jsonwebtoken");
 
 const { user } = require('../models/index');
 const { otp_notification } = require('../models/index');
-const { where } = require('sequelize');
-const { emit } = require('process');
-const e = require('express');
+
 
 function generateAccessToken(user_details) {
     return jwt.sign(user_details, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '60m' });
@@ -27,20 +25,21 @@ const getUser = async (data) => {
     //return res.status(200).send(response);
 }
 
+
 const verifyOTP = async (data) => {
     try {
-        let { email, otp, new_password } = data;
+        let { user_id, otp, new_password } = data;
+        let userDetails = await user.findOne({
+            where:{
+                user_id: user_id
+            }
+        });
         let lastRow = await otp_notification.findOne({
             where: {
-                email: email,
+                email: userDetails?.email,
                 otp_hash: crypto.createHash('md5').update(otp).digest('hex')
             },
             order: [['created_at', 'DESC']]
-        });
-        let userDetails = await user.findOne({
-            where:{
-                email: email
-            }
         });
         //return lastRow;
         if(lastRow && userDetails){
@@ -49,7 +48,7 @@ const verifyOTP = async (data) => {
             },
             {
                 where: {
-                    email: email
+                    user_id: user_id
                 }
             }
         );

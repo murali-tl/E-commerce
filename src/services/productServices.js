@@ -34,7 +34,7 @@ const getProducts = async (data) => {
             limit: parseInt(limit),
             offset: offset,
         });
-        return { success: true, products: products, totalPages: totalPages, current_page: page, total_orders: totalCount };
+        return { success: true, products: products, totalPages: totalPages, current_page: page, total_productss: totalCount };
     }
     catch (e) {
         console.error(e);
