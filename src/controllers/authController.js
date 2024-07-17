@@ -2,16 +2,23 @@ const { Response } = require('../services/constants');
 const jwt = require('jsonwebtoken');
 require('dotenv').config({ path: '../.env' });
 const fs = require('fs');
-const {generateAccessToken} = require('../services/loginServices');
+const { generateAccessToken } = require('../services/loginServices');
 
 
 const refreshToken = (req, res) => {
     console.info("/refreshToken called");
     try {
         const refreshToken = req?.body?.refresh_token;
-        if (refreshToken === null) { return res.status(401).send(new Response(false, 'Refresh Token not found', {})) };
+        if (refreshToken === null) { return res.status(400).send(new Response(false, 'Refresh Token not found', {})) };
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-            if (err) return res.status(403).send(new Response(false, 'Refresh token is expired or invalid',{}));
+            if (err) {
+                if (err.name === 'TokenExpiredError') {
+                    return res.status(401).send(new Response(false, 'Refresh token is expired', {}));
+                } else {
+                    return res.status(401).send(new Response(false, 'Refresh token is invalid', {}));
+                }
+            }
+            //return res.status(401).send(new Response(false, 'Refresh token is expired or invalid',{}));
             const accessToken = generateAccessToken({ user_id: user?.user_id });
             res.json({ accessToken: accessToken });
         })

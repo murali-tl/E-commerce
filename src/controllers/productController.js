@@ -38,12 +38,13 @@ const fetchProduct = async (req, res) => {
     }
 }
 
-const fetchReviews = (req, res) => {
+const fetchReviews = async (req, res) => {
     try {
-        const { productId } = req?.params?.product_id;
-        console.info(`/reviews of ${productId} called`);
-        const result = reviewService.getReviews(productId);
+        const product_id = req?.params?.product_id;
+        console.info(`/reviews of ${product_id} called`);
+        const result = await reviewService.getReviews(product_id);
         if (!result?.status) {
+            //console.log('Check', result);
             return res.status(500).send(new Response(false, 'Error while fetching reviews', {}));
         }
         return res.status(200).send(new Response(true, 'Product reviews fetched', { average_rating: result[1], reviews: result[0], ratings_count: result[2] }));

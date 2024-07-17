@@ -4,17 +4,21 @@ const { QueryTypes } = require('sequelize');
 
 const getReviews = async (productId) => {  // instead of user_id send user_name
     try {
+        //const product_id = `${productId}`;
         const query = `
       SELECT reviews.*, users.full_name AS user_full_name
       FROM reviews
       INNER JOIN users ON reviews.user_id = users.user_id
-      WHERE reviews.product_id = ${productId}
+      WHERE reviews.product_id = '${productId}'
     `;
 
-        const [reviews, metadata] = await sequelize.query(query, {
+        let [reviews, metadata] = await sequelize.query(query, {
             type: QueryTypes.SELECT
         });
-
+        if (!reviews) {
+            reviews = [];
+        }
+        //console.log('===', reviews);
         //return results;
         // let reviews = await review.findAll({
         //     where: {
@@ -26,26 +30,31 @@ const getReviews = async (productId) => {  // instead of user_id send user_name
                 product_id: productId
             }
         });
-        let avg_rating = productDetails.dataValues?.rating;
-        const ratings = await review.findAll({
-            attributes: [
-                'rating',
-                [sequelize.fn('COUNT', sequelize.col('rating')), 'rating_count']
-            ],
-            group: ['rating'],
-            raw: true
-        });
+        if (productDetails) {
+            let avg_rating = productDetails.dataValues?.rating;
+            const ratings = await review.findAll({
+                attributes: [
+                    'rating',
+                    [sequelize.fn('COUNT', sequelize.col('rating')), 'rating_count']
+                ],
+                group: ['rating'],
+                raw: true
+            });
 
-        const ratingCounts = {};
-        ratings.forEach(rating => {
-            ratingCounts[rating.rating] = rating.rating_count;
-        });
-        //const userIds = reviews.map(item => item.user_id);
+            const ratingCounts = {};
+            ratings.forEach(rating => {
+                ratingCounts[rating.rating] = rating.rating_count;
+            });
+            //const userIds = reviews.map(item => item.user_id);
 
-        return { status: true, message: "Details fetched", data: [reviews, avg_rating, ratingCounts] };
+            return { status: true, message: "Details fetched", data: [reviews, avg_rating, ratingCounts] };
+        }
+
+        return { status: true, message: "Product not found", data: [[], 0, {}] };
+
     }
     catch (err) {
-        console.log(err);
+        console.log('==', err);
         return { status: false, message: "Error while fetching product reviews" };
     }
 }

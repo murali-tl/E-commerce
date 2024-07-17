@@ -77,17 +77,19 @@ const getCartDetails = async (user_id) => {
             }
         });
         //console.log(cartDetails);
-        const productIds = cartDetails.product_details.map(item => item.product_id);
-        const products = await product.findAll({
-            where: { product_id: productIds },
-            attributes: ['product_id', 'product_name', 'images', 'price', 'category']
-        });
-        cartDetails.product_detail.forEach((element, index) => {
-            products[index]['size'] = element?.size;
-            products[index]['quantity'] = element?.quantity;
-            products[index]['colour'] = element?.colour;
-        });
-        cartDetails["products"] = products
+        if (cartDetails?.product_details?.length) {
+            const productIds = cartDetails.product_details.map(item => item.product_id);
+            const products = await product.findAll({
+                where: { product_id: productIds },
+                attributes: ['product_id', 'product_name', 'images', 'price', 'category']
+            });
+            cartDetails.product_detail.forEach((element, index) => {
+                products[index]['size'] = element?.size;
+                products[index]['quantity'] = element?.quantity;
+                products[index]['colour'] = element?.colour;
+            });
+            cartDetails["products"] = products;
+        }
         return cartDetails;
     }
     catch (err) {

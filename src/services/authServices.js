@@ -1,4 +1,4 @@
-const {Response} = require('./constants');
+const { Response } = require('./constants');
 require('dotenv').config({ path: '../.env' });
 const jwt = require("jsonwebtoken");
 
@@ -10,7 +10,11 @@ function authenticate(req, res, next) {
             jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
                 try {
                     if (err) {
-                        return res.status(401).send(new Response(false, 'Token Expired', {}));
+                        if (err.name === 'TokenExpiredError') {
+                            return res.status(401).send(new Response(false, 'Refresh token is expired', {}));
+                        } else {
+                            return res.status(401).send(new Response(false, 'Refresh token is invalid', {}));
+                        }
                     }
                     req.user = user;
                     next();
@@ -22,7 +26,7 @@ function authenticate(req, res, next) {
             })
         }
         else {
-            return res.status(403).send(new Response(false, 'Token not found', {}));
+            return res.status(400).send(new Response(false, 'Token not found', {}));
         }
     }
     catch (err) {

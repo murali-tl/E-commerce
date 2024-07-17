@@ -2,9 +2,9 @@ const { order, product } = require('../models/index');
 const { validateProduct, validateUUID } = require('./validations');
 const { Constants } = require('./constants');
 
-const getAllOrders = async (req) => {
+const getAllOrders = async (page, limit, search) => {
     try {
-        const { page = 1, limit = 10, search } = req?.query;
+        //const { page = 1, limit = 10, search } = req?.query;
         let whereConditions = {};
         if (search) {
             whereConditions = {
@@ -46,12 +46,14 @@ const getOrderDetails = async (orderId) => {
                 order_id: orderId
             }
         });
-        const productIds = cart.product_details.map(item => item.product_id);
-        const products = await product.findAll({
-            where: { product_id: productIds },
-            attributes: ['product_name', 'images', 'price', 'category']
-        });
-        orderDetails["products"] = products;
+        if (orderDetails) {
+            const productIds = cart.product_details.map(item => item.product_id);
+            const products = await product.findAll({
+                where: { product_id: productIds },
+                attributes: ['product_name', 'images', 'price', 'category']
+            });
+            orderDetails["products"] = products;
+        }
         return orderDetails;
     }
     catch (err) {
@@ -108,7 +110,7 @@ const createProduct = async (data) => {
         return { success: true, status: 200, message: 'Product created', data: { product_id: productAdded?.product_id } }; //should we need to send product_details
     }
     catch (err) {
-        return { success: false, message: " Error while creating new prodct" , err};
+        return { success: false, message: " Error while creating new prodct", err };
     }
 }
 

@@ -2,7 +2,7 @@ const { Response } = require("../services/constants");
 const { createUser, getWishListDetails, getCartDetails } = require('../services/userServices');
 const { insertIntoWishList, deleteFromWishList } = require('../services/wishListServices');
 const { insertIntoCart, deleteFromCart, orderSummary } = require('../services/cartServices');
-const { addReview, updateReview } = require('../services/reviewServices');
+// const { addReview, updateReview } = require('../services/reviewServices');
 const { getAdresses, createAddress } = require('../services/addressServices');
 const { viewFilterOrders } = require('../services/orderServices');
 const { validateUser, validateAddress, validateCartDetails, validateReview } = require('../services/validations');
@@ -53,6 +53,9 @@ const addToWishList = async (req, res) => {
     console.info('/user/add-to-wish-list called');
     const userId = req?.user?.user_id;
     const { product_id } = req?.body;
+    if(!userId || !product_id){
+      return res.status(400).send(new Response(false, 'Invalid details', {}));
+    }
     const result = await insertIntoWishList({ user_id: userId, product_id: product_id });
     if (!result?.success) {
       return res.status(500).send(new Response(false, 'Error while adding product to wishlist', {}));
@@ -156,39 +159,39 @@ const removeFromCart = async (req, res) => {
   }
 }
 
-const createReview = async (req, res) => {
-  try {
-    console.info('/user/create-review called');
-    const validated = validateReview(req?.body);
-    if (validated?.error) {
-      return res.status(400).send(new Response(false, 'Invalid review details while adding review', { "error": validated?.error }));
-    }
-    const result = await addReview(req?.body, req?.user?.user_id);
-    if (result?.error) {
-      return res.status(500).send(new Response(false, 'Error while saving review', {}));
-    }
-    return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));
-  }
-  catch (e) {
-    console.error("Customer Controller: Error occurred while creating Review", e)
-    return res.status(500).send(new Response(false, 'Internal server Error', {}));
-  }
-}
+// const createReview = async (req, res) => {
+//   try {
+//     console.info('/user/create-review called');
+//     const validated = validateReview(req?.body);
+//     if (validated?.error) {
+//       return res.status(400).send(new Response(false, 'Invalid review details while adding review', { "error": validated?.error }));
+//     }
+//     const result = await addReview(req?.body, req?.user?.user_id);
+//     if (result?.error) {
+//       return res.status(500).send(new Response(false, 'Error while saving review', {}));
+//     }
+//     return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));
+//   }
+//   catch (e) {
+//     console.error("Customer Controller: Error occurred while creating Review", e)
+//     return res.status(500).send(new Response(false, 'Internal server Error', {}));
+//   }
+// }
 
-const markReview = async (req, res) => {
-  try {
-    console.info('/user/mark-review called');
-    const result = await updateReview(req?.body);
-    if (result?.error) {
-      return res.status(500).send(new Response(false, 'Error while updating review', {}));
-    }
-    return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));
-  }
-  catch (e) {
-    console.error("Customer Controller: Error occurred while marking Review", e)
-    return res.status(500).send(new Response(false, 'Internal server Error', {}));
-  }
-}
+// const markReview = async (req, res) => {
+//   try {
+//     console.info('/user/mark-review called');
+//     const result = await updateReview(req?.body);
+//     if (result?.error) {
+//       return res.status(500).send(new Response(false, 'Error while updating review', {}));
+//     }
+//     return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));
+//   }
+//   catch (e) {
+//     console.error("Customer Controller: Error occurred while marking Review", e)
+//     return res.status(500).send(new Response(false, 'Internal server Error', {}));
+//   }
+// }
 
 const fetchAddresses = async (req, res) => {
   try {
@@ -270,8 +273,8 @@ module.exports = {
   fetchCart,
   addToCart,
   removeFromCart,
-  createReview,
-  markReview,
+  // createReview,
+  // markReview,
   fetchAddresses,
   addAddress,
   viewFilterUserOrders,

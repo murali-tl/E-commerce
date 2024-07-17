@@ -7,7 +7,8 @@ const fetchAllOrders = async (req, res) => {
     try {
         if (await isAdmin(req?.user?.user_id)) {
             console.info('/admin/view-orders called');
-            const result = await getAllOrders(req);
+            const { page = 1, limit = 10, search } = req?.query;
+            const result = await getAllOrders(page, limit, search);
             if (result?.error) {
                 return res.status(500).send(new Response(false, 'Error while fetching orders', {}));
             }

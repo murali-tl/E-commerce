@@ -18,6 +18,7 @@ const getUser = async (data) => {
         where: {
             email: email,
             password: passwordHash,
+            user_status: 'active'
         }
     })
     //console.log(response);
