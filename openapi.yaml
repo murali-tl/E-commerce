@@ -37,6 +37,12 @@ paths:
                   role:
                     type: string
                     example: "String"
+                  email:
+                    tyep: string
+                    example: "String"
+                  full_name:
+                    type: string
+                    example: "String"
                   access_token:
                     type: string
                     example: "String"
@@ -97,7 +103,7 @@ paths:
           schema:
             type: object
             properties:
-              email:
+              user_id:
                 type: string
               otp:
                 type: string
@@ -367,7 +373,7 @@ paths:
           description: "Filter products by category ID"
           required: false
           schema:
-            type: string
+            type: string or array
         - in: query
           name: color_id
           description: "Filter products by color ID"
@@ -424,12 +430,19 @@ paths:
                         category_id:
                           type: string
                           example: "String"
+                        product_status:
+                          type: string
+                          example: "available"
                         rating:
                           type: number
                           example: 0.0
                         quantity:
                           type: number
                           example: 0
+                  sizes:
+                    type: array
+                    items: 
+                     type: string
                   total_count:
                     type: number
                     example: 0
@@ -451,7 +464,7 @@ paths:
                     type: string
                     example: ""
 
-  /product/{product_id}:
+  /products/{product_id}:
     get:
       summary: "Get Product Details"
       description: "Fetch details of a specific product by product ID."
@@ -464,7 +477,7 @@ paths:
             type: string
       responses:
         200:
-          description: "Successful operation"
+          description: Successful response
           schema:
             type: object
             properties:
@@ -473,7 +486,7 @@ paths:
                 example: true
               message:
                 type: string
-                example: "Product details fetched."
+                example: "Products details fetched."
               data:
                 type: object
                 properties:
@@ -490,29 +503,66 @@ paths:
                     type: array
                     items:
                       type: string
-                    example: ["String"]
+                      example: "String"
                   size_ids:
                     type: array
                     items:
                       type: string
-                    example: ["String"]
+                      example: "String"
                   color_ids:
                     type: array
                     items:
                       type: string
-                    example: ["String"]
+                      example: "String"
                   price:
                     type: number
-                    example: 0.0
+                    example: 10.5
                   category_id:
                     type: string
                     example: "String"
                   rating:
                     type: number
-                    example: 0.0
+                    example: 4.5
+                  product_status:
+                    type: string
+                    example: "available"
                   quantity:
-                    type: number
-                    example: 0
+                    type: integer
+                    example: 100
+                  colors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        color_id:
+                          type: string
+                          example: "String"
+                        color_name:
+                          type: string
+                          example: "String"
+                        color_code:
+                          type: string
+                          example: "String"
+                  sizes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        size_id:
+                          type: string
+                          example: "String"
+                        size_type:
+                          type: string
+                          example: "String"
+                  category:
+                    type: object
+                    properties:
+                      category_id:
+                        type: string
+                        example: "String"
+                      category_name:
+                        type: string
+                        example: "String"
         default:
           description: "Error while fetching"
           schema:
@@ -1589,7 +1639,7 @@ paths:
                     type: string
                     example: ""
 
-  /admin/view-order:
+  /admin/view-order/{order_id}:
     get:
       summary: Fetch Details of a Specific Order
       description: Retrieve details of a specific order from the database.
@@ -1651,63 +1701,112 @@ paths:
                     type: string
                     example: ""
 
-  /admin/order-status:
-    get:
-      summary: Fetch Status of a Particular Order
-      description: Retrieve status details of a specific order from the database.
-      parameters:
-        - in: query
-          name: order_id
-          type: string
-          required: true
-          description: ID of the order to fetch status for.
+  /user/create-order:
+    post:
+      summary: create order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  format: float
+                shipping_type:
+                  type: string
+                address:
+                  type: object
+                product_details:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      product_id:
+                        type: string
+                      size:
+                        type: string
+                      quantity:
+                        type: integer
+                      colour:
+                        type: string
+              required:
+                - amount
+                - shipping_type
+                - address
+                - product_details
       responses:
-        200:
-          description: Successful operation
-          schema:
-            type: object
-            properties:
-              status:
-                type: boolean
-                example: true
-              message:
-                type: string
-                example: "Order Status fetched."
-              data:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
                 type: object
                 properties:
-                  products:
-                    type: array
-                    items:
-                      type: object
-                      properties: {}
-                  shipping_details:
+                  status:
+                    type: boolean
+                  message:
                     type: string
-                  created_at:
-                    type: string
-                    format: date-time
-                  payment_status:
-                    type: string
-                  estimated_delivery_date:
-                    type: string
-                    format: date-time
-                  delivery_status:
-                    type: string
-        400:
-          description: Order not found
-          schema:
-            type: object
-            properties:
-              status:
-                type: boolean
-                example: false
-              message:
-                type: string
-                example: "Error while fetching order status..."
-              data:
+                  data:
+                    type: object
+                    properties:
+                      order_id:
+                        type: string
+        'default':
+          description: failure
+          content:
+            application/json:
+              schema:
                 type: object
                 properties:
-                  reason:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
                     type: string
-                    example: ""
-#// need orderAPIs, admin APIs- update-order
+                  data:
+                    type: object
+                    properties:
+                      reason:
+                        type: string
+
+  /user/webhook:
+    post:
+      summary: verify payment signature and send response to user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event:
+                  type: object
+      headers:
+        stripe-signature:
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+        'default':
+          description: failure
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+
+#// need admin APIs- update-order, order-status

@@ -66,7 +66,7 @@ verify OTP sent and update password
 
 ```js
 {
-    "email": "string",
+    "user_id": "string",
     "otp": "String",
     "new_password":"String"
 }
@@ -80,7 +80,7 @@ default $~~~~~~~~~$ successful operation
 
 ```js
 {status:true, message:'New Password updated',data: {}} //if valid OTP
-{ status:false, message: 'Email or OTP is incorrect', data: {}} //if OTP invalid or incorrect
+{ status:false, message: 'User details or OTP is incorrect', data: {}} //if OTP invalid or incorrect
 ```
 
 <br><br>
@@ -328,7 +328,26 @@ $~~~~~~~~~$
             "price": "Float",
             "category_id": "String",
             "rating": "Float",
-            "quantity": "Number"
+            "quantity": "Number",
+            colors : [
+                {
+                    "color_id": "String",
+                    "color_name": "String",
+                    "color_code": "String"
+                },
+                ...
+            ],
+            sizes: [
+                {
+                    "size_id": "String",
+                    "size_type": "String"
+                },
+                ...
+            ],
+            category: {
+                "category_id": "String",
+                "category_name": "String"
+            }
         }
 }//successful operation
 {status: false, message: 'Error while fetching', data:{reason: ""}} //failure
@@ -691,7 +710,6 @@ Body:
 ```js
 {
  "amount":"Float",
- "currency":"String",
  "shipping_type": "String",
  "address": "json",
  "product_details":"String[]",  // [{product_id: ,size: , quantity: , colour:}]
@@ -714,7 +732,7 @@ Body:
 
 <br><br>
 
-## `POST` /user/verify-payment
+## `POST` /user/webhook
 
 verify payment signature and send response to user
 
@@ -723,15 +741,14 @@ customerController.createReview
 Headers:
 
 ```js
-{'x-razorpay-signature': "String" }
+{'stripe-signature': "String" }
 ```
 
 Body:
 
 ```js
 {
- "order_id":"String",
- "payment_id":"String"
+ "event":"Object"
 }
 ```
 
@@ -742,8 +759,8 @@ Body:
 200 $~~~~~~~~~$ successful operation
 
 ```js
-{ status: true, message: 'Signature valid', data:{}}//successful operation
-{ status: false, message: 'Invalid signature', data:{reason: ""}} //failure
+{ status: true}//successful operation
+{ status: false} //failure
 ```
 
 <br><br>
@@ -844,70 +861,6 @@ average_rating: "Float"
 
 <br><br>
 
-## `POST` /user/create-review
-
-user gives review of a product
-calculate avg rating of the product and update in  product table
-
-### `Parameters`:
-
-Body:
-
-```js
-{
-"product_id": "String",
- "title" : "String",
- "description": "String",
- "rating": "String"
-}
-```
-
-### `Response`
-
-### code $~~~~~~~~~$ Description
-
-200 $~~~~~~~~~$ successful operation
-$~~~~~~~~~$
-
-```js
-{ status: true, message: 'review details saved', data:{}}//successful operation
-{ status: false, message: 'Error while saving review', data:{reason: ""}} //failure
-```
-
-400 $~~~~~~~~~$ user not found
-
-<br><br>
-
-## `PATCH` /user/mark-review
-will be called when user clicks on "useful" button or "flag as inappropriate"
-
-### `Parameters`:
-
-Body:
-
-```js
-{
- "review_id":"String",
- "is_useful":"boolean",//yes or no
- "inappropriate_flag":"boolean"
-}
-```
-
-### `Response`
-
-### code $~~~~~~~~~$ Description
-
-200 $~~~~~~~~~$ successful operation
-$~~~~~~~~~$
-
-```js
-{ status: true, message: 'saved', data:{}
-}//successful operation
-{ status: false, message: 'Error while marking review', data:{reason: ""}} //failure
-```
-400 $~~~~~~~~~$ review not found
-
-<br><br>
 
 # Admin APIs
 
@@ -1057,7 +1010,7 @@ total_pages: "Number",
 
 <br><br>
 
-## `GET` /admin/view-order
+## `GET` /admin/view-order/:order_id
 
 fetch deatils of a specific order
 
@@ -1090,70 +1043,3 @@ $~~~~~~~~~$
 ```
 400 $~~~~~~~~~$ order not found
 <br><br>
-
-## `GET` /admin/order-status
-
-fetch status of a particular order
-
-### `Parameters`:
-
-```js
-{
- "order_id":"String"
-}
-```
-### `Response`
-
-### code $~~~~~~~~~$ Description
-
-200 $~~~~~~~~~$ successful operation
-$~~~~~~~~~$
-
-```js
-{ status: true, message: 'Order Status fetched.', data:{
-    "products":[],
-    "shipping_details":"string",
-    "created_at":"Timestamp",
-    "payment_status":"String",
-    "estimated_delivery_date":"timestamp",
-    "delivery_status":,"String"
-    }
-}//successful operation
-{ status: false, message: 'Error while fetching order status...', data:{reason: ""}} //failure
-```
-400 $~~~~~~~~~$ order not found
-<br><br>
-
-## `PATCH` /admin/update-order
-
-update order details like payment status, delivery time, delivery status
-
-### `Parameters`:
-
-Body:
-
-```js
-{
- "order_id":"Number",
- "estimated_delivery_date":"String",
- "delivery_status":"String"
-}
-```
-
-### `Response`
-
-### code $~~~~~~~~~$ Description
-
-200 $~~~~~~~~~$ successful operation
-$~~~~~~~~~$
-
-```js
-{ status: true, message: 'Order details updated', data:{}}//successful operation
-{ status: false, message: 'Error while updating order details...', data:{reason: ""}} //failure
-```
-400 $~~~~~~~~~$ order not found
-<br><br>
-
-# Other APIs
-
-## -> login using webhooks
