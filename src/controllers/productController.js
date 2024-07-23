@@ -7,7 +7,9 @@ const fetchProducts = async (req, res) => {
     try {
         console.info(`/list-products called`);
         const { page = 1, limit = 10, search, sort_by = 'rating', category_id } = req?.query;
+
         const requestedColors = Array.isArray(req.query.color_id) ? req.query.color_id : [req.query.color_id];
+        //console.log(page, limit, search)
         const result = await productService.getProducts({ page: page, limit: limit, search: search, sort_by: sort_by, color_id: requestedColors, category_id: category_id });
         if (!result?.success) {
             return res.status(500).send(new Response(false, 'Error while fetching products', {}));

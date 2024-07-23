@@ -8,7 +8,8 @@ const getProducts = async (data) => {
         let { page = 1, limit = 10, search, sort_by = 'rating', color_id, category_id } = data;
        // const requestedColors = Array.isArray(req.query.color_id) ? req.query.color_id : [req.query.color_id];
         let whereConditions = {};
-        if (color_id) {
+        console.log(true, data, color_id);
+        if (!typeof(color_id[0]) === 'undefined') {
             whereConditions.color_ids = {
                 [Op.overlap]: color_id
             }
