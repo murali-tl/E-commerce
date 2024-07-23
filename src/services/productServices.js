@@ -5,12 +5,12 @@ const { Constants } = require('./constants');
 const getProducts = async (data) => {
     //const categories = req?.body?.categories; //get categories as array
     try {
-        let { page = 1, limit = 10, search, sort_by = 'rating', category_id } = data;
-        const requestedColors = Array.isArray(req.query.color_id) ? req.query.color_id : [req.query.color_id];
+        let { page = 1, limit = 10, search, sort_by = 'rating', color_id, category_id } = data;
+       // const requestedColors = Array.isArray(req.query.color_id) ? req.query.color_id : [req.query.color_id];
         let whereConditions = {};
         if (color_id) {
             whereConditions.colour_ids = {
-                [Op.overlap]: requestedColors
+                [Op.overlap]: color_id
             }
         }
         if (search) {
