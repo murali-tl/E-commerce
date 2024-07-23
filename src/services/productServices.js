@@ -5,10 +5,13 @@ const { Constants } = require('./constants');
 const getProducts = async (data) => {
     //const categories = req?.body?.categories; //get categories as array
     try {
-        let { page = 1, limit = 10, search, sort_by = 'rating', color_id, category_id } = data;
+        let { page = 1, limit = 10, search, sort_by = 'rating', category_id } = data;
+        const requestedColors = Array.isArray(req.query.color_id) ? req.query.color_id : [req.query.color_id];
         let whereConditions = {};
         if (color_id) {
-            whereConditions.colour_ids = color_id;
+            whereConditions.colour_ids = {
+                [Op.overlap]: requestedColors
+            }
         }
         if (search) {
             whereConditions.product_name = { [Op.iLike]: `%${search}%` };
@@ -63,7 +66,7 @@ const getProduct = async (productId) => {
                 product_id: productId,
                 product_status: Constants?.PRODUCT_STATUS[0]
             },
-            attributes: { exclude: ['createdAt', 'created_by', 'updated_by', 'updatedAt', 'deletedAt'] },            
+            attributes: { exclude: ['createdAt', 'created_by', 'updated_by', 'updatedAt', 'deletedAt'] },
         });
         if (!result.length) {
             return { success: true, message: "product not found", data: result };
@@ -124,7 +127,7 @@ const getRecentProducts = async () => {
                 where: {
                     product_status: 'available'
                 },
-                attributes: { exclude: ['createdAt', 'created_by', 'updated_by', 'updatedAt', 'deletedAt'] },            
+                attributes: { exclude: ['createdAt', 'created_by', 'updated_by', 'updatedAt', 'deletedAt'] },
                 order: [['created_at', 'DESC']],
                 limit: 3
             }
