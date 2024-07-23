@@ -69,7 +69,7 @@ const addProduct = async (req, res) => {
             let validatedresult = validateProduct(req?.body);
             if (validatedresult.error) {
                 console.error('error occured in validating add product', validatedresult.error.details);
-                return res.status(500).send(new Response(false, 'Error while adding new product', { "err": validatedresult?.error.details }));
+                return res.status(500).send(new Response(false, 'Error occured in validating adding new product', { "err": validatedresult?.error.details }));
             }
             const result = await createProduct(req?.body);
             if (!result?.success) {
@@ -115,7 +115,7 @@ const editProduct = async (req) => {
             let validatedresult = validateProduct(req?.body);
             if (validatedresult.error) {
                 console.error('error occured in validating add product', validatedresult.error.details);
-                return res.status(500).send(new Response(false, 'Error while updating product', { "err": validatedresult?.error.details }));
+                return res.status(500).send(new Response(false, 'Error occured in validating in updating product', { "err": validatedresult?.error.details }));
             }
             const result = await updateProduct(req?.body);
             if (result?.error) {

@@ -112,6 +112,7 @@ const createProduct = async (data) => {
         return { success: true, status: 200, message: 'Product created', data: { product_id: productAdded?.product_id } }; //should we need to send product_details
     }
     catch (err) {
+        console.log(err);
         return { success: false, message: " Error while creating new prodct", err };
     }
 }
@@ -137,6 +138,7 @@ const removeProduct = async (data) => {
         return { success: false, status: 400, message: 'Product not found', data: {} };
     }
     catch (err) {
+        console.log(err);
         return { "error": err };
     }
 }
