@@ -5,7 +5,7 @@ const { Constants } = require('./constants');
 const getProducts = async (data) => {
     //const categories = req?.body?.categories; //get categories as array
     try {
-        const { page = 1, limit = 10, search, sort_by = 'rating', color_id, category_id } = data;
+        let { page = 1, limit = 10, search, sort_by = 'rating', color_id, category_id } = data;
         let whereConditions = {};
         if (color_id) {
             whereConditions.colour_ids = {
@@ -30,10 +30,26 @@ const getProducts = async (data) => {
 
         const products = await product.findAll({
             where: whereConditions,
-            order: [[sort_by, 'ASC']], //sort_by may need to change based on req
+            attributes: { exclude: ['createdAt', 'created_by', 'updated_by', 'updatedAt', 'deletedAt'] },
+            order: [[sort_by, 'ASC']],
             limit: parseInt(limit),
             offset: offset,
         });
+        let size_objs = await size?.findAll();
+        //console.log(size_objs);
+        products.forEach(obj => {
+            obj["dataValues"]["sizes"] = [];
+            obj?.size_ids?.forEach(sizeId => {
+                //console.log('===', sizeId);
+                for (let size_obj of size_objs) {
+                    //console.log(true, size_obj)
+                    if (size_obj?.dataValues?.size_id === sizeId) {
+                        obj["dataValues"]["sizes"].push(size_obj?.dataValues?.size_type);
+                    }
+                }
+            })
+        });
+        //console.log(products);
         return { success: true, products: products, totalPages: totalPages, current_page: page, total_productss: totalCount };
     }
     catch (e) {
@@ -48,7 +64,8 @@ const getProduct = async (productId) => {
             where: {
                 product_id: productId,
                 product_status: Constants?.PRODUCT_STATUS[0]
-            }
+            },
+            attributes: { exclude: ['createdAt', 'created_by', 'updated_by', 'updatedAt', 'deletedAt'] },            
         });
         if (!result.length) {
             return { success: true, message: "product not found", data: result };
@@ -63,7 +80,7 @@ const getProduct = async (productId) => {
             where: {
                 color_id: colorIds
             },
-            attributes: ['color_name']
+            attributes: ['color_id', 'color_name', 'color_code']
         });
         //console.log(colors);
         let colorValues = [];
@@ -75,7 +92,7 @@ const getProduct = async (productId) => {
             where: {
                 size_id: sizeIds
             },
-            attributes: ['size_type']
+            attributes: ['size_id', 'size_type']
         });
         let sizeValues = [];
         sizes.forEach(element => {
@@ -86,7 +103,7 @@ const getProduct = async (productId) => {
             where: {
                 category_id: categoryId
             },
-            attributes: ['category_name']
+            attributes: ['category_id', 'category_name']
         });
         resultObj['category'] = categoryy.dataValues;
         //console.log(resultObj)
@@ -109,6 +126,7 @@ const getRecentProducts = async () => {
                 where: {
                     product_status: 'available'
                 },
+                attributes: { exclude: ['createdAt', 'created_by', 'updated_by', 'updatedAt', 'deletedAt'] },            
                 order: [['created_at', 'DESC']],
                 limit: 3
             }

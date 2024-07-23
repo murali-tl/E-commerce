@@ -1,5 +1,6 @@
 const { orderSummary } = require('../services/cartServices');
 const { Constants } = require('../services/constants');
+const { checkProductStock } = require('../services/orderServices');
 require('dotenv').config({ path: '../.env' });
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_API_KEY);
@@ -28,6 +29,18 @@ const createOrder = async (req, res) => {
         if (productValidation.error) {
             return res.status(400).send(new Response(false, 'Invalid product_details format', { "error": productValidation?.error.details }));
             //return { "error": validated?.error.details };
+        }
+        let productQuantities = {};
+        for (let obj of req?.body?.product_details) {
+            if (obj?.product_id in productQuantities) {
+                productQuantities[obj?.product_id] += obj?.quantity;
+            }   
+            else {
+                productQuantities[obj?.product_id] = obj?.quantity;
+            }
+        }
+        if (!checkProductStock(productQuantities)) {
+            return res.status(200).send(new Response(true, 'Some of the products are out of stock', {}));
         }
         if (amount && typeof (amount) === 'number') {
             let createdOrder = await order.create({

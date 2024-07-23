@@ -53,12 +53,14 @@ const getWishListDetails = async (userId) => {
         let result = await wishlist.findAll({
             where: {
                 user_id: userId
-            }
+            },
+            attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] },            
         })
         let products = await product.findAll({
             where: {
                 product_id: result[0]?.product_ids
-            }
+            },
+            attributes: { exclude: ['createdAt', 'created_by', 'updated_by', 'updatedAt', 'deletedAt'] },            
         });
         result['products'] = products;
         return { status: true, data: result };
@@ -74,7 +76,8 @@ const getCartDetails = async (user_id) => {
         const cartDetails = await cart.findOne({
             where: {
                 user_id: user_id
-            }
+            },
+            attributes: { exclude: ['createdAt', 'updatedAt' ] },            
         });
         //console.log(cartDetails);
         if (cartDetails?.product_details?.length) {

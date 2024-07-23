@@ -6,7 +6,8 @@ const getAdresses = async (user_id) => {
         let addresses = await user_addresses.findAll({
             where: {
                 user_id: user_id
-            }
+            },
+            attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] },            
         });
         if (addresses.length) {
             return { success: true, status: 200, message: 'Addresses fetched', data: { "addresses": addresses } };

@@ -27,6 +27,7 @@ const getAllOrders = async (page, limit, search) => {
         const totalPages = Math.ceil(totalCount / limit);
         const orders = await order.findAll({
             where: whereConditions,
+            attributes: { exclude: ['createdAt', 'updated_by', 'updatedAt', 'deletedAt'] },            
             attributes: ['user_id', 'order_id'],
             limit: parseInt(limit),
             offset: offset,
@@ -44,7 +45,8 @@ const getOrderDetails = async (orderId) => {
         const orderDetails = await order.findOne({
             where: {
                 order_id: orderId
-            }
+            },
+            attributes: { exclude: ['createdAt', 'updated_by', 'updatedAt', 'deletedAt'] },
         });
         if (orderDetails) {
             const productIds = cart.product_details.map(item => item.product_id);

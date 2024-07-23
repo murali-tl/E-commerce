@@ -18,7 +18,6 @@ const refreshToken = (req, res) => {
                     return res.status(401).send(new Response(false, 'Refresh token is invalid', {}));
                 }
             }
-            //return res.status(401).send(new Response(false, 'Refresh token is expired or invalid',{}));
             const accessToken = generateAccessToken({ user_id: user?.user_id });
             res.json({ accessToken: accessToken });
         })

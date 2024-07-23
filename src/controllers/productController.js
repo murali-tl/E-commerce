@@ -31,7 +31,7 @@ const fetchProduct = async (req, res) => {
         if (!product?.success) {
             return res.status(500).send(new Response(false, 'Error while fetching data', {}));
         }
-        return res.status(200).send(new Response(true, product?.message, product.data));
+        return res.status(200).send(new Response(true, product?.message, product.data[0]));
     } catch (e) {
         console.error("Product Controller: Error occurred while fetching product", e)
         return res.status(500).send(new Response(false, 'Internal server Error', {}));
