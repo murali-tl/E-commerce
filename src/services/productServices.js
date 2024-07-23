@@ -9,7 +9,7 @@ const getProducts = async (data) => {
        // const requestedColors = Array.isArray(req.query.color_id) ? req.query.color_id : [req.query.color_id];
         let whereConditions = {};
         if (color_id) {
-            whereConditions.colour_ids = {
+            whereConditions.color_ids = {
                 [Op.overlap]: color_id
             }
         }
