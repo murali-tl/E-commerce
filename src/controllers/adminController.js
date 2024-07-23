@@ -73,6 +73,7 @@ const addProduct = async (req, res) => {
             }
             const result = await createProduct(req?.body);
             if (!result?.success) {
+                //console.error()
                 return res.status(500).send(new Response(false, 'Error while adding new productt', {}));
             }
             return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));

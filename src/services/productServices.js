@@ -8,9 +8,7 @@ const getProducts = async (data) => {
         let { page = 1, limit = 10, search, sort_by = 'rating', color_id, category_id } = data;
         let whereConditions = {};
         if (color_id) {
-            whereConditions.colour_ids = {
-                [sequelize.Sequelize.Op.contains]: [color_id],
-            }
+            whereConditions.colour_ids = color_id;
         }
         if (search) {
             whereConditions.product_name = { [Op.iLike]: `%${search}%` };

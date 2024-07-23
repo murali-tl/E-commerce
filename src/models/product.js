@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true
       },
     product_name: DataTypes.STRING,
-    description: DataTypes.STRING,
+    description: DataTypes.TEXT,
     images: DataTypes.JSON,
     quantity: DataTypes.INTEGER,
     size_ids: DataTypes.JSON,
