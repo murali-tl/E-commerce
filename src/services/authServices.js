@@ -11,9 +11,9 @@ function authenticate(req, res, next) {
                 try {
                     if (err) {
                         if (err.name === 'TokenExpiredError') {
-                            return res.status(401).send(new Response(false, 'Refresh token is expired', {}));
+                            return res.status(401).send(new Response(false, 'Access token is expired', {}));
                         } else {
-                            return res.status(401).send(new Response(false, 'Refresh token is invalid', {}));
+                            return res.status(401).send(new Response(false, 'Access token is invalid', {}));
                         }
                     }
                     req.user = user;
