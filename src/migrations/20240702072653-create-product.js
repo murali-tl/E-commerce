@@ -25,7 +25,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       size_ids: {
-        type: Sequelize.JSON
+        type: Sequelize.ARRAY(Sequelize.STRING)
       },
       price: {
         type: Sequelize.FLOAT
@@ -34,7 +34,7 @@ module.exports = {
         type: Sequelize.FLOAT
       },
       color_ids: {
-        type: Sequelize.JSON
+        type: Sequelize.ARRAY(Sequelize.STRING)
       },
       category_id: {
         type: Sequelize.STRING
