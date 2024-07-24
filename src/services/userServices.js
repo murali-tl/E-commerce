@@ -79,6 +79,7 @@ const getCartDetails = async (user_id) => {
                 where: { product_id: productIds },
                 attributes: ['product_id', 'product_name', 'images', 'price', 'category_id']
             });
+            console.log(cartDetails, products);
             cartDetails?.product_details?.forEach((element, index) => {
                 products['dataValues'][index]['size'] = element?.size_id;
                 products['dataValues'][index]['quantity'] = element?.quantity;
