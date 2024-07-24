@@ -60,7 +60,7 @@ const insertIntoCart = async (data, userId) => {
                                 user_id: userId
                             }
                         });
-                    return { status: 200, message: "Product already exist... quantity updated" , data: otherProducts?.length};
+                    return { status: 200, message: "Product already exist... quantity updated" , data: {cart_size: otherProducts?.length}};
                 }
                 product_details.push(data);
                 await cart.update(
@@ -73,7 +73,7 @@ const insertIntoCart = async (data, userId) => {
                         },
                     },
                 );
-                return { status: 200, message: "product added to cart" , data: product_details?.length}
+                return { status: 200, message: "product added to cart" , data: {cart_size: product_details?.length}}
             }
             else {
                 return { status: 200, message: "Product not found" };
