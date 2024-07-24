@@ -8,7 +8,6 @@ const insertIntoCart = async (data, userId) => {
                 user_id: userId
             }
         });
-        //console.log(true, cartDetails);
         if (cartDetails) {
             const productDetails = await product.findOne({
                 where: {
@@ -17,7 +16,6 @@ const insertIntoCart = async (data, userId) => {
                 }
             });
             if (productDetails) {
-                //console.log('check1');
                 const { product_id, size_id, color_id } = data;
                 let productObj = {
                     product_id: product_id,
@@ -27,7 +25,6 @@ const insertIntoCart = async (data, userId) => {
                 console.log('check0', cartDetails?.dataValues);
                 //let cartProductDetails = cartDetails?.dataValues?.product_details;
                 let product_details = [...cartDetails?.dataValues?.product_details];
-                console.log('check0')
                 let foundProduct = product_details.filter(element => {
                     let { product_id, size_id, color_id } = element;
                     let cartObj = {
@@ -39,7 +36,7 @@ const insertIntoCart = async (data, userId) => {
 
                 });
                 //console.log(foundProduct);
-                if (foundProduct.length) {
+                if (foundProduct?.length) {
                     //console.log('check2');
                     let otherProducts = product_details.filter(element => {
                         let { product_id, size_id, color_id } = element;
@@ -65,9 +62,10 @@ const insertIntoCart = async (data, userId) => {
                         });
                     return { status: "Product already exist... quantity updated" };
                 }
+                product_details.push(data);
                 await cart.update(
                     {
-                        product_details: data
+                        product_details: product_details
                     },
                     {
                         where: {
