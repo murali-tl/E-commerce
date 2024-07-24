@@ -123,7 +123,7 @@ const addToCart = async (req, res) => {
     if (result?.error) {
       return res.status(500).send(new Response(false, 'Error while adding product to cart', {}));
     }
-    return res.status(result?.status).send(new Response(true, result?.message, {}));
+    return res.status(result?.status).send(new Response(true, result?.message, result?.data));
   }
   catch (e) {
     console.error("Customer Controller: Error occurred while adding to cart", e)
