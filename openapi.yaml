@@ -612,9 +612,9 @@ paths:
               data:
                 type: object
                 properties:
-                  cart_id:
-                    type: string
-                    example: "String"
+                  cart_size:
+                    type: number
+                    example: 1
         default:
           description: "Error while adding to cart"
           schema:

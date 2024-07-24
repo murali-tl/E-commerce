@@ -542,7 +542,7 @@ Body:
 200 $~~~~~~~~~$ successful operation
 
 ```js
-{ status: true, message: 'Product added to Cart.', data:{"product_id": "String"}}//successful operation
+{ status: true, message: 'Product added to Cart.', data:{"cart_size": "Number"}}//successful operation
 { status: false, message: 'Error while adding to cart', data:{reason: ""}} //failure
 ```
 
