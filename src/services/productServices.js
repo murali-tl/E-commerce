@@ -6,12 +6,16 @@ const getProducts = async (data) => {
     //const categories = req?.body?.categories; //get categories as array
     try {
         let { page = 1, limit = 10, search, sort_by = 'rating', color_id, category_id } = data;
-       // const requestedColors = Array.isArray(req.query.color_id) ? req.query.color_id : [req.query.color_id];
-        let whereConditions = {};
-        console.log(true, data, color_id);
-        if (!typeof(color_id[0]) === 'undefined') {
+        // const requestedColors = Array.isArray(req.query.color_id) ? req.query.color_id : [req.query.color_id];
+        let whereConditions = {
+            deleted_at: null,
+            product_status: Constants?.PRODUCT_STATUS[0],
+        };
+        //console.log(true, data, color_id);
+        if (!(typeof (color_id[0]) === 'undefined')) {
+            //console.log('Check1');
             whereConditions.color_ids = {
-                [Op.overlap]: color_id
+                [Op.overlap]: color_id //overlap not working
             }
         }
         if (search) {
