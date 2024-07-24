@@ -90,11 +90,10 @@ const fetchCart = async (req, res) => {
     console.info('/user/cart called');
     const userId = req?.user?.user_id;
     const result = await getCartDetails(userId);
-    //console.log(result);
     if (result?.error) {
       return res.status(500).send(new Response(false, 'Error while fetching cart', {}));
     }
-    if (result.length) {
+    if (result?.product_details?.length) {
       return res.status(200).send(new Response(true, 'Cart details fetched', result));
     }
     return res.status(200).send(new Response(true, 'Cart empty!!', {}));
