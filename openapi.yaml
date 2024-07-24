@@ -1700,15 +1700,12 @@ paths:
                   reason:
                     type: string
                     example: ""
-
   /user/create-order:
     post:
-      summary: create order
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
+      summary: Create an order
+      parameters:
+        - in: body
+          schema:
               type: object
               properties:
                 amount:
@@ -1738,26 +1735,22 @@ paths:
                 - product_details
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
+          description: Successful operation
+          schema:
                 type: object
                 properties:
                   status:
                     type: boolean
+                    example: true
                   message:
                     type: string
+                    example: order created
                   data:
                     type: object
-                    properties:
-                      order_id:
-                        type: string
+                    example: paymentIntentObj
         'default':
-          description: failure
-          content:
-            application/json:
-              schema:
+          description: Order creation failed
+          schema:
                 type: object
                 properties:
                   status:
@@ -1765,44 +1758,35 @@ paths:
                     example: false
                   message:
                     type: string
+                    example: Order creation failed
                   data:
                     type: object
                     properties:
                       reason:
                         type: string
-
+                        example: "Invalid product details"
   /user/webhook:
     post:
-      summary: verify payment signature and send response to user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
+      summary: Verify payment webhook
+      parameters:
+        - in: body
+          schema:
               type: object
               properties:
                 event:
                   type: object
-      headers:
-        stripe-signature:
-          schema:
-            type: string
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
+          description: Successful operation
+          schema:
                 type: object
                 properties:
                   status:
                     type: boolean
                     example: true
         'default':
-          description: failure
-          content:
-            application/json:
-              schema:
+          description: Webhook processing failed
+          schema:
                 type: object
                 properties:
                   status:

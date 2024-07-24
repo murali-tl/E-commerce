@@ -712,7 +712,7 @@ Body:
  "amount":"Float",
  "shipping_type": "String",
  "address": "json",
- "product_details":"String[]",  // [{product_id: ,size: , quantity: , colour:}]
+ "product_details":"Objects[]",  // [{product_id: ,size: , quantity: , colour:}]
 }
 ```
 
@@ -723,9 +723,7 @@ Body:
 200 $~~~~~~~~~$ successful operation
 
 ```js
-{ status: true, message: 'order created', data:{
-    "order_id": "String"
-    }  
+{ status: true, message: 'order created', data: paymentIntent  //object
 }//successful operation
 { status: false, message: 'Order creation failed', data:{reason: ""}} //failure
 ```
