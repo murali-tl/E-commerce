@@ -40,7 +40,6 @@ const sendOTP = async (email) => {
             html: `<p>Following is your OTP to reset password : ${generatedOTP}</p>
         <p><a href="http://localhost:3000/reset-password/${userDetails?.user_id}">Reset Password</a></p>`
         };
-        //console.log(process.env.EMAIL_USER_NAME, process.env.EMAIL_PASSWORD);
         if (email && userDetails) {
             let info = await transporter.sendMail(mailOptions);
             await otp_notification.create({ 

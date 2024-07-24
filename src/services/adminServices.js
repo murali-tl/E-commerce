@@ -65,6 +65,8 @@ const getOrderDetails = async (orderId) => {
     }
 }
 
+//Based on discussion with FE updateOrder is commented
+
 // const updateOrder = async (req) => {
 //     try {
 //         const { order_id, estimated_delivery_date, delivery_status } = req?.body;

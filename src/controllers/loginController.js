@@ -14,13 +14,10 @@ const login = async (req, res) => {
         const { email, password } = req?.body;
         const response = await getUser({ email: email, password: password });
         if (response?.length) {
-            //console.log('MilliSeconds:',Date.parse(response[0]?.createdAt));
             const user = { user_id: response[0].user_id };
             const accessToken = generateAccessToken(user);
             const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d' });
-            //refreshTokens.push(refreshToken);
             let role = (await isAdmin(user?.user_id)) ? Constants?.ADMIN : Constants?.CUSTOMER;
-            //fs.writeFileSync(__dirname + '/../database/refreshToken.json', JSON.stringify(refreshTokens)); //create table in database
             return res.status(200).send(new Response(true, 'Tokens Generated', { role: role,email: response[0]?.email, full_name: response[0]?.full_name, accessToken: accessToken, refreshToken: refreshToken }));
         }
         else {

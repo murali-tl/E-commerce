@@ -1,6 +1,5 @@
 const { wishlist, product } = require('../models/index');
 const { Constants } = require('./constants');
-// const wishlist = require('../models/wishlist');
 
 const insertIntoWishList = async (data) => {
     try {

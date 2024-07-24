@@ -9,14 +9,14 @@ module.exports = {
       {
         role_id: uuidv4(),
         role_name: 'customer',
-        actions_allowed: JSON.stringify(["viewProducts", "viewProduct", "viewHisOrders", "viewHisOrder", "updateCart", "updateWishList"]),
+        actions_allowed: ["viewProducts", "viewProduct", "viewHisOrders", "viewHisOrder", "updateCart", "updateWishList"],
         created_at: new Date(),
         updated_at: new Date(),
       },
       {
         role_id: uuidv4(), 
         role_name: 'admin',
-        actions_allowed: JSON.stringify(["viewProducts", "viewProduct", "addProduct", "editProduct", "deleteProduct", "viewOrders", "viewOrder", "editOrder", "viewOrderStatus"]),
+        actions_allowed: ["viewProducts", "viewProduct", "addProduct", "editProduct", "deleteProduct", "viewOrders", "viewOrder", "editOrder", "viewOrderStatus"],
         created_at: new Date(),
         updated_at: new Date(),
       }

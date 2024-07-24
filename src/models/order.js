@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true
       },
     user_id: DataTypes.UUID,
-    product_details: DataTypes.JSON,
+    product_details: DataTypes.ARRAY(DataTypes.JSON),
     amount: DataTypes.FLOAT,
     payment_status: DataTypes.STRING,
     order_status: DataTypes.STRING,

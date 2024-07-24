@@ -1,5 +1,4 @@
 const { user_addresses } = require('../models/index');
-const { validateArgs } = require('./utils');
 
 const getAdresses = async (user_id) => {
     try {
@@ -33,7 +32,7 @@ const createAddress = async (data, user_id) => {  //address validation
             city: city,
             pincode: pincode,
             country: country,
-            mobile: mobile  //do we need to validate ??
+            mobile: mobile 
         });
         return { success: true, status: 200, message: 'Address added', data: {} };
 

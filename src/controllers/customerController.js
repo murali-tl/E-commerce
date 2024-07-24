@@ -2,10 +2,10 @@ const { Response } = require("../services/constants");
 const { createUser, getWishListDetails, getCartDetails } = require('../services/userServices');
 const { insertIntoWishList, deleteFromWishList } = require('../services/wishListServices');
 const { insertIntoCart, deleteFromCart, orderSummary } = require('../services/cartServices');
-// const { addReview, updateReview } = require('../services/reviewServices');
 const { getAdresses, createAddress } = require('../services/addressServices');
 const { viewFilterOrders } = require('../services/orderServices');
 const { validateUser, validateAddress, validateCartDetails, validateReview } = require('../services/validations');
+// const { addReview, updateReview } = require('../services/reviewServices');
 
 const registerUser = async (req, res,) => {
   try {
@@ -116,12 +116,11 @@ const addToCart = async (req, res) => {
     const { product_id, size_id, color_id, quantity } = req?.body;
     let data = {
       product_id: product_id,
-      user_id: user_id,
       size_id: size_id,
       color_id: color_id,
       quantity: quantity
     }
-    const result = await insertIntoCart(data);
+    const result = await insertIntoCart(data, user_id);
     if (result?.error) {
       return res.status(500).send(new Response(false, 'Error while adding product to cart', {}));
     }
@@ -158,7 +157,7 @@ const removeFromCart = async (req, res) => {
     return res.status(500).send(new Response(false, 'Internal server Error', {}));
   }
 }
-
+// Based on discussion with FE createReview and markReview are commented
 // const createReview = async (req, res) => {
 //   try {
 //     console.info('/user/create-review called');

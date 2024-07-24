@@ -14,7 +14,7 @@ module.exports = {
         unique: true
       },
       product_details: {
-        type: Sequelize.JSON
+        type: Sequelize.ARRAY(Sequelize.JSON)
       },
       created_at: {
         allowNull: false,

@@ -21,9 +21,7 @@ const getUser = async (data) => {
             user_status: 'active'
         }
     })
-    //console.log(response);
     return response;
-    //return res.status(200).send(response);
 }
 
 
@@ -42,7 +40,6 @@ const verifyOTP = async (data) => {
             },
             order: [['created_at', 'DESC']]
         });
-        //return lastRow;
         if(lastRow && userDetails){
             await user.update({
                 password: crypto.createHash('md5').update(new_password).digest('hex') // hash it  ---

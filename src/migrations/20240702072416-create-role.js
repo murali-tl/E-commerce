@@ -16,7 +16,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       actions_allowed: {
-        type: Sequelize.JSON
+        type: Sequelize.ARRAY(Sequelize.STRING)
       },
       created_at: {
         allowNull: false,

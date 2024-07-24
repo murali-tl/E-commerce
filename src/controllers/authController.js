@@ -1,7 +1,6 @@
 const { Response } = require('../services/constants');
 const jwt = require('jsonwebtoken');
 require('dotenv').config({ path: '../.env' });
-const fs = require('fs');
 const { generateAccessToken } = require('../services/loginServices');
 
 

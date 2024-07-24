@@ -5,10 +5,6 @@ const { validateUser } = require('../services/validations');
 
 const createUser = async (data) => {
     const { full_name, email, password } = data;
-    //const validated = validateUser(data);
-    // if (validated.error) {
-    //     return { "error": validated?.error.details };
-    // }
     try {
         const roleDetails = await role.findOne({
             where: {
@@ -48,7 +44,6 @@ const createUser = async (data) => {
 }
 
 const getWishListDetails = async (userId) => {
-    //console.log(req?.user);
     try {
         let result = await wishlist.findAll({
             where: {
@@ -71,7 +66,6 @@ const getWishListDetails = async (userId) => {
 }
 
 const getCartDetails = async (user_id) => {
-    //console.log(req?.user);
     try {
         const cartDetails = await cart.findOne({
             where: {
@@ -79,7 +73,6 @@ const getCartDetails = async (user_id) => {
             },
             attributes: { exclude: ['createdAt', 'updatedAt' ] },            
         });
-        //console.log(cartDetails);
         if (cartDetails?.product_details?.length) {
             const productIds = cartDetails.product_details.map(item => item.product_id);
             const products = await product.findAll({

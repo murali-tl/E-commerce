@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   wishlist.init({
     user_id: DataTypes.UUID,
-    product_ids: DataTypes.JSON
+    product_ids: DataTypes.ARRAY(DataTypes.UUID)
   }, {
     sequelize,
     modelName: 'wishlist',

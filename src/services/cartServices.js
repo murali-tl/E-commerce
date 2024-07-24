@@ -1,28 +1,33 @@
 const { cart, product } = require('../models/index');
 const { Constants } = require('./constants');
 
-const insertIntoCart = async (data) => {
+const insertIntoCart = async (data, userId) => {
     try {
         let cartDetails = await cart.findOne({
             where: {
-                user_id: data?.user_id
+                user_id: userId
             }
         });
+        //console.log(true, cartDetails);
         if (cartDetails) {
-            const productDetails = product.findOne({
+            const productDetails = await product.findOne({
                 where: {
                     product_id: data?.product_id,
                     product_status: Constants?.PRODUCT_STATUS[0]
                 }
             });
             if (productDetails) {
+                //console.log('check1');
                 const { product_id, size_id, color_id } = data;
                 let productObj = {
                     product_id: product_id,
                     size_id: size_id,
                     color_id: color_id
                 };
-                let product_details = [...cartDetails?.product_details];
+                console.log('check0', cartDetails?.dataValues);
+                //let cartProductDetails = cartDetails?.dataValues?.product_details;
+                let product_details = [...cartDetails?.dataValues?.product_details];
+                console.log('check0')
                 let foundProduct = product_details.filter(element => {
                     let { product_id, size_id, color_id } = element;
                     let cartObj = {
@@ -35,6 +40,7 @@ const insertIntoCart = async (data) => {
                 });
                 //console.log(foundProduct);
                 if (foundProduct.length) {
+                    //console.log('check2');
                     let otherProducts = product_details.filter(element => {
                         let { product_id, size_id, color_id } = element;
                         let cartObj = {
@@ -48,12 +54,13 @@ const insertIntoCart = async (data) => {
                     let newQuantity = foundProduct[0]?.quantity + data?.quantity;
                     productObj['quantity'] = newQuantity;
                     otherProducts.push(productObj);
+                    console.log('Inserted into cart');
                     await cart.update({
                         product_details: otherProducts
                     },
                         {
                             where: {
-                                user_id: data?.user_id
+                                user_id: userId
                             }
                         });
                     return { status: "Product already exist... quantity updated" };
@@ -64,7 +71,7 @@ const insertIntoCart = async (data) => {
                     },
                     {
                         where: {
-                            user_id: data.user_id
+                            user_id: userId
                         },
                     },
                 );
@@ -82,6 +89,7 @@ const insertIntoCart = async (data) => {
         }
     }
     catch (err) {
+        console.error(err);
         return { "error": err };
     }
 }
@@ -101,7 +109,7 @@ const deleteFromCart = async (data, user_id) => {
                 }
             });
             if (productDetails) {
-                let { product_details } = [...cartDetails?.product_details];
+                let product_details = [...cartDetails?.product_details];
                 let foundProduct = product_details.filter(element => {
                     let { product_id, size_id, color_id } = element;
                     let cartObj = {
@@ -149,6 +157,7 @@ const deleteFromCart = async (data, user_id) => {
         }
     }
     catch (err) {
+        console.error(err);
         return { "error": err };
     }
 }

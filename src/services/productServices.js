@@ -6,15 +6,15 @@ const getProducts = async (data) => {
     //const categories = req?.body?.categories; //get categories as array
     try {
         let { page = 1, limit = 10, search, sort_by = 'rating', color_id, category_id } = data;
-        // const requestedColors = Array.isArray(req.query.color_id) ? req.query.color_id : [req.query.color_id];
-        let whereConditions = {
-            deleted_at: null,
-            product_status: Constants?.PRODUCT_STATUS[0],
-        };
+       // const requestedColors = Array.isArray(req.query.color_id) ? req.query.color_id : [req.query.color_id];
+       let whereConditions = {
+        deleted_at: null,
+        product_status: Constants?.PRODUCT_STATUS[0],
+    };
         //console.log(true, data, color_id);
-        if (!(typeof (color_id[0]) === 'undefined')) {
+        if (!(typeof(color_id[0]) === 'undefined')) {
             //console.log('Check1');
-            whereConditions.color_ids = {
+            whereConditions.color_ids = { 
                 [Op.overlap]: color_id //overlap not working
             }
         }
@@ -24,12 +24,13 @@ const getProducts = async (data) => {
         if (category_id) {
             whereConditions.category_id = category_id;
         }
+        //console.log(whereConditions);
         if (sort_by) {
             if (sort_by === 'recent') {
                 sort_by = 'created_at';
             }
         }
-        whereConditions.product_status = Constants?.PRODUCT_STATUS[0];
+        //whereConditions.product_status = Constants?.PRODUCT_STATUS[0];
         const offset = (page - 1) * limit;
         const totalCount = await product.count({ where: whereConditions });
         const totalPages = Math.ceil(totalCount / limit);

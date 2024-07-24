@@ -48,6 +48,7 @@ const fetchSpecificOrder = async (req, res) => {  //use path params
     }
 }
 
+// Based on discussion with FE editOrder is commented
 // const editOrder = async (req, res) => {
 //     if (await isAdmin(req?.user?.user_id)) {
 //         console.info('/admin/edit-order called');
@@ -73,7 +74,6 @@ const addProduct = async (req, res) => {
             }
             const result = await createProduct(req?.body);
             if (!result?.success) {
-                //console.error()
                 return res.status(500).send(new Response(false, 'Error while adding new productt', {}));
             }
             return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));
@@ -84,7 +84,7 @@ const addProduct = async (req, res) => {
     }
     catch (e) {
         console.error("Admin Controller: Error occured in addProduct", e);
-        return res.status(500).send(new Response(false, 'Error while adding new product', { "err": e }));
+        return res.status(500).send(new Response(false, 'Error while adding new product', { }));
     }
 }
 

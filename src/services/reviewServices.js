@@ -2,9 +2,8 @@ const { review, product } = require('../models/index');
 const { sequelize } = require('../models/index');
 const { QueryTypes } = require('sequelize');
 
-const getReviews = async (productId) => {  // instead of user_id send user_name
+const getReviews = async (productId) => {  
     try {
-        //const product_id = `${productId}`;
         const query = `
       SELECT reviews.*, users.full_name AS user_full_name
       FROM reviews
@@ -18,13 +17,6 @@ const getReviews = async (productId) => {  // instead of user_id send user_name
         if (!reviews) {
             reviews = [];
         }
-        //console.log('===', reviews);
-        //return results;
-        // let reviews = await review.findAll({
-        //     where: {
-        //         product_id: req?.body?.product_id
-        //     }
-        // });
         let productDetails = await product.findOne({
             where: {
                 product_id: productId
@@ -45,8 +37,6 @@ const getReviews = async (productId) => {  // instead of user_id send user_name
             ratings.forEach(rating => {
                 ratingCounts[rating.rating] = rating.rating_count;
             });
-            //const userIds = reviews.map(item => item.user_id);
-
             return { status: true, message: "Details fetched", data: [reviews, avg_rating, ratingCounts] };
         }
 
@@ -158,6 +148,6 @@ const checkReview = async (userId, productId) => {
 }
 module.exports = {
     getReviews,
-    addReview, //add routes
+    addReview,
     updateReview
 }

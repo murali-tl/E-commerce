@@ -14,7 +14,7 @@ module.exports = {
         unique: true
       },
       product_ids: {
-        type: Sequelize.JSON,
+        type: Sequelize.ARRAY(Sequelize.UUID),
       },
       created_at: {
         allowNull: false,

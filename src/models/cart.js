@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   cart.init({
     user_id: DataTypes.UUID,
-    product_details: DataTypes.JSON
+    product_details: DataTypes.ARRAY(DataTypes.JSON)
   }, {
     sequelize,
     modelName: 'cart',

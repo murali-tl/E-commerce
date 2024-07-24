@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true
       },
     role_name: DataTypes.STRING,
-    actions_allowed: DataTypes.JSON
+    actions_allowed: DataTypes.ARRAY(DataTypes.JSONB)
   }, {
     sequelize,
     modelName: 'role',

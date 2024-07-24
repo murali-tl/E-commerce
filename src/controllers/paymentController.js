@@ -1,6 +1,7 @@
 const { orderSummary } = require('../services/cartServices');
-const { Constants } = require('../services/constants');
+const { Response, Constants } = require('../services/constants');
 const { checkProductStock } = require('../services/orderServices');
+const { validateAddress, validateProductDetails } = require('../services/validations');
 require('dotenv').config({ path: '../.env' });
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_API_KEY);
@@ -8,7 +9,7 @@ const { order } = require('../models/index');
 const { ifPaymentSuccess } = require('../services/paymentServices');
 
 const calculateOrderAmount = (productIds) => {
-    let { sub_amount, total_amount } = orderSummary({
+    let { total_amount } = orderSummary({
         product_ids: productIds
     })
     return total_amount || 0;
@@ -24,17 +25,15 @@ const createOrder = async (req, res) => {
         const productValidation = validateProductDetails(req?.body?.product_details);
         if (validated.error) {
             return res.status(400).send(new Response(false, 'Invalid address format', { "error": validated?.error.details }));
-            //return { "error": validated?.error.details };
         }
         if (productValidation.error) {
             return res.status(400).send(new Response(false, 'Invalid product_details format', { "error": productValidation?.error.details }));
-            //return { "error": validated?.error.details };
         }
         let productQuantities = {};
         for (let obj of req?.body?.product_details) {
             if (obj?.product_id in productQuantities) {
                 productQuantities[obj?.product_id] += obj?.quantity;
-            }   
+            }
             else {
                 productQuantities[obj?.product_id] = obj?.quantity;
             }
@@ -101,7 +100,6 @@ const confirmOrder = (request, response) => {
         switch (event.type) {
             case 'payment_intent.succeeded':
                 const paymentIntent = event.data.object;
-                //console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
                 ifPaymentSuccess(paymentIntent);
                 break;
             case 'payment_method.attached':

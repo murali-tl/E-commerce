@@ -16,7 +16,7 @@ module.exports = {
         type: Sequelize.UUID
       },
       product_details: {
-        type: Sequelize.JSON
+        type: Sequelize.ARRAY(Sequelize.JSON)
       },
       amount: {
         type: Sequelize.FLOAT
