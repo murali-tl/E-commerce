@@ -74,12 +74,12 @@ const getCartDetails = async (user_id) => {
             attributes: { exclude: ['createdAt', 'updatedAt' ] },            
         });
         if (cartDetails?.product_details?.length) {
-            const productIds = cartDetails.product_details.map(item => item.product_id);
+            const productIds = cartDetails?.product_details?.map(item => item.product_id);
             const products = await product.findAll({
                 where: { product_id: productIds },
-                attributes: ['product_id', 'product_name', 'images', 'price', 'category']
+                attributes: ['product_id', 'product_name', 'images', 'price', 'category_id']
             });
-            cartDetails.product_detail.forEach((element, index) => {
+            cartDetails.product_details.forEach((element, index) => {
                 products[index]['size'] = element?.size;
                 products[index]['quantity'] = element?.quantity;
                 products[index]['colour'] = element?.colour;
