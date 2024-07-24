@@ -73,7 +73,7 @@ const insertIntoCart = async (data, userId) => {
                         },
                     },
                 );
-                return { status: 200, message: "product added to cart" , data: productDetails?.length}
+                return { status: 200, message: "product added to cart" , data: product_details?.length}
             }
             else {
                 return { status: 200, message: "Product not found" };
