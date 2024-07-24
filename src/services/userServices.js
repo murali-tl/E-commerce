@@ -81,9 +81,9 @@ const getCartDetails = async (user_id) => {
             });
             console.log(cartDetails, products);
             cartDetails?.product_details?.forEach((element, index) => {
-                products['dataValues'][index]['size'] = element?.size_id;
-                products['dataValues'][index]['quantity'] = element?.quantity;
-                products['dataValues'][index]['colour'] = element?.color_id;
+                products[index]['dataValues']['size'] = element?.size_id;
+                products[index]['dataValues']['quantity'] = element?.quantity;
+                products[index]['dataValues']['colour'] = element?.color_id;
             });
             cartDetails["products"] = products;
         }
