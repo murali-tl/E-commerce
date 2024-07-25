@@ -7,6 +7,8 @@ paths:
     post:
       summary: "User Login"
       description: "Checks if the user exists, logs in, and provides access and refresh tokens."
+      tags:
+        - Login APIs
       parameters:
         - in: body
           name: body
@@ -68,6 +70,8 @@ paths:
     post:
       summary: "Generate OTP"
       description: "Generates OTP and triggers email notification to the user."
+      tags:
+        - Login APIs
       parameters:
         - in: body
           name: email
@@ -95,6 +99,8 @@ paths:
     patch:
       summary: "Reset Password"
       description: "Verify OTP sent and update password."
+      tags:
+        - Login APIs
       parameters:
         - in: body
           name: body
@@ -129,6 +135,8 @@ paths:
     post:
       summary: "Refresh Access Token"
       description: "Re-generates Access token using refresh token."
+      tags:
+        - Auth APIs
       parameters:
         - in: body
           name: body
@@ -153,6 +161,8 @@ paths:
     post:
       summary: "Create User"
       description: "Create a new user and initialize cart and wishlist."
+      tags:
+        - Customer APIs
       parameters:
         - in: body
           name: body
@@ -192,6 +202,8 @@ paths:
     get:
       summary: "Get Product Parameters"
       description: "Fetch product parameters like categories, colors, and sizes."
+      tags:
+        - Customer APIs
       responses:
         200:
           description: "Successful operation"
@@ -265,6 +277,8 @@ paths:
     get:
       summary: "Fetch Home Page Data"
       description: "Fetch banner and recently arrived products for the home page."
+      tags:
+        - Customer APIs
       responses:
         200:
           description: "Successful operation"
@@ -343,6 +357,8 @@ paths:
     get:
       summary: "List Products"
       description: "Fetch list of products filtered by category or all products."
+      tags:
+        - Product APIs
       parameters:
         - in: query
           name: page
@@ -468,6 +484,8 @@ paths:
     get:
       summary: "Get Product Details"
       description: "Fetch details of a specific product by product ID."
+      tags:
+        - Product APIs
       parameters:
         - in: path
           name: product_id
@@ -585,6 +603,8 @@ paths:
     get:
       summary: "View Cart"
       description: "Fetch products in the user's cart."
+      tags:
+        - Cart APIs
       responses:
         200:
           description: Successful response with cart details
@@ -689,6 +709,8 @@ paths:
       summary: Add Product to Cart
       description: >
         Add a product to the user's cart. If the product is already in the cart, update the quantity.
+      tags:
+        - Cart APIs
       parameters:
         - in: body
           name: body
@@ -745,6 +767,8 @@ paths:
     delete:
       summary: Remove Product from Cart
       description: Remove a product from the user's cart.
+      tags:
+        - Cart APIs
       parameters:
         - in: body
           name: body
@@ -795,6 +819,8 @@ paths:
     get:
       summary: Calculate Order Amount
       description: Calculate amount based on products and shipping type.
+      tags:
+        - Cart APIs
       parameters:
         - in: query
           name: shipping_type
@@ -852,6 +878,8 @@ paths:
     get:
       summary: "View Wishlist"
       description: "Fetch products in the user's wishlist."
+      tags:
+        - WishList APIs
       responses:
         200:
           description: "Successful operation"
@@ -930,6 +958,8 @@ paths:
     post:
       summary: "Add Product to Wishlist"
       description: "Add a product to the user's wishlist."
+      tags:
+        - WishList APIs
       parameters:
         - in: body
           name: body
@@ -980,6 +1010,8 @@ paths:
     delete:
       summary: "Remove Product from Wishlist"
       description: "Remove a product from the user's wishlist."
+      tags:
+        - WishList APIs
       parameters:
         - in: query
           name: product_id
@@ -1026,6 +1058,8 @@ paths:
     get:
       summary: Fetch Addresses of User
       description: Fetch addresses associated with the user.
+      tags:
+        - Customer APIs
       parameters:
         - in: query
           name: user_id
@@ -1104,6 +1138,8 @@ paths:
     post:
       summary: Add User Address
       description: Add another address for the user.
+      tags:
+        - Customer APIs
       parameters:
         - in: body
           name: body
@@ -1163,6 +1199,8 @@ paths:
     get:
       summary: Fetch Reviews of a Product
       description: Fetch reviews associated with a specific product.
+      tags:
+        - Product APIs
       parameters:
         - in: path
           name: product_id
@@ -1257,111 +1295,12 @@ paths:
                     type: string
                     example: ""
 
-  /user/create-review:
-    post:
-      summary: Create Review for a Product
-      description: Allow a user to submit a review for a specific product.
-      parameters:
-        - in: body
-          name: body
-          description: Review details to create
-          required: true
-          schema:
-            type: object
-            properties:
-              product_id:
-                type: string
-              title:
-                type: string
-              description:
-                type: string
-              rating:
-                type: string
-      responses:
-        200:
-          description: Successful operation
-          schema:
-            type: object
-            properties:
-              status:
-                type: boolean
-                example: true
-              message:
-                type: string
-                example: "Review details saved"
-              data:
-                type: object
-        400:
-          description: User not found
-          schema:
-            type: object
-            properties:
-              status:
-                type: boolean
-                example: false
-              message:
-                type: string
-                example: "Error while saving review"
-              data:
-                type: object
-                properties:
-                  reason:
-                    type: string
-                    example: ""
-
-  /user/mark-review:
-    patch:
-      summary: Mark Review as Useful or Inappropriate
-      description: Mark a review as useful or flag it as inappropriate.
-      parameters:
-        - in: body
-          name: body
-          description: Review marking details
-          required: true
-          schema:
-            type: object
-            properties:
-              review_id:
-                type: string
-              is_useful:
-                type: boolean
-              inappropriate_flag:
-                type: boolean
-      responses:
-        200:
-          description: Successful operation
-          schema:
-            type: object
-            properties:
-              status:
-                type: boolean
-                example: true
-              message:
-                type: string
-                example: "Saved"
-              data:
-                type: object
-        400:
-          description: Review not found
-          schema:
-            type: object
-            properties:
-              status:
-                type: boolean
-                example: false
-              message:
-                type: string
-                example: "Error while marking review"
-              data:
-                type: object
-                properties:
-                  reason:
-                    type: string
-                    example: ""
   /admin/add-product:
     post:
       summary: Add Product to Database
       description: Add a new product to the database.
+      tags:
+        - admin
       parameters:
         - in: body
           name: body
@@ -1433,6 +1372,8 @@ paths:
     put:
       summary: Update Product in Database
       description: Update an existing product in the database.
+      tags:
+        - admin
       parameters:
         - in: body
           name: body
@@ -1502,6 +1443,8 @@ paths:
     delete:
       summary: Delete Product from Database
       description: Delete a product from the database.
+      tags:
+        - admin
       parameters:
         - in: body
           name: body
@@ -1548,6 +1491,8 @@ paths:
     get:
       summary: Fetch All Orders from Database
       description: Retrieve details of all orders from the database.
+      tags:
+        - admin
       parameters:
         - in: query
           name: page
@@ -1616,6 +1561,8 @@ paths:
     get:
       summary: Fetch Details of a Specific Order
       description: Retrieve details of a specific order from the database.
+      tags:
+        - admin
       parameters:
         - in: query
           name: order_id
@@ -1676,6 +1623,8 @@ paths:
   /user/create-order:
     post:
       summary: Create an order
+      tags:
+        - Order APIs
       parameters:
         - in: body
           schema:
@@ -1741,6 +1690,8 @@ paths:
   /user/webhook:
     post:
       summary: Verify payment webhook
+      tags:
+        - Order APIs
       parameters:
         - in: body
           schema:
