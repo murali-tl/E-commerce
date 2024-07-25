@@ -108,7 +108,7 @@ const getCartDetails = async (user_id) => {
             });
             let tempObj = cartDetails;
             tempObj["products"] = mappedProducts;
-            //console.log(cartDetails);
+            console.log(tempObj);
         }
         return cartDetails;
     }
