@@ -684,7 +684,7 @@ paths:
                     type: string
                     example: ""
 
-  /user/cart/add-to-cart:
+  /user/add-to-cart:
     post:
       summary: Add Product to Cart
       description: >
@@ -741,7 +741,7 @@ paths:
                     type: string
                     example: ""
 
-  /user/cart/remove-from-cart:
+  /user/remove-from-cart:
     delete:
       summary: Remove Product from Cart
       description: Remove a product from the user's cart.
