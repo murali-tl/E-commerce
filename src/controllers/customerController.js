@@ -114,7 +114,7 @@ const addToCart = async (req, res) => {
     const user_id = req?.user?.user_id;
     const { product_id, size_id, color_id, quantity } = req?.body;
     if(!quantity){
-      return res.status(400).send(new Response(false, 'Invalid product details while adding to cart: Quantity missing', { "error": validated?.error }));
+      return res.status(400).send(new Response(false, 'Invalid product details while adding to cart: Quantity missing', { }));
     }
     let data = {
       product_id: product_id,
