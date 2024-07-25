@@ -86,13 +86,12 @@ const getCartDetails = async (user_id) => {
                 attributes: ['color_id', 'color_name', 'color_code'],
             });
             const mappedProducts = [];
-            productIds.forEach(productId => {
+            productIds.forEach((productId, index )=> {
                 const productItem = products.find(item => item.product_id === productId);
-                const cartProduct = cartDetails?.product_details?.find(item => item.product_id === productId);
+                const cartProduct = cartDetails?.product_details[index];
                 const sizeItem = sizes.find(item => item?.size_id === cartProduct?.size_id);
                 const colorItem = colors.find(item => item?.color_id === cartProduct?.color_id);
                 mappedProducts.push({
-
                     ...productItem.dataValues,
                     size: {
                         ...sizeItem?.dataValues
