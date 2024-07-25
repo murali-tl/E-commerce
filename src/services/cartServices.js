@@ -22,7 +22,7 @@ const insertIntoCart = async (data, userId) => {
                     size_id: size_id,
                     color_id: color_id
                 };
-                console.log('check0', cartDetails?.dataValues);
+                //console.log('check0', cartDetails?.dataValues);
                 //let cartProductDetails = cartDetails?.dataValues?.product_details;
                 let product_details = [...cartDetails?.dataValues?.product_details];
                 let foundProduct = product_details.filter(element => {

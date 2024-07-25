@@ -581,58 +581,6 @@ paths:
                     type: string
                     example: ""
 
-  /user/add-to-cart:
-    post:
-      summary: "Add Product to Cart"
-      description: "Add a product to the user's cart."
-      parameters:
-        - in: body
-          name: body
-          description: "Product ID and quantity to add to cart"
-          required: true
-          schema:
-            type: object
-            properties:
-              product_id:
-                type: string
-              quantity:
-                type: integer
-      responses:
-        200:
-          description: "Successful operation"
-          schema:
-            type: object
-            properties:
-              status:
-                type: boolean
-                example: true
-              message:
-                type: string
-                example: "Product added to cart."
-              data:
-                type: object
-                properties:
-                  cart_size:
-                    type: number
-                    example: 1
-        default:
-          description: "Error while adding to cart"
-          schema:
-            type: object
-            properties:
-              status:
-                type: boolean
-                example: false
-              message:
-                type: string
-                example: "Error while adding to cart"
-              data:
-                type: object
-                properties:
-                  reason:
-                    type: string
-                    example: ""
-
   /user/cart:
     get:
       summary: "View Cart"

@@ -49,13 +49,13 @@ const getWishListDetails = async (userId) => {
             where: {
                 user_id: userId
             },
-            attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] },            
+            attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] },
         })
         let products = await product.findAll({
             where: {
                 product_id: result[0]?.product_ids
             },
-            attributes: { exclude: ['createdAt', 'created_by', 'updated_by', 'updatedAt', 'deletedAt'] },            
+            attributes: { exclude: ['createdAt', 'created_by', 'updated_by', 'updatedAt', 'deletedAt'] },
         });
         result['products'] = products;
         return { status: true, data: result };
@@ -71,7 +71,7 @@ const getCartDetails = async (user_id) => {
             where: {
                 user_id: user_id
             },
-            attributes: { exclude: ['createdAt', 'updatedAt' ] },            
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
         });
         if (cartDetails?.product_details?.length) {
             const productIds = cartDetails?.product_details?.map(item => item.product_id);
@@ -79,14 +79,21 @@ const getCartDetails = async (user_id) => {
                 where: { product_id: productIds },
                 attributes: ['product_id', 'product_name', 'images', 'price', 'category_id']
             });
-            console.log(productIds, cartDetails, products);
-            cartDetails?.product_details?.forEach((element, index) => {
-                console.log(index)
-                products[index]['size'] = element?.size_id;
-                products[index]['quantity'] = element?.quantity;
-                products[index]['colour'] = element?.color_id;
+            const mappedProducts = [];
+            productIds.forEach(productId => {
+                const productItem = products.find(item => item.product_id === productId);
+                const cartProduct = cartDetails?.product_details?.find(item => item.product_id === productId);
+                mappedProducts.push({
+                    productId: productId,
+                    product: {
+                        ...productItem.dataValues,
+                    },
+                    size: cartProduct.size_id,
+                    quantity: cartProduct.quantity,
+                    colour: cartProduct.color_id
+                });
             });
-            cartDetails["products"] = products;
+            cartDetails["products"] = mappedProducts;
         }
         return cartDetails;
     }
