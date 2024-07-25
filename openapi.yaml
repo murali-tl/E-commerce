@@ -720,9 +720,9 @@ paths:
               data:
                 type: object
                 properties:
-                  product_id:
-                    type: string
-                    example: "String"
+                  cart_size:
+                    type: number
+                    example: 2
         400:
           description: User or product not found
           schema:

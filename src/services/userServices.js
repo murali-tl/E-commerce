@@ -106,7 +106,6 @@ const getCartDetails = async (user_id) => {
             });
             let cartDetailsObj = cartDetails?.dataValues;
             cartDetailsObj["products"] = mappedProducts;
-            //console.log(tempObj);
         }
         return cartDetails;
     }
