@@ -1,4 +1,4 @@
-const { user, wishlist, cart, product, role } = require('../models/index');
+const { user, wishlist, cart, product, role , color, size} = require('../models/index');
 require('dotenv').config({ path: '../.env' });
 const crypto = require('crypto');
 const { validateUser } = require('../services/validations');
@@ -79,22 +79,36 @@ const getCartDetails = async (user_id) => {
                 where: { product_id: productIds },
                 attributes: ['product_id', 'product_name', 'images', 'price', 'category_id']
             });
+            let sizes = await size.findAll({
+                attributes: ['size_id', 'size_type'],
+            });
+            let colors = await color.findAll({
+                attributes: ['color_id', 'color_name', 'color_code'],
+            });
             const mappedProducts = [];
             productIds.forEach(productId => {
                 const productItem = products.find(item => item.product_id === productId);
                 const cartProduct = cartDetails?.product_details?.find(item => item.product_id === productId);
+                const sizeItem = sizes.find(item => item?.size_id === cartProduct?.size_id);
+                const colorItem = colors.find(item => item?.color_id === cartProduct?.color_id);
+
                 mappedProducts.push({
                     productId: productId,
                     product: {
                         ...productItem.dataValues,
                     },
-                    size: cartProduct.size_id,
+                    size : {
+                        ...sizeItem?.dataValues
+                    },
                     quantity: cartProduct.quantity,
-                    colour: cartProduct.color_id
+                    color: {
+                        ...colorItem?.dataValues
+                    }
                 });
             });
-            console.log(mappedProducts);
-            cartDetails["products"] = mappedProducts;
+            let tempObj = cartDetails;
+            tempObj["products"] = mappedProducts;
+            //console.log(cartDetails);
         }
         return cartDetails;
     }
