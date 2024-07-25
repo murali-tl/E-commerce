@@ -4,7 +4,7 @@ const { insertIntoWishList, deleteFromWishList } = require('../services/wishList
 const { insertIntoCart, deleteFromCart, orderSummary } = require('../services/cartServices');
 const { getAdresses, createAddress } = require('../services/addressServices');
 const { viewFilterOrders } = require('../services/orderServices');
-const { validateUser, validateAddress, validateCartDetails, validateReview } = require('../services/validations');
+const { validateUser, validateAddress, validateCartDetails } = require('../services/validations');
 // const { addReview, updateReview } = require('../services/reviewServices');
 
 const registerUser = async (req, res,) => {
@@ -113,6 +113,9 @@ const addToCart = async (req, res) => {
     }
     const user_id = req?.user?.user_id;
     const { product_id, size_id, color_id, quantity } = req?.body;
+    if(!quantity){
+      return res.status(400).send(new Response(false, 'Invalid product details while adding to cart: Quantity missing', { }));
+    }
     let data = {
       product_id: product_id,
       size_id: size_id,
