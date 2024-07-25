@@ -93,6 +93,7 @@ const getCartDetails = async (user_id) => {
                     colour: cartProduct.color_id
                 });
             });
+            console.log(mappedProducts);
             cartDetails["products"] = mappedProducts;
         }
         return cartDetails;
