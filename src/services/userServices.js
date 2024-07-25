@@ -1,4 +1,4 @@
-const { user, wishlist, cart, product, role , color, size} = require('../models/index');
+const { user, wishlist, cart, product, role, color, size } = require('../models/index');
 require('dotenv').config({ path: '../.env' });
 const crypto = require('crypto');
 const { validateUser } = require('../services/validations');
@@ -91,19 +91,17 @@ const getCartDetails = async (user_id) => {
                 const cartProduct = cartDetails?.product_details?.find(item => item.product_id === productId);
                 const sizeItem = sizes.find(item => item?.size_id === cartProduct?.size_id);
                 const colorItem = colors.find(item => item?.color_id === cartProduct?.color_id);
-
                 mappedProducts.push({
-                    productId: productId,
-                    product: {
-                        ...productItem.dataValues,
-                    },
-                    size : {
+
+                    ...productItem.dataValues,
+                    size: {
                         ...sizeItem?.dataValues
                     },
                     quantity: cartProduct.quantity,
                     color: {
                         ...colorItem?.dataValues
                     }
+
                 });
             });
             let tempObj = cartDetails?.dataValues;

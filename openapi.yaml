@@ -587,7 +587,7 @@ paths:
       description: "Fetch products in the user's cart."
       responses:
         200:
-          description: "Successful operation"
+          description: Successful response with cart details
           schema:
             type: object
             properties:
@@ -596,11 +596,31 @@ paths:
                 example: true
               message:
                 type: string
-                example: "Cart fetched."
+                example: Cart details fetched.
               data:
                 type: object
                 properties:
-                  cart_items:
+                  user_id:
+                    type: string
+                    example: "String"
+                  product_details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        product_id:
+                          type: string
+                          example: "String"
+                        size_id:
+                          type: string
+                          example: "String"
+                        color_id:
+                          type: string
+                          example: "String"
+                        quantity:
+                          type: number
+                          example: 1
+                  products:
                     type: array
                     items:
                       type: object
@@ -610,37 +630,42 @@ paths:
                           example: "String"
                         product_name:
                           type: string
-                          example: "String"
-                        description:
-                          type: string
-                          example: "String"
+                          example: "Product Name"
                         images:
                           type: array
                           items:
                             type: string
-                          example: ["String"]
-                        size_ids:
-                          type: array
-                          items:
-                            type: string
-                          example: ["String"]
-                        color_ids:
-                          type: array
-                          items:
-                            type: string
-                          example: ["String"]
+                            example: ["url1", "url2"]
                         price:
                           type: number
-                          example: 0.0
+                          example: 99.99
                         category_id:
                           type: string
-                          example: "String"
-                        rating:
-                          type: number
-                          example: 0.0
+                          example: "Category ID"
+                        size:
+                          type: object
+                          properties:
+                            size_id:
+                              type: string
+                              example: "Size ID"
+                            size_type:
+                              type: string
+                              example: "Large"
                         quantity:
                           type: number
-                          example: 0
+                          example: 1
+                        color:
+                          type: object
+                          properties:
+                            color_id:
+                              type: string
+                              example: "Color ID"
+                            color_name:
+                              type: string
+                              example: "Red"
+                            color_code:
+                              type: string
+                              example: "#FF0000"
         default:
           description: "Error while fetching cart"
           schema:

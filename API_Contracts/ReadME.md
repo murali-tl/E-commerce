@@ -486,7 +486,8 @@ $~~~~~~~~~$
 { status: true, message: 'Cart details fetched.', data:{
     user_id: "String",
     product_details: [ { product_id: "String",
-                         size: "String",
+                         size_id: "String",
+                         color_id: "String",
                          quantity: "Number"
                        }
                        ...
@@ -497,10 +498,17 @@ $~~~~~~~~~$
             "product_name": "String",
             "images": "String[]",
             "price": "Float",
-            "category": "String",
-            size: "String",
+            "category_id": "String",
+            size: {
+                size_id: "String",
+                size_type: "String"
+            },
             quantity: "Number",
-            "colour": "String"
+            "color": {
+                color_id: "String",
+                color_name: "String",
+                color_code: "String"
+            }
         },
         {
 
