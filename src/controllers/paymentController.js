@@ -8,10 +8,8 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_API_KEY);
 const { order } = require('../models/index');
 const { ifPaymentSuccess } = require('../services/paymentServices');
 
-const calculateOrderAmount = (productIds) => {
-    let { total_amount } = orderSummary({
-        product_ids: productIds
-    })
+const calculateOrderAmount = (shippingType, productDetails) => {
+    let { total_amount } = orderSummary({shipping_type: shippingType, product_details: productDetails})
     return total_amount || 0;
 };
 
@@ -19,8 +17,6 @@ const createOrder = async (req, res) => {
     try {
         const amount = req?.body?.amount;
         const { product_details } = req.body;
-        const productIds = product_details.map(obj => { return obj?.product_id });
-        console.log(productIds);
         const validated = validateAddress(req?.body?.address);
         const productValidation = validateProductDetails(req?.body?.product_details);
         if (validated.error) {
@@ -41,11 +37,12 @@ const createOrder = async (req, res) => {
         if (!checkProductStock(productQuantities)) {
             return res.status(200).send(new Response(true, 'Some of the products are out of stock', {}));
         }
+        let calculatedAmount = calculateOrderAmount(req?.body?.shipping_type, product_details);
         if (amount && typeof (amount) === 'number') {
             let createdOrder = await order.create({
                 user_id: req?.user?.user_id,
                 product_details: req?.body?.product_details,
-                amount: amount,
+                amount: calculatedAmount,
                 payment_status: Constants?.PAYMENT_STATUS[0],
                 order_status: Constants?.ORDER_STATUS[0],
                 shipping_type: req?.body?.shipping_type,
@@ -55,7 +52,7 @@ const createOrder = async (req, res) => {
                 delivered_at: ''
             });
             const paymentIntent = await stripe.paymentIntents.create({
-                amount: calculateOrderAmount(productIds),
+                amount: calculatedAmount,
                 currency: "usd",
                 customer: req?.user?.user_id,
                 metadata: {

@@ -268,10 +268,7 @@ paths:
                 example: "Error while fetching"
               data:
                 type: object
-                properties:
-                  reason:
-                    type: string
-                    example: ""
+                example: {}
 
   /home:
     get:
@@ -349,9 +346,7 @@ paths:
               data:
                 type: object
                 properties:
-                  reason:
-                    type: string
-                    example: ""
+                example: {}
 
   /list-products:
     get:
@@ -459,7 +454,13 @@ paths:
                     type: array
                     items: 
                      type: string
-                  total_count:
+                  total_pages:
+                    type: number
+                    example: 1
+                  current_page:
+                    type: number
+                    example: 1
+                  total_products:
                     type: number
                     example: 0
         default:
@@ -595,9 +596,7 @@ paths:
               data:
                 type: object
                 properties:
-                  reason:
-                    type: string
-                    example: ""
+                example: {}
 
   /user/cart:
     get:
@@ -700,9 +699,7 @@ paths:
               data:
                 type: object
                 properties:
-                  reason:
-                    type: string
-                    example: ""
+                example: {}
 
   /user/add-to-cart:
     post:
@@ -759,9 +756,7 @@ paths:
               data:
                 type: object
                 properties:
-                  reason:
-                    type: string
-                    example: ""
+                example: {}
 
   /user/remove-from-cart:
     delete:
@@ -828,13 +823,19 @@ paths:
           required: true
           type: string
         - in: query
-          name: product_ids
-          description: Comma-separated list of product IDs
+          name: product_details
+          description: details of products
           required: true
           type: array
-          collectionFormat: csv
           items:
-            type: string
+            product_id:
+                type: string
+            quantity:
+                type: number
+            size_id:
+                type: string
+            color_id:
+                type: string
       responses:
         200:
           description: Successful operation
@@ -869,10 +870,7 @@ paths:
                 example: "Error while calculating"
               data:
                 type: object
-                properties:
-                  reason:
-                    type: string
-                    example: ""
+                example: {}
 
   /user/wishlist:
     get:
@@ -895,7 +893,13 @@ paths:
               data:
                 type: object
                 properties:
-                  wishlist_items:
+                  user_id:
+                    type: string
+                  product_ids:
+                    type: array
+                    items:
+                      type: string
+                  products:
                     type: array
                     items:
                       type: object
@@ -950,9 +954,7 @@ paths:
               data:
                 type: object
                 properties:
-                  reason:
-                    type: string
-                    example: ""
+                example: {}
 
   /user/add-to-wishlist:
     post:
@@ -984,10 +986,7 @@ paths:
                 example: "Product added to wishlist."
               data:
                 type: object
-                properties:
-                  wishlist_id:
-                    type: string
-                    example: "String"
+                example: {}
         default:
           description: "Error while adding to wishlist"
           schema:
@@ -1001,10 +1000,7 @@ paths:
                 example: "Error while adding to wishlist"
               data:
                 type: object
-                properties:
-                  reason:
-                    type: string
-                    example: ""
+                example: {}
 
   /user/remove-from-wishlist:
     delete:
@@ -1033,10 +1029,7 @@ paths:
                 example: "Product removed from wishlist."
               data:
                 type: object
-                properties:
-                  wishlist_id:
-                    type: string
-                    example: "String"
+                example: {}
         default:
           description: "Error while removing from wishlist"
           schema:
@@ -1051,21 +1044,13 @@ paths:
               data:
                 type: object
                 properties:
-                  reason:
-                    type: string
-                    example: ""
+                  example: {}
   /user/addresses:
     get:
       summary: Fetch Addresses of User
       description: Fetch addresses associated with the user.
       tags:
         - Customer APIs
-      parameters:
-        - in: query
-          name: user_id
-          description: User ID to fetch addresses
-          required: true
-          type: string
       responses:
         200:
           description: Successful operation
@@ -1104,18 +1089,10 @@ paths:
                         country:
                           type: string
                           example: "USA"
-                        zipcode:
+                        pincode:
                           type: string
                           example: "12345"
-                        email:
-                          type: string
-                          example: "john.doe@example.com"
-                        mobile:
-                          type: string
-                          example: "+1234567890"
-                        optional_text:
-                          type: string
-                          example: "Home address"
+                        
         400:
           description: User not found
           schema:
@@ -1130,9 +1107,7 @@ paths:
               data:
                 type: object
                 properties:
-                  reason:
-                    type: string
-                    example: ""
+                example: {}
 
   /user/add-address:
     post:
@@ -1160,9 +1135,7 @@ paths:
                 type: string
               country:
                 type: string
-              zipcode:
-                type: string
-              optional_text:
+              pincode:
                 type: string
       responses:
         200:
@@ -1192,9 +1165,7 @@ paths:
               data:
                 type: object
                 properties:
-                  reason:
-                    type: string
-                    example: ""
+                example: {}
   /product/reviews/{product_id}:
     get:
       summary: Fetch Reviews of a Product
@@ -1207,11 +1178,7 @@ paths:
           required: true
           type: string
           description: ID of the product to fetch reviews for.
-        - in: query
-          name: user_id
-          required: false
-          type: string
-          description: Optional user ID to filter reviews by user.
+        
       responses:
         200:
           description: Successful operation
@@ -1291,9 +1258,7 @@ paths:
               data:
                 type: object
                 properties:
-                  reason:
-                    type: string
-                    example: ""
+                example: {}
 
   /admin/add-product:
     post:
@@ -1309,6 +1274,8 @@ paths:
           schema:
             type: object
             properties:
+              product_id:
+                tyep: string
               product_name:
                 type: string
               images:
@@ -1364,9 +1331,7 @@ paths:
               data:
                 type: object
                 properties:
-                  reason:
-                    type: string
-                    example: ""
+                example: {}
 
   /admin/edit-product:
     put:
@@ -1431,7 +1396,7 @@ paths:
                 example: false
               message:
                 type: string
-                example: "Error while updating product details..."
+                example: "Product not found"
               data:
                 type: object
                 properties:
@@ -1439,22 +1404,18 @@ paths:
                     type: string
                     example: ""
 
-  /admin/delete-product:
+  /admin/delete-product/{product_id}:
     delete:
       summary: Delete Product from Database
       description: Delete a product from the database.
       tags:
         - admin
       parameters:
-        - in: body
-          name: body
-          description: Product ID to delete
+        - in: query
+          name: order_id
+          type: string
           required: true
-          schema:
-            type: object
-            properties:
-              product_id:
-                type: string
+          description: Product ID to delete
       responses:
         200:
           description: Successful operation
@@ -1483,9 +1444,7 @@ paths:
               data:
                 type: object
                 properties:
-                  reason:
-                    type: string
-                    example: ""
+                example: {}
 
   /admin/view-orders:
     get:
@@ -1553,9 +1512,7 @@ paths:
               data:
                 type: object
                 properties:
-                  reason:
-                    type: string
-                    example: ""
+                example: {}
 
   /admin/view-order/{order_id}:
     get:
@@ -1588,7 +1545,7 @@ paths:
                     type: string
                   user_id:
                     type: string
-                  products:
+                  product_details:
                     type: array
                     items:
                       type: object
@@ -1616,10 +1573,8 @@ paths:
                 example: "Error while fetching order details..."
               data:
                 type: object
-                properties:
-                  reason:
-                    type: string
-                    example: ""
+                example: {}
+
   /user/create-order:
     post:
       summary: Create an order
@@ -1717,4 +1672,3 @@ paths:
                     type: boolean
                     example: false
 
-#// need admin APIs- update-order, order-status
