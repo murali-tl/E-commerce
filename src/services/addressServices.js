@@ -22,11 +22,11 @@ const getAdresses = async (user_id) => {
 
 const createAddress = async (data, user_id) => {  
     try {
-        const { first_name, second_name, address_line1, address_line2, city, pincode, country } = data;
+        const { first_name, last_name, address_line1, address_line2, city, pincode, country } = data;
         await user_addresses.create({
             user_id: user_id,
             first_name: first_name,
-            second_name: second_name,
+            last_name: last_name,
             address_line1: address_line1,
             address_line2: address_line2,
             city: city,
