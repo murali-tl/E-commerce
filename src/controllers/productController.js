@@ -2,7 +2,6 @@ const productService = require('../services/productServices.js');
 const reviewService = require('../services/reviewServices.js');
 const { Response } = require('../services/constants.js');
 
-
 const fetchProducts = async (req, res) => {
     try {
         console.info(`/list-products called`);
@@ -18,7 +17,6 @@ const fetchProducts = async (req, res) => {
         console.error("Product Controller: Error occurred while fetching product", e)
         return res.status(500).send(new Response(false, 'Internal server Error', {}));
     }
-
 }
 
 const fetchProduct = async (req, res) => {
@@ -60,7 +58,6 @@ const fetchRecentProducts = async (req, res) => {
         console.info(`/home called`);
         const products = await productService.getRecentProducts();
         if (!products?.success) {
-            console.log()
             return res.status(500).send(new Response(false, 'Error while fetching recent products', {}));
         }
         if (products?.products.length) {

@@ -9,7 +9,7 @@ module.exports = {
       {
         role_id: uuidv4(),
         role_name: 'customer',
-        actions_allowed: ["viewProducts", "viewProduct", "viewHisOrders", "viewHisOrder", "updateCart", "updateWishList"],
+        actions_allowed: ["/add-product", "/edit-product'", "/delete-product", "/view-orders", "/view-order/" ],
         created_at: new Date(),
         updated_at: new Date(),
       },

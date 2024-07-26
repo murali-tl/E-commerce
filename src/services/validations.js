@@ -1,27 +1,29 @@
 const db = require('../models');
-const Joi = require('joi')
+const Joi = require('joi');
+const { Response } = require('./constants');
 
-const isAdmin = async (userId) => {
+const getRole = async (userId) => {
+  const userDetails = await db.user.findByPk(userId, {
+    include: {
+      model: db.role,
+      as: 'role'
+    }
+  });
+  return userDetails?.role?.role_name;
+}
+
+const isCustomer = async (req, res, next) => {
   try {
-    const userDetails = await db.user.findByPk(userId, {
-      include: {
-        model: db.role,
-        as: 'role'
-      }
-    });
+    console.log('=',req?.url);
+    const roleName = await getRole(req?.user?.user_id);
+    if (!roleName || roleName !== 'customer') {
+      return res.status(403).send(new Response(false, 'Access denied.', {}));
+    }
+    next();
 
-    if (!userDetails) {
-      return 'User not found';
-    }
-    //console.log(userDetails);
-    const roleName = userDetails.role.role_name;
-    if (roleName === 'admin') {
-      return true;
-    }
-    return false;
   } catch (error) {
     console.error('Error checking user role:', error);
-    throw error; // Handle or propagate error as needed
+    return res.status(500).send(new Response(false, 'Error while verifying admin', {}));
   }
 }
 
@@ -46,6 +48,36 @@ function validateUser(user) {
   }).options({ abortEarly: false });
 
   return JoiSchema.validate(user)
+}
+
+function validateLoginDetails(user) {
+  const JoiSchema = Joi.object({
+    email: Joi.string()
+      .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+      .min(5)
+      .max(50)
+      .required(),
+
+    password: Joi.string()
+      .pattern(new RegExp('^[a-zA-Z0-9!@#$%^&*()-_+=]{8,30}$'))
+      .required(),
+
+  }).options({ abortEarly: false });
+
+  return JoiSchema.validate(user)
+}
+
+function validateResetPaswordDetails(obj){
+  const JoiSchema = Joi.object({
+    user_id: Joi.string().uuid().required(),
+    otp: Joi.string().min(6).max(6).required(),
+    new_password: Joi.string()
+      .pattern(new RegExp('^[a-zA-Z0-9!@#$%^&*()-_+=]{8,30}$'))
+      .required(),
+
+  }).options({ abortEarly: false });
+
+  return JoiSchema.validate(obj);
 }
 
 function validateProduct(product) {
@@ -115,8 +147,11 @@ function validateUUID(obj) {
 }
 
 module.exports = {
-  isAdmin,
+  isCustomer,
+  getRole,
   validateUser,
+  validateLoginDetails,
+  validateResetPaswordDetails,
   validateProduct,
   validateUUID,
   validateAddress,

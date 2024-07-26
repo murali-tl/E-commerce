@@ -108,7 +108,7 @@ const updateReview = async (data) => {
         });
         if (review_id && reviewDetails) {
             let useful_count = 0, not_useful_count = 0, inappropriate_flag_count = 0;
-            if (typeof (is_useful) === 'boolean') {
+            if (typeof(is_useful) === 'boolean') {
                 useful_count = ((is_useful) ? 1 : 0);
                 not_useful_count = ((is_useful) ? 0 : 1);
             }

@@ -7,7 +7,7 @@ const app = express();
 const PORT = 3001;
 
 const cors = require('cors')
-const myRoute = require('./routes/mainRoutes');
+const myRoute = require('./routes/routes.js');
 
 
 app.use(express.json({ limit: '50mb' }));
@@ -19,7 +19,7 @@ app.use(
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     })
   );
-app.use('/', myRoute);
+app.use('/api', myRoute);
 
 app.get('/', async (req, res) => {
     console.info("/health api called at", new Date().toISOString());

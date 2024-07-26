@@ -524,7 +524,7 @@ $~~~~~~~~~$
 
 <br><br>
 
-## `POST` /user/cart/add-to-cart
+## `POST` /user/add-to-cart
 
 add product to cart
 if already in cart update quantity
@@ -557,7 +557,7 @@ Body:
 400 $~~~~~~~~~$ user or product not found
 <br><br>
 
-## `DELETE` /user/cart/remove-from-cart
+## `DELETE` /user/remove-from-cart
 
 remove product from cart
 and update amount
@@ -654,7 +654,6 @@ $~~~~~~~~~$
             "zipcode": "String",
             "email": "String",
             "mobile": "String",
-            "optional_text": "String"
         },
         {
 
@@ -687,7 +686,6 @@ Body:
  "city":"String",
  "country":"String",
  "zipcode":"String",
- "optional_text":"String"
 }
 ```
 

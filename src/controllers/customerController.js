@@ -1,7 +1,7 @@
 const { Response } = require("../services/constants");
 const { createUser, getWishListDetails, getCartDetails } = require('../services/userServices');
 const { insertIntoWishList, deleteFromWishList } = require('../services/wishListServices');
-const { insertIntoCart, deleteFromCart, orderSummary, updateCartProduct } = require('../services/cartServices');
+const { insertIntoCart, deleteFromCart, orderSummary } = require('../services/cartServices');
 const { getAdresses, createAddress } = require('../services/addressServices');
 const { viewFilterOrders } = require('../services/orderServices');
 const { validateUser, validateAddress, validateCartDetails } = require('../services/validations');
@@ -131,38 +131,6 @@ const addToCart = async (req, res) => {
     return res.status(500).send(new Response(false, 'Internal server Error', {}));
   }
 }
-
-// currently on hold
-
-// const updateCart = async (req, res) => {
-//   try {
-//     console.info('/user/add-to-cart called.');
-//     const validated = validateCartDetails(req?.body);
-//     if (validated?.error) {
-//       return res.status(400).send(new Response(false, 'Invalid product details while updating to cart', { "error": validated?.error }));
-//     }
-//     const user_id = req?.user?.user_id;
-//     const { product_id, size_id, color_id, quantity } = req?.body;
-//     if(!quantity){
-//       return res.status(400).send(new Response(false, 'Invalid product details while updating to cart: Quantity missing', { }));
-//     }
-//     let data = {
-//       product_id: product_id,
-//       size_id: size_id,
-//       color_id: color_id,
-//       quantity: quantity
-//     }
-//     const result = await updateCartProduct(data, user_id);
-//     if (result?.error) {
-//       return res.status(500).send(new Response(false, 'Error while updating product quantity in cart', {}));
-//     }
-//     return res.status(result?.status).send(new Response(true, result?.message, result?.data));
-//   }
-//   catch (e) {
-//     console.error("Customer Controller: Error occurred while adding to cart", e)
-//     return res.status(500).send(new Response(false, 'while updating product quantity in cart', {}));
-//   }
-// }
 
 const removeFromCart = async (req, res) => {
   try {
@@ -308,7 +276,6 @@ module.exports = {
   addAddress,
   viewFilterUserOrders,
   calculateOrderAmount,
-  //updateCart,
   // createReview,
   // markReview,
 }

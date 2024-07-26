@@ -101,16 +101,13 @@ const confirmOrder = (request, response) => {
                 break;
             case 'payment_method.attached':
                 const paymentMethod = event.data.object;
-                console.log('case2')
-                // Then define and call a method to handle the successful attachment of a PaymentMethod.
-                // handlePaymentMethodAttached(paymentMethod);
+                console.log('case2');
                 break;
             default:
                 // Unexpected event type
                 console.log(`Unhandled event type ${event.type}.`);
         }
 
-        // Return a 200 response to acknowledge receipt of the event
         response.send();
     }
     catch (e) {

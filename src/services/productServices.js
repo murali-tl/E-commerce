@@ -3,19 +3,15 @@ const { product, color, size, category } = require('../models/index');
 const { Constants } = require('./constants');
 
 const getProducts = async (data) => {
-    //const categories = req?.body?.categories; //get categories as array
     try {
         let { page = 1, limit = 10, search, sort_by = 'rating', color_id, category_id } = data;
-       // const requestedColors = Array.isArray(req.query.color_id) ? req.query.color_id : [req.query.color_id];
        let whereConditions = {
         deleted_at: null,
         product_status: Constants?.PRODUCT_STATUS[0],
     };
-        //console.log(true, data, color_id);
         if (!(typeof(color_id[0]) === 'undefined')) {
-            //console.log('Check1');
             whereConditions.color_ids = { 
-                [Op.overlap]: color_id //overlap not working
+                [Op.overlap]: color_id 
             }
         }
         if (search) {
@@ -24,13 +20,11 @@ const getProducts = async (data) => {
         if (category_id) {
             whereConditions.category_id = category_id;
         }
-        //console.log(whereConditions);
         if (sort_by) {
             if (sort_by === 'recent') {
                 sort_by = 'created_at';
             }
         }
-        //whereConditions.product_status = Constants?.PRODUCT_STATUS[0];
         const offset = (page - 1) * limit;
         const totalCount = await product.count({ where: whereConditions });
         const totalPages = Math.ceil(totalCount / limit);
@@ -43,20 +37,16 @@ const getProducts = async (data) => {
             offset: offset,
         });
         let size_objs = await size?.findAll();
-        //console.log(size_objs);
         products.forEach(obj => {
             obj["dataValues"]["sizes"] = [];
             obj?.size_ids?.forEach(sizeId => {
-                //console.log('===', sizeId);
                 for (let size_obj of size_objs) {
-                    //console.log(true, size_obj)
                     if (size_obj?.dataValues?.size_id === sizeId) {
                         obj["dataValues"]["sizes"].push(size_obj?.dataValues?.size_type);
                     }
                 }
-            })
+            });
         });
-        //console.log(products);
         return { success: true, products: products, totalPages: totalPages, current_page: page, total_productss: totalCount };
     }
     catch (e) {
@@ -80,8 +70,6 @@ const getProduct = async (productId) => {
         let colorIds = result[0]?.color_ids;
         let sizeIds = result[0]?.size_ids;
         let categoryId = result[0]?.category_id;
-        //let colors = [];
-        //console.log(result[0], 'check1', colorIds, sizeIds, categoryId);
         let resultObj = result[0].dataValues;
         let colors = await color.findAll({
             where: {
@@ -89,7 +77,7 @@ const getProduct = async (productId) => {
             },
             attributes: ['color_id', 'color_name', 'color_code']
         });
-        //console.log(colors);
+
         let colorValues = [];
         colors.forEach(element => {
             colorValues.push(element.dataValues);
@@ -106,14 +94,14 @@ const getProduct = async (productId) => {
             sizeValues.push(element.dataValues);
         });
         resultObj['sizes'] = sizeValues;
+
         let categoryy = await category.findOne({
             where: {
                 category_id: categoryId
             },
             attributes: ['category_id', 'category_name']
         });
-        resultObj['category'] = categoryy.dataValues;
-        //console.log(resultObj)
+        resultObj['category'] = categoryy;
         if (result?.length) {
             return { success: true, message: "product details fetched", data: result };
         }
@@ -157,7 +145,6 @@ const getProductParameters = async () => {
         let categories = await category.findAll({
             attributes: ['category_id', 'category_name']
         });
-        //console.log(colors, sizes, categories);
         return {
             success: true, message: "product parameters fetched", data: {
                 colors: colors,

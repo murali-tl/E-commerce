@@ -1,4 +1,4 @@
-const { order, payment, product } = require('../models/index');
+const { order, payment } = require('../models/index');
 const { Constants } = require('./constants');
 const { updateProductQuantity } = require('./utils');
 const ifPaymentSuccess = async (paymentIntent) => {

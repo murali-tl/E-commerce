@@ -1,5 +1,4 @@
 const crypto = require('crypto');
-const { Response } = require('./constants');
 require('dotenv').config({ path: '../.env' });
 const jwt = require("jsonwebtoken");
 
@@ -42,7 +41,7 @@ const verifyOTP = async (data) => {
         });
         if(lastRow && userDetails){
             await user.update({
-                password: crypto.createHash('md5').update(new_password).digest('hex') // hash it  ---
+                password: crypto.createHash('md5').update(new_password).digest('hex')
             },
             {
                 where: {

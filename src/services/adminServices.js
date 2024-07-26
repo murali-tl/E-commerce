@@ -4,7 +4,6 @@ const { Constants } = require('./constants');
 
 const getAllOrders = async (page, limit, search) => {
     try {
-        //const { page = 1, limit = 10, search } = req?.query;
         let whereConditions = {};
         if (search) {
             whereConditions = {
@@ -33,7 +32,6 @@ const getAllOrders = async (page, limit, search) => {
             offset: offset,
         });
         return { orders: orders, totalPages: totalPages, current_page: page, total_orders: totalCount };
-        //const orders = await order.findAll();
     }
     catch (err) {
         console.error(err);
@@ -113,7 +111,7 @@ const createProduct = async (data) => {
             category_id: data?.category_id,
             product_status: Constants?.PRODUCT_STATUS[0],
         })
-        return { success: true, status: 200, message: 'Product created', data: { product_id: productAdded?.product_id } }; //should we need to send product_details
+        return { success: true, status: 200, message: 'Product created', data: { product_id: productAdded?.product_id } };
     }
     catch (err) {
         console.error(err);
@@ -136,7 +134,7 @@ const removeProduct = async (data) => {
                     product_id: product_id
                 }
             });
-        if (result?.affectedRows > 0) { //check affectedRows or count
+        if (result?.affectedRows > 0) {
             return { success: true, status: 200, message: 'Product removed', data: {} };
         }
         return { success: false, status: 400, message: 'Product not found', data: {} };
@@ -147,7 +145,7 @@ const removeProduct = async (data) => {
     }
 }
 
-const updateProduct = async (data) => { //check product quantity
+const updateProduct = async (data) => { 
     let result = validateProduct(data);
     if (result.error) {
         return { "error": result.error.details };
@@ -183,8 +181,8 @@ const updateProduct = async (data) => { //check product quantity
 module.exports = {
     getAllOrders,
     getOrderDetails,
-    //updateOrder,
     createProduct,
     removeProduct,
     updateProduct
+    //updateOrder,
 }

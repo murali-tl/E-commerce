@@ -1,11 +1,9 @@
 const { Response } = require("../services/constants");
 const { getAllOrders, getOrderDetails, createProduct, removeProduct, updateProduct } = require('../services/adminServices');
-const { isAdmin } = require('../services/validations');
-const { validateProduct, validateUUID } = require('../services/validations');
+const { validateProduct } = require('../services/validations');
 
 const fetchAllOrders = async (req, res) => {
     try {
-        if (await isAdmin(req?.user?.user_id)) {
             console.info('/admin/view-orders called');
             const { page = 1, limit = 10, search } = req?.query;
             const result = await getAllOrders(page, limit, search);
@@ -13,10 +11,6 @@ const fetchAllOrders = async (req, res) => {
                 return res.status(500).send(new Response(false, 'Error while fetching orders', {}));
             }
             return res.status(200).send(new Response(true, 'Orders fetched', result));
-        }
-        else {
-            return res.status(403).send(new Response(false, 'User is Forbidden', {}));
-        }
     }
     catch (e) {
         console.error('Admin Controller: Error occured in fetch orders', e);
@@ -24,9 +18,8 @@ const fetchAllOrders = async (req, res) => {
     }
 }
 
-const fetchSpecificOrder = async (req, res) => {  //use path params
+const fetchSpecificOrder = async (req, res) => {
     try {
-        if (await isAdmin(req?.user?.user_id)) {
             console.info('/admin/view-order called');
             const order_id = req?.params?.order_id;
             const result = await getOrderDetails(order_id);
@@ -37,10 +30,6 @@ const fetchSpecificOrder = async (req, res) => {  //use path params
                 return res.status(200).send(new Response(true, 'Order details fetched', result));
             }
             return res.status(400).send(new Response(false, 'Order not found', {}));
-        }
-        else {
-            return res.status(403).send(new Response(false, 'User is Forbidden', {}));
-        }
     }
     catch (e) {
         console.error('Admin Controller: Error occurred in fetching order details', e);
@@ -65,7 +54,6 @@ const fetchSpecificOrder = async (req, res) => {  //use path params
 
 const addProduct = async (req, res) => {
     try {
-        if (await isAdmin(req?.user?.user_id)) {
             console.info('/admin/add-product called');   //
             let validatedresult = validateProduct(req?.body);
             if (validatedresult.error) {
@@ -77,10 +65,7 @@ const addProduct = async (req, res) => {
                 return res.status(500).send(new Response(false, 'Error while adding new productt', {}));
             }
             return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));
-        }
-        else {
-            return res.status(403).send(new Response(false, 'User is Forbidden', {}));
-        }
+    
     }
     catch (e) {
         console.error("Admin Controller: Error occured in addProduct", e);
@@ -90,18 +75,13 @@ const addProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
     try {
-        if (await isAdmin(req?.user?.user_id)) {
-            console.info('/admin/delete-product called');   //
-            const { product_id } = req?.body;
+            console.info('/admin/delete-product called');
+            const product_id = req?.params?.product_id;
             const result = await removeProduct({ product_id: product_id });
             if (result?.error) {
                 return res.status(500).send(new Response(false, 'Error while removing product', {}));
             }
             return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));
-        }
-        else {
-            return res.status(403).send(new Response(false, 'User is Forbidden', {}));
-        }
     }
     catch (e) {
         console.error('Admin Controller: Error occurred while deleting product', e);
@@ -111,8 +91,7 @@ const deleteProduct = async (req, res) => {
 
 const editProduct = async (req) => {
     try {
-        if (await isAdmin(req?.user?.user_id)) {
-            console.info('/admin/delete-product called');   //
+            console.info('/admin/delete-product called');
             let validatedresult = validateProduct(req?.body);
             if (validatedresult.error) {
                 console.error('error occured in validating add product', validatedresult.error.details);
@@ -123,10 +102,6 @@ const editProduct = async (req) => {
                 return res.status(500).send(new Response(false, 'Error while updating product', {}));
             }
             return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));
-        }
-        else {
-            return res.status(403).send(new Response(false, 'User is Forbidden', {}));
-        }
     }
     catch (e) {
         console.error('Admin Controller: Error occurred while updating product', e);
@@ -137,8 +112,8 @@ const editProduct = async (req) => {
 module.exports = {
     fetchAllOrders,
     fetchSpecificOrder,
-    //editOrder,
     addProduct,
     deleteProduct,
     editProduct
+    //editOrder,
 }
