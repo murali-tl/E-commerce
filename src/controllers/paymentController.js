@@ -37,11 +37,12 @@ const createOrder = async (req, res) => {
         if (!checkProductStock(productQuantities)) {
             return res.status(200).send(new Response(true, 'Some of the products are out of stock', {}));
         }
+        let calculatedAmount = calculateOrderAmount(req?.body?.shipping_type, product_details);
         if (amount && typeof (amount) === 'number') {
             let createdOrder = await order.create({
                 user_id: req?.user?.user_id,
                 product_details: req?.body?.product_details,
-                amount: amount,
+                amount: calculatedAmount,
                 payment_status: Constants?.PAYMENT_STATUS[0],
                 order_status: Constants?.ORDER_STATUS[0],
                 shipping_type: req?.body?.shipping_type,
@@ -51,7 +52,7 @@ const createOrder = async (req, res) => {
                 delivered_at: ''
             });
             const paymentIntent = await stripe.paymentIntents.create({
-                amount: calculateOrderAmount(req?.body?.shipping_type, product_details),
+                amount: calculatedAmount,
                 currency: "usd",
                 customer: req?.user?.user_id,
                 metadata: {
