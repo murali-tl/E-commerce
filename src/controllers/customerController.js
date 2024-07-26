@@ -1,11 +1,11 @@
 const { Response } = require("../services/constants");
 const { createUser, getWishListDetails, getCartDetails } = require('../services/userServices');
 const { insertIntoWishList, deleteFromWishList } = require('../services/wishListServices');
-const { insertIntoCart, deleteFromCart, orderSummary } = require('../services/cartServices');
+const { insertIntoCart, deleteFromCart, orderSummary, updateCartProduct } = require('../services/cartServices');
 const { getAdresses, createAddress } = require('../services/addressServices');
 const { viewFilterOrders } = require('../services/orderServices');
 const { validateUser, validateAddress, validateCartDetails } = require('../services/validations');
-// const { addReview, updateReview } = require('../services/reviewServices');
+// const { addReview, updateReview } = require('../services/reviewServices'); //commented based on discussion with FE
 
 const registerUser = async (req, res,) => {
   try {
@@ -16,7 +16,6 @@ const registerUser = async (req, res,) => {
       return res.status(400).send(new Response(false, 'Invalid details', { "error": validated?.error }));
     }
     const result = await createUser({ full_name: full_name, email: email, password: password });
-    //console.log(result);
     if (!result?.status) {
       return res.status(500).send(new Response(false, result?.message, {}));
     }
@@ -33,7 +32,6 @@ const fetchWishList = async (req, res) => {
     console.info('/user/wish-list called');
     const userId = req?.user?.user_id;
     const result = await getWishListDetails(userId);
-    //console.log(result);
     if (!result?.status) {
       return res.status(500).send(new Response(false, 'Error while fetching wishlist', {}));
     }
@@ -67,12 +65,12 @@ const addToWishList = async (req, res) => {
     return res.status(500).send(new Response(false, 'Internal server Error', {}));
   }
 }
-//
+
 const removeFromWishList = async (req, res) => {
   try {
     console.info('/user/remove-from-wish-list called');
     const userId = req?.user?.user_id;
-    const { product_id } = req?.body;
+    const product_id = req?.params?.product_id;
     const result = await deleteFromWishList({ user_id: userId, product_id: product_id });
     if (!result?.success) {
       return res.status(500).send(new Response(false, 'Error while removing product from wishlist', {}));
@@ -133,6 +131,38 @@ const addToCart = async (req, res) => {
     return res.status(500).send(new Response(false, 'Internal server Error', {}));
   }
 }
+
+// currently on hold
+
+// const updateCart = async (req, res) => {
+//   try {
+//     console.info('/user/add-to-cart called.');
+//     const validated = validateCartDetails(req?.body);
+//     if (validated?.error) {
+//       return res.status(400).send(new Response(false, 'Invalid product details while updating to cart', { "error": validated?.error }));
+//     }
+//     const user_id = req?.user?.user_id;
+//     const { product_id, size_id, color_id, quantity } = req?.body;
+//     if(!quantity){
+//       return res.status(400).send(new Response(false, 'Invalid product details while updating to cart: Quantity missing', { }));
+//     }
+//     let data = {
+//       product_id: product_id,
+//       size_id: size_id,
+//       color_id: color_id,
+//       quantity: quantity
+//     }
+//     const result = await updateCartProduct(data, user_id);
+//     if (result?.error) {
+//       return res.status(500).send(new Response(false, 'Error while updating product quantity in cart', {}));
+//     }
+//     return res.status(result?.status).send(new Response(true, result?.message, result?.data));
+//   }
+//   catch (e) {
+//     console.error("Customer Controller: Error occurred while adding to cart", e)
+//     return res.status(500).send(new Response(false, 'while updating product quantity in cart', {}));
+//   }
+// }
 
 const removeFromCart = async (req, res) => {
   try {
@@ -197,10 +227,10 @@ const removeFromCart = async (req, res) => {
 const fetchAddresses = async (req, res) => {
   try {
     console.info('/user/addresses called.');
-    const user_id = req?.user?.user_id;
-    const result = await getAdresses(user_id);
+    const userId = req?.user?.user_id;
+    const result = await getAdresses(userId);
     if (result?.error) {
-      return res.status(500).send(new Response(false, 'Error while fetchin addresses', {}));
+      return res.status(500).send(new Response(false, 'Error while fetching addresses', {}));
     }
     return res.status(result?.status).send(new Response(result?.success, result?.message, result?.data));
   }
@@ -253,8 +283,8 @@ const viewFilterUserOrders = async (req, res) => {
 const calculateOrderAmount = async (req, res) => {
   try {
     console.info('/user/calculate-order-amount called');
-    let { shipping_type, product_ids } = req?.body;
-    const result = await orderSummary({ shipping_type: shipping_type, product_ids: product_ids });
+    let { shipping_type, product_details } = req?.body;
+    const result = await orderSummary({ shipping_type: shipping_type, product_details: product_details });
     if (result?.error) {
       return res.status(500).send(new Response(false, 'Error while calculating order summary', {}));
     }
@@ -274,10 +304,11 @@ module.exports = {
   fetchCart,
   addToCart,
   removeFromCart,
-  // createReview,
-  // markReview,
   fetchAddresses,
   addAddress,
   viewFilterUserOrders,
-  calculateOrderAmount
+  calculateOrderAmount,
+  //updateCart,
+  // createReview,
+  // markReview,
 }
