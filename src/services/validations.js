@@ -72,10 +72,11 @@ function validateAddress(addressObj) {
     city: Joi.string().required(),
     pincode: Joi.string().required(),
     country: Joi.string().required(),
-    mobile: Joi.string().pattern(/^[0-9]+$/).required().min(10).max(15)
+    mobile: Joi.string().pattern(/^[0-9]+$/).min(10).max(15)
   }).options({ abortEarly: false });
   return addressSchema.validate(addressObj);
 }
+
 const productDetailSchema = Joi.object({
   product_id: Joi.string().uuid().required(),
   size: Joi.string().required(),
