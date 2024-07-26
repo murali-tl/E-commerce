@@ -6,7 +6,7 @@ const getAdresses = async (user_id) => {
             where: {
                 user_id: user_id
             },
-            attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] },            
+            attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt', 'mobile'] },            
         });
         if (addresses.length) {
             return { success: true, status: 200, message: 'Addresses fetched', data: { "addresses": addresses } };
@@ -20,9 +20,9 @@ const getAdresses = async (user_id) => {
     }
 }
 
-const createAddress = async (data, user_id) => {  //address validation
+const createAddress = async (data, user_id) => {  
     try {
-        const { first_name, second_name, address_line1, address_line2, city, pincode, country, mobile } = data;
+        const { first_name, second_name, address_line1, address_line2, city, pincode, country } = data;
         await user_addresses.create({
             user_id: user_id,
             first_name: first_name,
@@ -32,7 +32,6 @@ const createAddress = async (data, user_id) => {  //address validation
             city: city,
             pincode: pincode,
             country: country,
-            mobile: mobile 
         });
         return { success: true, status: 200, message: 'Address added', data: {} };
 

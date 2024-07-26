@@ -8,10 +8,8 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_API_KEY);
 const { order } = require('../models/index');
 const { ifPaymentSuccess } = require('../services/paymentServices');
 
-const calculateOrderAmount = (productIds) => {
-    let { total_amount } = orderSummary({
-        product_ids: productIds
-    })
+const calculateOrderAmount = (shippingType, productDetails) => {
+    let { total_amount } = orderSummary({shipping_type: shippingType, product_details: productDetails})
     return total_amount || 0;
 };
 
@@ -19,8 +17,6 @@ const createOrder = async (req, res) => {
     try {
         const amount = req?.body?.amount;
         const { product_details } = req.body;
-        const productIds = product_details.map(obj => { return obj?.product_id });
-        console.log(productIds);
         const validated = validateAddress(req?.body?.address);
         const productValidation = validateProductDetails(req?.body?.product_details);
         if (validated.error) {
@@ -55,7 +51,7 @@ const createOrder = async (req, res) => {
                 delivered_at: ''
             });
             const paymentIntent = await stripe.paymentIntents.create({
-                amount: calculateOrderAmount(productIds),
+                amount: calculateOrderAmount(req?.body?.shipping_type, product_details),
                 currency: "usd",
                 customer: req?.user?.user_id,
                 metadata: {
