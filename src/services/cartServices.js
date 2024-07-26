@@ -33,7 +33,7 @@ const insertIntoCart = async (data, userId) => {
                 if(quantityInCart>0){
                     maxQuantity -= quantityInCart;
                 }
-                if((maxQuantity - data?.quantity )<1 ){
+                if((maxQuantity - data?.quantity )<0 ){
                     return { status: 200, message: "Cannot update Quantity: Current quantity exceeds product Stock", data: { cart_size: cartDetails?.product_details?.length } };
                 }
                 let product_details = [...cartDetails?.dataValues?.product_details];
