@@ -45,7 +45,7 @@ const fetchReviews = async (req, res) => {
         if (!result?.status) {
             return res.status(500).send(new Response(false, 'Error while fetching reviews', {}));
         }
-        return res.status(200).send(new Response(true, 'Product reviews fetched', { average_rating: result[1], reviews: result[0], ratings_count: result[2] }));
+        return res.status(200).send(new Response(true, 'Product reviews fetched', { average_rating: result?.data[1], reviews: result?.data[0], ratings_count: result?.data[2] }));
     }
     catch (e) {
         console.error("Product Controller: Error occurred while fetching Review", e)

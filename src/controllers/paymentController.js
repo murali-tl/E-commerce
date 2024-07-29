@@ -9,12 +9,13 @@ const { order } = require('../models/index');
 const { ifPaymentSuccess } = require('../services/paymentServices');
 
 const calculateOrderAmount = (shippingType, productDetails) => {
-    let { total_amount } = orderSummary({shipping_type: shippingType, product_details: productDetails})
+    let { total_amount } = orderSummary({ shipping_type: shippingType, product_details: productDetails })
     return total_amount || 0;
 };
 
 const createOrder = async (req, res) => {
     try {
+        console.info('/user/cretae-order called');
         const amount = req?.body?.amount;
         const { product_details } = req.body;
         const validated = validateAddress(req?.body?.address);
@@ -71,12 +72,14 @@ const createOrder = async (req, res) => {
         }
     }
     catch (err) {
-        console.log(err);
+        console.error("Error while creating order.", err);
+        return res.status(500).send(new Response(false, 'Internal server error in create order', {}))
     }
 };
 
 const confirmOrder = (request, response) => {
     try {
+        console.info('/user/webhook called');
         let event = request.body;
 
         if (endpointSecret) {
