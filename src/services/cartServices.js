@@ -177,7 +177,7 @@ const orderSummary = async (req) => {
         let whereConditions = {};
         const productIds = product_details?.map(item => item.product_id);
         if (productIds?.length) {
-            whereConditions['product_id'] = [productIds]
+            whereConditions['product_id'] = productIds
         }
         const products = await product.findAll({
             where: whereConditions,
@@ -187,12 +187,9 @@ const orderSummary = async (req) => {
             const productItem = products.find(item => item.product_id === element?.product_id);
             sub_amount += (element?.quantity * productItem?.price);
         });
-        sub_amount = product_prices.reduce((acc, value) => {
-            return acc + value;
-        }, 0);
         total_amount = sub_amount;
         if (shipping_type && (shipping_type in Constants.SHIPPING_DETAILS)) {
-            total_amount += Constants.SHIPPING_DETAILS?.shipping_type;
+            total_amount += Constants.SHIPPING_DETAILS[shipping_type][1];
         }
         return { total_amount: total_amount, sub_amount: sub_amount };
     }
