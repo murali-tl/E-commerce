@@ -1,14 +1,16 @@
-const { order, payment, product } = require('../models/index');
+const { order, payment, cart } = require('../models/index');
 const { Constants } = require('./constants');
 const { updateProductQuantity } = require('./utils');
+const { deleteFromCart } = require('./cartServices');
+
 const ifPaymentSuccess = async (paymentIntent) => {
     const currentDate = new Date();
     const futureDate = new Date(currentDate);
     if (paymentIntent?.shipping?.shipping_type) {
         futureDate.setDate(currentDate.getDate() + Constants.SHIPPING_DETAILS?.shipping_type[1]);
     }
-    else{
-    futureDate.setDate(currentDate.getDate() + 4);
+    else {
+        futureDate.setDate(currentDate.getDate() + 4);
     }
     order.update({
         order_status: Constants?.ORDER_STATUS[1],
@@ -28,6 +30,26 @@ const ifPaymentSuccess = async (paymentIntent) => {
     });
     if (orderDetails) {
         const productsDetails = orderDetails?.product_details;
+        if (productsDetails?.length > 1) {
+            await cart.update({
+                product_details: []
+            },
+                {
+                    where:{
+                        user_id: paymentIntent?.metadata?.user_id
+                    }
+                }
+            );
+        }
+        else {
+            let {product_id, color_id, size_id} = productsDetails[0];
+            let dataObj = {
+                product_id: product_id,
+                color_id: color_id,
+                size_id: size_id
+            };
+            await deleteFromCart(dataObj, paymentIntent?.metadata?.user_id);
+        }
         productsDetails.forEach(element => {
             updateProductQuantity(element?.product_id, element?.quantity);
         });
