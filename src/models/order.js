@@ -26,6 +26,8 @@ module.exports = (sequelize, DataTypes) => {
     shipping_type: DataTypes.STRING,
     address: DataTypes.JSON,
     delivery_status: DataTypes.STRING,
+    estimated_delivery_date: DataTypes.DATE,
+    delivered_at: DataTypes.DATE,
     updated_by: DataTypes.STRING
   }, {
     sequelize,

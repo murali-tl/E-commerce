@@ -49,8 +49,6 @@ const createOrder = async (req, res) => {
                 shipping_type: req?.body?.shipping_type,
                 address: req?.body?.address,
                 delivery_status: '',
-                estimated_delivery_date: '',
-                delivered_at: ''
             });
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: calculatedAmount,
