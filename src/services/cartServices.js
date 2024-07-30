@@ -177,7 +177,7 @@ const orderSummary = async (req) => {
         let whereConditions = {};
         const productIds = product_details?.map(item => item.product_id);
         if (productIds?.length) {
-            whereConditions['product_id'] = [product_ids]
+            whereConditions['product_id'] = [productIds]
         }
         const products = await product.findAll({
             where: whereConditions,
