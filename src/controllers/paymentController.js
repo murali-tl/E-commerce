@@ -77,8 +77,9 @@ const createOrder = async (req, res) => {
 
 const confirmOrder = (request, response) => {
     try {
+        console.info('user/webhook called.');
         let event = request.body;
-
+        const endpointSecret = process.env.STRIPE_END_POINT_SECRET;
         if (endpointSecret) {
             // Get the signature sent by Stripe
             const signature = request.headers['stripe-signature'];

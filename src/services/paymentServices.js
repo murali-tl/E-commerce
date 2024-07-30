@@ -7,11 +7,13 @@ const ifPaymentSuccess = async (paymentIntent) => {
     if (paymentIntent?.shipping?.shipping_type) {
         futureDate.setDate(currentDate.getDate() + Constants.SHIPPING_DETAILS?.shipping_type[1]); //sure_post or ground_shipping
     }
-    let futureTime = futureDate.setDate(currentDate.getDate() + 4);
+    else{
+    futureDate.setDate(currentDate.getDate() + 4);
+    }
     order.update({
         order_status: Constants?.ORDER_STATUS[1],
         payment_status: Constants?.PAYMENT_STATUS[1],
-        estimated_delivery_date: futureTime
+        estimated_delivery_date: futureDate
     },
         {
             where: {
