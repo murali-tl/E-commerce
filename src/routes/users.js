@@ -16,7 +16,6 @@ router.get('/addresses', authenticate, customerController.fetchAddresses);
 router.post('/add-address', authenticate, customerController.addAddress);
 router.get('/calculate-order-amount', authenticate, customerController.calculateOrderAmount);
 router.post('/create-order', authenticate, paymentController.createOrder);
-router.post('/webhook', express.raw({type: "application/json"}), paymentController.confirmOrder);
 
 // router.post('/update-cart', authenticate, customerController.updateCart);   // => currently on hold
 // router.post('/create-review', authenticate, customerController.createReview);

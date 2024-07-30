@@ -9,6 +9,9 @@ const PORT = 3000;
 const cors = require('cors')
 const myRoute = require('./routes/mainRoutes');
 
+const paymentController = require('./controllers/paymentController.js');
+app.post('/webhook', express.raw({type: "application/json"}), paymentController.confirmOrder);
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
 
