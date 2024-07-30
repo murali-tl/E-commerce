@@ -33,7 +33,7 @@ const ifPaymentSuccess = async (paymentIntent) => {
         });
         await payment.create({
             payment_id: paymentIntent?.id,
-            user_id: paymentIntent?.customer,
+            user_id: paymentIntent?.metadata?.user_id,
             payment_status: Constants?.PAYMENT_STATUS[1],
             order_id: paymentIntent?.metadata?.order_id,
             amount: paymentIntent?.amount,
