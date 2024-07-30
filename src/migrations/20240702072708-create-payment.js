@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       payment_id: {
-        type: Sequelize.UUID,
+        type: Sequelize.STRING,
         primaryKey: true,
       },
       payment_status: {
