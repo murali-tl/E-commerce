@@ -8,8 +8,9 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_API_KEY);
 const { order } = require('../models/index');
 const { ifPaymentSuccess } = require('../services/paymentServices');
 
-const calculateOrderAmount = (shippingType, productDetails) => {
-    let { total_amount } = orderSummary({shipping_type: shippingType, product_details: productDetails})
+const calculateOrderAmount = async (shippingType, productDetails) => {
+    let obj = {shipping_type: shippingType, product_details: productDetails};
+    let { total_amount } = await orderSummary({body: obj})
     return total_amount || 0;
 };
 
@@ -37,7 +38,7 @@ const createOrder = async (req, res) => {
         if (!checkProductStock(productQuantities)) {
             return res.status(200).send(new Response(true, 'Some of the products are out of stock', {}));
         }
-        let calculatedAmount = calculateOrderAmount(req?.body?.shipping_type, product_details);
+        let calculatedAmount = await calculateOrderAmount(req?.body?.shipping_type, product_details);
         if (amount && typeof (amount) === 'number') {
             let createdOrder = await order.create({
                 user_id: req?.user?.user_id,
@@ -48,14 +49,12 @@ const createOrder = async (req, res) => {
                 shipping_type: req?.body?.shipping_type,
                 address: req?.body?.address,
                 delivery_status: '',
-                estimated_delivery_date: '',
-                delivered_at: ''
             });
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: calculatedAmount,
                 currency: "usd",
-                customer: req?.user?.user_id,
                 metadata: {
+                    user_id: req?.user?.user_id,
                     order_id: createdOrder?.order_id
                 },
                 automatic_payment_methods: {
