@@ -145,7 +145,7 @@ const removeProduct = async (data) => {
     }
 }
 
-const updateProduct = async (data) => { //check product quantity
+const updateProduct = async (data) => {
     let result = validateProduct(data);
     if (result.error) {
         return { "error": result.error.details };

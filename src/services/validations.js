@@ -13,7 +13,6 @@ const isAdmin = async (userId) => {
     if (!userDetails) {
       return 'User not found';
     }
-    //console.log(userDetails);
     const roleName = userDetails.role.role_name;
     if (roleName === 'admin') {
       return true;
@@ -21,7 +20,7 @@ const isAdmin = async (userId) => {
     return false;
   } catch (error) {
     console.error('Error checking user role:', error);
-    throw error; // Handle or propagate error as needed
+    throw error; 
   }
 }
 

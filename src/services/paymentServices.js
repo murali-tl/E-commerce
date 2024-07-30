@@ -5,7 +5,7 @@ const ifPaymentSuccess = async (paymentIntent) => {
     const currentDate = new Date();
     const futureDate = new Date(currentDate);
     if (paymentIntent?.shipping?.shipping_type) {
-        futureDate.setDate(currentDate.getDate() + Constants.SHIPPING_DETAILS?.shipping_type[1]); //sure_post or ground_shipping
+        futureDate.setDate(currentDate.getDate() + Constants.SHIPPING_DETAILS?.shipping_type[1]);
     }
     else{
     futureDate.setDate(currentDate.getDate() + 4);

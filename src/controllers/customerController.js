@@ -1,7 +1,7 @@
 const { Response } = require("../services/constants");
 const { createUser, getWishListDetails, getCartDetails } = require('../services/userServices');
 const { insertIntoWishList, deleteFromWishList } = require('../services/wishListServices');
-const { insertIntoCart, deleteFromCart, orderSummary, updateCartProduct } = require('../services/cartServices');
+const { insertIntoCart, deleteFromCart, orderSummary } = require('../services/cartServices');
 const { getAdresses, createAddress } = require('../services/addressServices');
 const { viewFilterOrders } = require('../services/orderServices');
 const { validateUser, validateAddress, validateCartDetails } = require('../services/validations');
