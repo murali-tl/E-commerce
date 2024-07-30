@@ -23,7 +23,7 @@ const ifPaymentSuccess = async (paymentIntent) => {
             }
         });
     // update quantity in db
-    const orderDetails = order.findOne({
+    const orderDetails = await order.findOne({
         where: {
             order_id: paymentIntent?.metadata?.order_id
         }

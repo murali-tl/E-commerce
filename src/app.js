@@ -4,11 +4,10 @@ const YAML = require("yamljs");
 const path = require("path");
 
 const app = express();
-const PORT = 3001;
+const PORT = 3000;
 
 const cors = require('cors')
 const myRoute = require('./routes/mainRoutes');
-
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
