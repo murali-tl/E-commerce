@@ -194,7 +194,7 @@ const orderSummary = async (req) => {
         return { total_amount: total_amount, sub_amount: sub_amount };
     }
     catch (err) {
-        console.log(err);
+        console.error(err);
         return { "error": err };
     }
 }

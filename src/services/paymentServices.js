@@ -5,7 +5,7 @@ const ifPaymentSuccess = async (paymentIntent) => {
     const currentDate = new Date();
     const futureDate = new Date(currentDate);
     if (paymentIntent?.shipping?.shipping_type) {
-        futureDate.setDate(currentDate.getDate() + Constants.SHIPPING_DETAILS?.shipping_type[1]); //sure_post or ground_shipping
+        futureDate.setDate(currentDate.getDate() + Constants.SHIPPING_DETAILS?.shipping_type[1]);
     }
     else{
     futureDate.setDate(currentDate.getDate() + 4);
@@ -33,7 +33,7 @@ const ifPaymentSuccess = async (paymentIntent) => {
         });
         await payment.create({
             payment_id: paymentIntent?.id,
-            user_id: paymentIntent?.customer,
+            user_id: paymentIntent?.metadata?.user_id,
             payment_status: Constants?.PAYMENT_STATUS[1],
             order_id: paymentIntent?.metadata?.order_id,
             amount: paymentIntent?.amount,

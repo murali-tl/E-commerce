@@ -1,7 +1,6 @@
 const { user, wishlist, cart, product, role, color, size } = require('../models/index');
 require('dotenv').config({ path: '../.env' });
 const crypto = require('crypto');
-const { validateUser } = require('../services/validations');
 
 const createUser = async (data) => {
     const { full_name, email, password } = data;
