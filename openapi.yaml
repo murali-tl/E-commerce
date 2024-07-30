@@ -1599,11 +1599,11 @@ paths:
                     properties:
                       product_id:
                         type: string
-                      size:
+                      size_id:
                         type: string
                       quantity:
                         type: integer
-                      colour:
+                      color_id:
                         type: string
               required:
                 - amount
