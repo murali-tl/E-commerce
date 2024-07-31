@@ -12,7 +12,7 @@ const ifPaymentSuccess = async (paymentIntent) => {
     else {
         futureDate.setDate(currentDate.getDate() + 4);
     }
-    order.update({
+    await order.update({
         order_status: Constants?.ORDER_STATUS[1],
         payment_status: Constants?.PAYMENT_STATUS[1],
         estimated_delivery_date: futureDate
@@ -62,7 +62,7 @@ const ifPaymentSuccess = async (paymentIntent) => {
 }
 
 const ifPaymentFailed = async (paymentIntent) => {
-    order.update({
+    await order.update({
         order_status: Constants?.ORDER_STATUS[2],
         payment_status: Constants?.PAYMENT_STATUS[2],
     },
