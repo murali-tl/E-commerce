@@ -89,7 +89,7 @@ const deleteProduct = async (req, res) => {
     }
 }
 
-const editProduct = async (req) => {
+const editProduct = async (req, res) => {
     try {
             console.info('/admin/delete-product called');
             let validatedresult = validateProduct(req?.body);

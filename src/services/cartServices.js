@@ -67,7 +67,6 @@ const insertIntoCart = async (data, userId) => {
                     let newQuantity = foundProduct[0]?.quantity + data?.quantity;
                     productObj['quantity'] = newQuantity;
                     otherProducts.push(productObj);
-                    console.log('Inserted into cart');
                     await cart.update({
                         product_details: otherProducts
                     },
@@ -185,8 +184,8 @@ const orderSummary = async (req) => {
             sub_amount += (element?.quantity * productItem?.price);
         });
         total_amount = sub_amount;
-        if (shipping_type && (shipping_type in Constants.SHIPPING_DETAILS)) {
-            total_amount += Constants.SHIPPING_DETAILS[shipping_type][1];
+        if (shipping_type && (shipping_type in Constants.SHIPPING_PRICES)) {
+            total_amount += Constants.SHIPPING_PRICES[shipping_type];
         }
         return { total_amount: total_amount, sub_amount: sub_amount };
     }

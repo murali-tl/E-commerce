@@ -17,6 +17,7 @@ const calculateOrderAmount = async (shippingType, productDetails) => {
 
 const createOrder = async (req, res) => {
     try {
+        console.info('user/create-order called.');
         const amount = req?.body?.amount;
         const { product_details } = req.body;
         const validated = validateAddress(req?.body?.address);
@@ -75,7 +76,8 @@ const createOrder = async (req, res) => {
         }
     }
     catch (err) {
-        console.log(err);
+        console.error('Error while creating order', err);
+        return res.status(500).send(new Response(false, 'Internal Server error', {}));
     }
 };
 
@@ -94,7 +96,7 @@ const confirmOrder = (request, response) => {
                     endpointSecret
                 );
             } catch (err) {
-                console.log(`⚠️  Webhook signature verification failed.`, err.message);
+                console.error(`⚠️  Webhook signature verification failed.`, err.message);
                 return response.sendStatus(400);
             }
         }

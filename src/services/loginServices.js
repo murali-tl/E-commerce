@@ -53,7 +53,7 @@ const verifyOTP = async (data) => {
     return lastRow;
     }
     catch (err) {
-        console.log(err);
+        console.error('Error while verifying OTP', err);
         return  false;
     }
 }

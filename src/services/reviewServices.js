@@ -44,7 +44,7 @@ const getReviews = async (productId) => {
 
     }
     catch (err) {
-        console.log('==', err);
+        console.error('Services: Error while fetcing review:', err);
         return { status: false, message: "Error while fetching product reviews" };
     }
 }
@@ -77,7 +77,6 @@ const addReview = async (data, user_id) => {
                     product_id: product_id
                 }
             });
-            console.log(result);
             const averageRating = result.dataValues.avg_rating || 0;
 
             await product.update(

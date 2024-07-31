@@ -5,7 +5,7 @@ const { getRole } = require('./validations')
 
 function authenticate(authHeader) {
     try {
-        console.log('Authentication function called');
+        console.info('Authentication function called');
         const token = authHeader?.split(' ')?.[1];
         let response = {};
         if (!token) {
@@ -25,8 +25,8 @@ function authenticate(authHeader) {
         return response;
     }
     catch (err) {
-        console.log(err);
-        return res.status(500).send(new Response(false, 'Internal Server Error', {}));
+        console.error('Error in Auth services:', err);
+        return { "status": 500, "success": false, "message": 'Internal server error', "data": {} };
     }
 }
 

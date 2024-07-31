@@ -128,7 +128,7 @@ const getRecentProducts = async () => {
         return { success: true, products: products };
     }
     catch (err) {
-        console.log(err);
+        console.error('Error while fetching product details:', err);
         return { success: false, message: "Error occurred while fetching recent products" };
     }
 }

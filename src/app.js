@@ -12,9 +12,9 @@ const cors = require('cors')
 const paymentController = require('./controllers/paymentController.js');
 app.post('/webhook', express.raw({type: "application/json"}), paymentController.confirmOrder);
 
-const myRoute = require('./routes/routes.js');
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
+const myRoute = require('./routes/routes.js');
 
 app.use(
     cors({
@@ -22,7 +22,7 @@ app.use(
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     })
   );
-app.use('/', myRoute);
+app.use('/api', myRoute);
 
 app.get('/', async (req, res) => {
     console.info("/health api called at", new Date().toISOString());

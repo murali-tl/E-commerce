@@ -167,8 +167,8 @@ const updateProduct = async (data) => {
                 }
             }
         );
-        if (result?.affectedRows > 0) {
-            return { success: true, status: 200, message: 'Product removed', data: {} };
+        if (result[0] > 0) {
+            return { success: true, status: 200, message: 'Product updated', data: {} };
         }
         return { success: false, status: 400, message: 'Product not found', data: {} };
     }

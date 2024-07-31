@@ -53,7 +53,7 @@ const sendOTP = async (email) => {
         }
     }
     catch (err) {
-        console.log(err);
+        console.error('Error while sending OTP to mail:', err);
         return { status: false };
     }
 }

@@ -14,7 +14,6 @@ const getRole = async (userId) => {
 
 const isCustomer = async (req, res, next) => {
   try {
-    console.log('=',req?.url);
     const roleName = await getRole(req?.user?.user_id);
     if (!roleName || roleName !== 'customer') {
       return res.status(403).send(new Response(false, 'Access denied.', {}));
