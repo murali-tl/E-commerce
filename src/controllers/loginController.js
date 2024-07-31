@@ -1,7 +1,6 @@
 const { Response } = require('../services/constants');
 const { getUser, verifyOTP, generateAccessToken } = require('../services/loginServices');
 const jwt = require("jsonwebtoken");
-const { user } = require('../models/index');
 const { sendOTP } = require('../services/otpServices.js');
 require('dotenv').config({ path: '../.env' });
 const { getRole, validateLoginDetails } = require('../services/validations.js')

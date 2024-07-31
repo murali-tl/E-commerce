@@ -49,7 +49,6 @@ const ifPaymentSuccess = async (paymentIntent) => {
             };
             await deleteFromCart(dataObj, paymentIntent?.metadata?.user_id);
         }
-
         await payment.create({
             payment_id: paymentIntent?.id,
             user_id: paymentIntent?.metadata?.user_id,

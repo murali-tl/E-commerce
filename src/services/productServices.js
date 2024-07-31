@@ -77,7 +77,6 @@ const getProduct = async (productId) => {
             },
             attributes: ['color_id', 'color_name', 'color_code']
         });
-
         let colorValues = [];
         colors.forEach(element => {
             colorValues.push(element.dataValues);
