@@ -111,8 +111,8 @@ function validateAddress(addressObj) {
 
 const productDetailSchema = Joi.object({
   product_id: Joi.string().uuid().required(),
-  size: Joi.string().required(),
-  colour: Joi.string().required(),
+  size_id: Joi.string().uuid().required(),
+  color_id: Joi.string().uuid().required(),
   quantity: Joi.number().integer().min(1).required()
 });
 
@@ -159,4 +159,3 @@ module.exports = {
   validateCartDetails,
   validateReview
 }
-

@@ -145,7 +145,7 @@ paths:
           schema:
             type: object
             properties:
-              refresh-token:
+              refresh_token:
                 type: string
       responses:
         default:
@@ -204,6 +204,12 @@ paths:
       description: "Fetch product parameters like categories, colors, and sizes."
       tags:
         - Customer APIs
+      parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
       responses:
         200:
           description: "Successful operation"
@@ -276,6 +282,12 @@ paths:
       description: "Fetch banner and recently arrived products for the home page."
       tags:
         - Customer APIs
+      parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
       responses:
         200:
           description: "Successful operation"
@@ -355,6 +367,11 @@ paths:
       tags:
         - Product APIs
       parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
         - in: query
           name: page
           description: "Page number"
@@ -488,6 +505,11 @@ paths:
       tags:
         - Product APIs
       parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
         - in: path
           name: product_id
           description: "ID of the product to fetch"
@@ -604,6 +626,12 @@ paths:
       description: "Fetch products in the user's cart."
       tags:
         - Cart APIs
+      parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
       responses:
         200:
           description: Successful response with cart details
@@ -709,6 +737,11 @@ paths:
       tags:
         - Cart APIs
       parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
         - in: body
           name: body
           description: Product details to add to cart
@@ -765,6 +798,11 @@ paths:
       tags:
         - Cart APIs
       parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
         - in: body
           name: body
           description: Product details to remove from cart
@@ -817,6 +855,11 @@ paths:
       tags:
         - Cart APIs
       parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
         - in: query
           name: shipping_type
           description: Shipping type (e.g., standard, express)
@@ -878,6 +921,12 @@ paths:
       description: "Fetch products in the user's wishlist."
       tags:
         - WishList APIs
+      parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
       responses:
         200:
           description: "Successful operation"
@@ -963,6 +1012,11 @@ paths:
       tags:
         - WishList APIs
       parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
         - in: body
           name: body
           description: "Product ID to add to wishlist"
@@ -1009,6 +1063,11 @@ paths:
       tags:
         - WishList APIs
       parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
         - in: query
           name: product_id
           description: "Product ID to remove from wishlist"
@@ -1051,6 +1110,12 @@ paths:
       description: Fetch addresses associated with the user.
       tags:
         - Customer APIs
+      parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
       responses:
         200:
           description: Successful operation
@@ -1116,6 +1181,11 @@ paths:
       tags:
         - Customer APIs
       parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
         - in: body
           name: body
           description: Address details to add
@@ -1173,6 +1243,11 @@ paths:
       tags:
         - Product APIs
       parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
         - in: path
           name: product_id
           required: true
@@ -1267,6 +1342,11 @@ paths:
       tags:
         - admin
       parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
         - in: body
           name: body
           description: Product details to add
@@ -1340,6 +1420,11 @@ paths:
       tags:
         - admin
       parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
         - in: body
           name: body
           description: Updated product details
@@ -1411,6 +1496,11 @@ paths:
       tags:
         - admin
       parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
         - in: query
           name: order_id
           type: string
@@ -1453,6 +1543,11 @@ paths:
       tags:
         - admin
       parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
         - in: query
           name: page
           type: number
@@ -1521,6 +1616,11 @@ paths:
       tags:
         - admin
       parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
         - in: query
           name: order_id
           type: string
@@ -1581,6 +1681,11 @@ paths:
       tags:
         - Order APIs
       parameters:
+        - in: header
+          name: BEARER Token
+          description: "Bearer token for authorization"
+          required: true
+          example: "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTXVyYWxpIiwiaWF0IjoxNzE4MzQ0ODUwfQ.nWvHIFI3X_ii6J38pdUdkuKTiSeiy5Ly9SAF6VymbI8"
         - in: body
           schema:
               type: object
@@ -1599,11 +1704,11 @@ paths:
                     properties:
                       product_id:
                         type: string
-                      size:
+                      size_id:
                         type: string
                       quantity:
                         type: integer
-                      colour:
+                      color_id:
                         type: string
               required:
                 - amount
@@ -1642,7 +1747,7 @@ paths:
                       reason:
                         type: string
                         example: "Invalid product details"
-  /user/webhook:
+  /webhook:
     post:
       summary: Verify payment webhook
       tags:
@@ -1671,4 +1776,3 @@ paths:
                   status:
                     type: boolean
                     example: false
-

@@ -9,15 +9,12 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      order.belongsTo(models.product, {
-        foreignKey: 'product_id',
-        as: 'productInfo'
-      });
     }
   }
   order.init({
     order_id: {
         type: DataTypes.STRING,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true
       },
     user_id: DataTypes.UUID,

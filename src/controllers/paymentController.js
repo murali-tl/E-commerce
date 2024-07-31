@@ -2,20 +2,21 @@ const { orderSummary } = require('../services/cartServices');
 const { Response, Constants } = require('../services/constants');
 const { checkProductStock } = require('../services/orderServices');
 const { validateAddress, validateProductDetails } = require('../services/validations');
+const { updateProductQuantity} = require('../services/utils');
 require('dotenv').config({ path: '../.env' });
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_API_KEY);
 const { order } = require('../models/index');
-const { ifPaymentSuccess } = require('../services/paymentServices');
+const { ifPaymentSuccess, ifPaymentFailed } = require('../services/paymentServices');
 
-const calculateOrderAmount = (shippingType, productDetails) => {
-    let { total_amount } = orderSummary({ shipping_type: shippingType, product_details: productDetails })
+const calculateOrderAmount = async (shippingType, productDetails) => {
+    let obj = { shipping_type: shippingType, product_details: productDetails };
+    let { total_amount } = await orderSummary({ body: obj })
     return total_amount || 0;
 };
 
 const createOrder = async (req, res) => {
     try {
-        console.info('/user/cretae-order called');
         const amount = req?.body?.amount;
         const { product_details } = req.body;
         const validated = validateAddress(req?.body?.address);
@@ -35,10 +36,10 @@ const createOrder = async (req, res) => {
                 productQuantities[obj?.product_id] = obj?.quantity;
             }
         }
-        if (!checkProductStock(productQuantities)) {
+        if (!(await checkProductStock(productQuantities))) {
             return res.status(200).send(new Response(true, 'Some of the products are out of stock', {}));
         }
-        let calculatedAmount = calculateOrderAmount(req?.body?.shipping_type, product_details);
+        let calculatedAmount = await calculateOrderAmount(req?.body?.shipping_type, product_details);
         if (amount && typeof (amount) === 'number') {
             let createdOrder = await order.create({
                 user_id: req?.user?.user_id,
@@ -49,14 +50,16 @@ const createOrder = async (req, res) => {
                 shipping_type: req?.body?.shipping_type,
                 address: req?.body?.address,
                 delivery_status: '',
-                estimated_delivery_date: '',
-                delivered_at: ''
+            });
+            const productsDetails = req?.body?.product_details;
+            productsDetails.forEach(element => {
+                updateProductQuantity(element?.product_id, element?.quantity);
             });
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: calculatedAmount,
                 currency: "usd",
-                customer: req?.user?.user_id,
                 metadata: {
+                    user_id: req?.user?.user_id,
                     order_id: createdOrder?.order_id
                 },
                 automatic_payment_methods: {
@@ -72,16 +75,15 @@ const createOrder = async (req, res) => {
         }
     }
     catch (err) {
-        console.error("Error while creating order.", err);
-        return res.status(500).send(new Response(false, 'Internal server error in create order', {}))
+        console.log(err);
     }
 };
 
 const confirmOrder = (request, response) => {
     try {
-        console.info('/user/webhook called');
+        console.info('user/webhook called.');
         let event = request.body;
-
+        const endpointSecret = process.env.STRIPE_END_POINT_SECRET;
         if (endpointSecret) {
             // Get the signature sent by Stripe
             const signature = request.headers['stripe-signature'];
@@ -99,18 +101,26 @@ const confirmOrder = (request, response) => {
 
         switch (event.type) {
             case 'payment_intent.succeeded':
-                const paymentIntent = event.data.object;
-                ifPaymentSuccess(paymentIntent);
+                ifPaymentSuccess(event.data.object);
+                break;
+            case 'payment_intent.cancelled':
+                ifPaymentFailed(event.data.object);
+                break;
+            case 'payment_intent.payment_failed':
+                ifPaymentFailed(event.data.object);
                 break;
             case 'payment_method.attached':
                 const paymentMethod = event.data.object;
-                console.log('case2');
+                console.log('case2')
+                // Then define and call a method to handle the successful attachment of a PaymentMethod.
+                // handlePaymentMethodAttached(paymentMethod);
                 break;
             default:
                 // Unexpected event type
                 console.log(`Unhandled event type ${event.type}.`);
         }
 
+        // Return a 200 response to acknowledge receipt of the event
         response.send();
     }
     catch (e) {

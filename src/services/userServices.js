@@ -113,8 +113,6 @@ const getCartDetails = async (user_id) => {
     }
 }
 
-
-
 module.exports = {
     createUser,
     getWishListDetails,

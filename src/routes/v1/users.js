@@ -15,7 +15,6 @@ router.get('/addresses', userAuth, customerController.fetchAddresses);
 router.post('/add-address', userAuth, customerController.addAddress);
 router.get('/calculate-order-amount', userAuth, customerController.calculateOrderAmount);
 router.post('/create-order', userAuth, paymentController.createOrder);
-router.post('/webhook', userAuth, paymentController.confirmOrder);
 
 /* Based on discussion with FE below routes are commented */
 
