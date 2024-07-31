@@ -105,7 +105,7 @@ const confirmOrder = (request, response) => {
             case 'payment_intent.succeeded':
                 ifPaymentSuccess(event.data.object);
                 break;
-            case 'payment_intent.cancelled':
+            case 'payment_intent.canceled':
                 ifPaymentFailed(event.data.object);
                 break;
             case 'payment_intent.payment_failed':

@@ -22,7 +22,7 @@ const getProducts = async (data) => {
         }
         if (sort_by) {
             if (sort_by === 'recent') {
-                sort_by = 'created_at';
+                sort_by = 'createdAt';
             }
         }
         const offset = (page - 1) * limit;
@@ -32,7 +32,7 @@ const getProducts = async (data) => {
         const products = await product.findAll({
             where: whereConditions,
             attributes: { exclude: ['createdAt', 'created_by', 'updated_by', 'updatedAt', 'deletedAt'] },
-            order: [[sort_by, 'ASC']],
+            order: [[sort_by, 'DESC']],
             limit: parseInt(limit),
             offset: offset,
         });
@@ -121,7 +121,7 @@ const getRecentProducts = async () => {
                     product_status: 'available'
                 },
                 attributes: { exclude: ['createdAt', 'created_by', 'updated_by', 'updatedAt', 'deletedAt'] },
-                order: [['created_at', 'DESC']],
+                order: [['createdAt', 'DESC']],
                 limit: 3
             }
         )
