@@ -2,12 +2,11 @@ const { orderSummary } = require('../services/cartServices');
 const { Response, Constants } = require('../services/constants');
 const { checkProductStock } = require('../services/orderServices');
 const { validateAddress, validateProductDetails } = require('../services/validations');
-const { updateProductQuantity} = require('../services/utils');
 require('dotenv').config({ path: '../.env' });
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_API_KEY);
 const { order } = require('../models/index');
-const { ifPaymentSuccess, ifPaymentFailed } = require('../services/paymentServices');
+const { ifPaymentSuccess } = require('../services/paymentServices');
 
 const calculateOrderAmount = async (shippingType, productDetails) => {
     let obj = { shipping_type: shippingType, product_details: productDetails };
@@ -52,10 +51,7 @@ const createOrder = async (req, res) => {
                 address: req?.body?.address,
                 delivery_status: '',
             });
-            const productsDetails = req?.body?.product_details;
-            productsDetails.forEach(element => {
-                updateProductQuantity(element?.product_id, element?.quantity);
-            });
+           
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: calculatedAmount,
                 currency: "usd",
@@ -106,10 +102,10 @@ const confirmOrder = (request, response) => {
                 ifPaymentSuccess(event.data.object);
                 break;
             case 'payment_intent.canceled':
-                ifPaymentFailed(event.data.object);
+                console.log('webhook event Payment cancelled');
                 break;
             case 'payment_intent.payment_failed':
-                ifPaymentFailed(event.data.object);
+                console.log('webhook event Payment failed');
                 break;
             case 'payment_method.attached':
                 const paymentMethod = event.data.object;

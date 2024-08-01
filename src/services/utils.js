@@ -40,30 +40,9 @@ const updateProductQuantity = async (productId, soldQuantity) => {
     }
 }
 
-const addProductQuantity = async (productId, quantity) => {
-    try{
-        let productDetails = await product.findOne({
-            where: {
-                product_id: productId
-            }
-        });
-        
-        await product.update({
-            quantity: (productDetails?.quantity + quantity)
-        },
-            {
-                where: {
-                    product_id: productId
-                }
-            }
-        );}
-        catch(e){
-            console.error('Error while adding quantity for product after payment failed:', productId);
-        }
-}
+
 
 module.exports = {
     validateArgs,
     updateProductQuantity,
-    addProductQuantity
 }
