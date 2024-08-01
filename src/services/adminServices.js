@@ -126,7 +126,7 @@ const removeProduct = async (data) => {
         if (validate.error) {
             return { status: 400, message: 'Product_id invalid', success: false, data: {} }
         }
-        let result = product.update({
+        let result = await product.update({
             product_status: Constants?.PRODUCT_STATUS[1]
         },
             {
@@ -134,7 +134,7 @@ const removeProduct = async (data) => {
                     product_id: product_id
                 }
             });
-        if (result?.affectedRows > 0) {
+        if (result[0] > 0) {
             return { success: true, status: 200, message: 'Product removed', data: {} };
         }
         return { success: false, status: 400, message: 'Product not found', data: {} };

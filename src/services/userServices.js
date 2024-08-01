@@ -35,10 +35,10 @@ const createUser = async (data) => {
 
     catch (err) {
         if (err.name === 'SequelizeUniqueConstraintError') {
-            return { statusCode: 409, status: true, "message": 'User already exist', data: {} };
+            return { statusCode: 409, status: false, "message": 'User already exist', data: {} };
         }
         console.error(err);
-        return { status: false, message: "Error while registering user" };
+        return { statusCode: 500, status: false, message: "Error while registering user" };
     }
 }
 

@@ -17,7 +17,7 @@ const registerUser = async (req, res,) => {
     }
     const result = await createUser({ full_name: full_name, email: email, password: password });
     if (!result?.status) {
-      return res.status(500).send(new Response(false, result?.message, {}));
+      return res.status(result?.statusCode).send(new Response(false, result?.message, {}));
     }
     return res.status(result?.statusCode).send(new Response(true, result?.message, result?.data));
   }
