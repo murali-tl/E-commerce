@@ -1,6 +1,6 @@
 const { order, payment, cart } = require('../models/index');
 const { Constants } = require('./constants');
-const { addProductQuantity } = require('./utils');
+const { updateProductQuantity} = require('./utils');
 const { deleteFromCart } = require('./cartServices');
 
 const ifPaymentSuccess = async (paymentIntent) => {
@@ -29,6 +29,9 @@ const ifPaymentSuccess = async (paymentIntent) => {
     });
     if (orderDetails) {
         const productsDetails = orderDetails?.product_details;
+        productsDetails.forEach(element => {
+            updateProductQuantity(element?.product_id, element?.quantity);
+        });
         if (productsDetails?.length > 1) {
             await cart.update({
                 product_details: []
@@ -61,39 +64,6 @@ const ifPaymentSuccess = async (paymentIntent) => {
     return;
 }
 
-const ifPaymentFailed = async (paymentIntent) => {
-    await order.update({
-        order_status: Constants?.ORDER_STATUS[2],
-        payment_status: Constants?.PAYMENT_STATUS[2],
-    },
-        {
-            where: {
-                order_id: paymentIntent?.metadata?.order_id
-            }
-        });
-    const orderDetails = await order.findOne({
-        where: {
-            order_id: paymentIntent?.metadata?.order_id
-        }
-    });
-    if (orderDetails) {
-        const productsDetails = orderDetails?.product_details;
-        productsDetails.forEach(element => {
-            addProductQuantity(element?.product_id, element?.quantity);
-        });
-        await payment.create({
-            payment_id: paymentIntent?.id,
-            user_id: paymentIntent?.metadata?.user_id,
-            payment_status: Constants?.PAYMENT_STATUS[2],
-            order_id: paymentIntent?.metadata?.order_id,
-            amount: paymentIntent?.amount,
-            payment_type: paymentIntent?.payment_method_types[0]
-        });
-    }
-    return;
-}
-
 module.exports = {
     ifPaymentSuccess,
-    ifPaymentFailed
 }

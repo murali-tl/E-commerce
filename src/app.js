@@ -24,7 +24,7 @@ app.use(
   );
 app.use('/api', myRoute);
 
-app.get('/', async (req, res) => {
+app.get('/health', async (req, res) => {
     console.info("/health api called at", new Date().toISOString());
     res.status(200).send("Welcome to health URL of Server");
 });

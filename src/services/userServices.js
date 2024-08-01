@@ -67,7 +67,7 @@ const getWishListDetails = async (userId) => {
 
 const getCartDetails = async (user_id) => {
     try {
-        const cartDetails = await cart.findOne({
+        let cartDetails = await cart.findOne({
             where: {
                 user_id: user_id
             },
@@ -76,19 +76,42 @@ const getCartDetails = async (user_id) => {
         if (cartDetails?.product_details?.length) {
             const productIds = cartDetails?.product_details?.map(item => item.product_id);
             const products = await product.findAll({
-                where: { product_id: productIds },
+                where: {
+                    product_id: productIds,
+                    product_status: 'available'
+                },
                 attributes: ['product_id', 'product_name', 'images', 'price', 'category_id']
             });
+            let availableProductIds = products.map(item => item?.product_id);
+            let cartProducts = [...cartDetails?.product_details];
+            cartProducts = cartProducts?.filter(obj => {
+                return (availableProductIds.includes(obj?.product_id));
+            });
+            await cart.update({
+                product_details: cartProducts
+            },
+                {
+                    where:{
+                        user_id: user_id
+                    }
+                })
+                ;
             let sizes = await size.findAll({
                 attributes: ['size_id', 'size_type'],
             });
             let colors = await color.findAll({
                 attributes: ['color_id', 'color_name', 'color_code'],
             });
+            cartDetails = await cart.findOne({
+                where: {
+                    user_id: user_id
+                },
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
+            });
             const mappedProducts = [];
-            productIds.forEach((productId, index )=> {
+            availableProductIds.forEach((productId, index) => {
                 const productItem = products.find(item => item.product_id === productId);
-                const cartProduct = cartDetails?.product_details[index];
+                const cartProduct = cartProducts[index];
                 const sizeItem = sizes.find(item => item?.size_id === cartProduct?.size_id);
                 const colorItem = colors.find(item => item?.color_id === cartProduct?.color_id);
                 mappedProducts.push({

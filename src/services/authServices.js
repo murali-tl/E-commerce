@@ -9,7 +9,7 @@ function authenticate(authHeader) {
         const token = authHeader?.split(' ')?.[1];
         let response = {};
         if (!token) {
-            response = { status: 400, success: false, message: 'Token not found' };
+            return { status: 400, success: false, message: 'Token not found' };
         }
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
             if (err) {
@@ -19,7 +19,9 @@ function authenticate(authHeader) {
                     response = { status: 401, success: false, message: 'Access token invalid' };
                 }
             }
-            response = { "status": 200, "success": true, "message": 'Token valid', "data": user };
+            else {
+                response = { "status": 200, "success": true, "message": 'Token valid', "data": user };
+            }
         })
 
         return response;
@@ -37,7 +39,7 @@ const adminAuth = async (req, res, next) => {
         const authHeader = req?.headers['authorization'];
         const resp = authenticate(authHeader);
         if (!resp.success) {
-            res.status(resp?.status).send(new Response(resp?.success, resp?.message, {}))
+            return res.status(resp?.status).send(new Response(resp?.success, resp?.message, {}))
         }
         req.user = resp?.data;
         const roleName = await getRole(resp?.data?.user_id);
@@ -57,7 +59,7 @@ const userAuth = async (req, res, next) => {
         const authHeader = req?.headers['authorization'];
         const resp = authenticate(authHeader);
         if (!resp.success) {
-            res.status(resp?.status).send(new Response(resp?.success, resp?.message, {}))
+            return res.status(resp?.status).send(new Response(resp?.success, resp?.message, {}))
         }
         req.user = resp?.data;
         next();
