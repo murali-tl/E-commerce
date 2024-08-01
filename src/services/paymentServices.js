@@ -1,6 +1,6 @@
 const { order, payment, cart } = require('../models/index');
 const { Constants } = require('./constants');
-const { updateProductQuantity } = require('./utils');
+const { addProductQuantity } = require('./utils');
 const { deleteFromCart } = require('./cartServices');
 
 const ifPaymentSuccess = async (paymentIntent) => {
@@ -12,7 +12,7 @@ const ifPaymentSuccess = async (paymentIntent) => {
     else {
         futureDate.setDate(currentDate.getDate() + 4);
     }
-    order.update({
+    await order.update({
         order_status: Constants?.ORDER_STATUS[1],
         payment_status: Constants?.PAYMENT_STATUS[1],
         estimated_delivery_date: futureDate
@@ -22,7 +22,6 @@ const ifPaymentSuccess = async (paymentIntent) => {
                 order_id: paymentIntent?.metadata?.order_id
             }
         });
-    // update quantity in db
     const orderDetails = await order.findOne({
         where: {
             order_id: paymentIntent?.metadata?.order_id
@@ -35,14 +34,14 @@ const ifPaymentSuccess = async (paymentIntent) => {
                 product_details: []
             },
                 {
-                    where:{
+                    where: {
                         user_id: paymentIntent?.metadata?.user_id
                     }
                 }
             );
         }
         else {
-            let {product_id, color_id, size_id} = productsDetails[0];
+            let { product_id, color_id, size_id } = productsDetails[0];
             let dataObj = {
                 product_id: product_id,
                 color_id: color_id,
@@ -50,9 +49,6 @@ const ifPaymentSuccess = async (paymentIntent) => {
             };
             await deleteFromCart(dataObj, paymentIntent?.metadata?.user_id);
         }
-        productsDetails.forEach(element => {
-            updateProductQuantity(element?.product_id, element?.quantity);
-        });
         await payment.create({
             payment_id: paymentIntent?.id,
             user_id: paymentIntent?.metadata?.user_id,
@@ -65,7 +61,39 @@ const ifPaymentSuccess = async (paymentIntent) => {
     return;
 }
 
+const ifPaymentFailed = async (paymentIntent) => {
+    await order.update({
+        order_status: Constants?.ORDER_STATUS[2],
+        payment_status: Constants?.PAYMENT_STATUS[2],
+    },
+        {
+            where: {
+                order_id: paymentIntent?.metadata?.order_id
+            }
+        });
+    const orderDetails = await order.findOne({
+        where: {
+            order_id: paymentIntent?.metadata?.order_id
+        }
+    });
+    if (orderDetails) {
+        const productsDetails = orderDetails?.product_details;
+        productsDetails.forEach(element => {
+            addProductQuantity(element?.product_id, element?.quantity);
+        });
+        await payment.create({
+            payment_id: paymentIntent?.id,
+            user_id: paymentIntent?.metadata?.user_id,
+            payment_status: Constants?.PAYMENT_STATUS[2],
+            order_id: paymentIntent?.metadata?.order_id,
+            amount: paymentIntent?.amount,
+            payment_type: paymentIntent?.payment_method_types[0]
+        });
+    }
+    return;
+}
 
 module.exports = {
-    ifPaymentSuccess
+    ifPaymentSuccess,
+    ifPaymentFailed
 }

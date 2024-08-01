@@ -12,6 +12,10 @@ class Constants {
         'sure_post': [5, 7],
         'ground_shipping': [3, 5]
     }
+    static SHIPPING_PRICES = {
+        'sure_post': 0,
+        'ground_shipping': 0
+    }
     static ADMIN = 'admin';
     static CUSTOMER = 'customer';
     static PAYMENT_STATUS = ['pending', 'paid'];

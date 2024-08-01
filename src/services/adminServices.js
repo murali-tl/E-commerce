@@ -114,7 +114,7 @@ const createProduct = async (data) => {
         return { success: true, status: 200, message: 'Product created', data: { product_id: productAdded?.product_id } };
     }
     catch (err) {
-        console.error(err);
+        console.error("Services: Error while adding product", err);
         return { success: false, message: " Error while creating new prodct", err };
     }
 }
@@ -126,7 +126,7 @@ const removeProduct = async (data) => {
         if (validate.error) {
             return { status: 400, message: 'Product_id invalid', success: false, data: {} }
         }
-        let result = product.update({
+        let result = await product.update({
             product_status: Constants?.PRODUCT_STATUS[1]
         },
             {
@@ -134,7 +134,7 @@ const removeProduct = async (data) => {
                     product_id: product_id
                 }
             });
-        if (result?.affectedRows > 0) { //check affectedRows or count
+        if (result[0] > 0) {
             return { success: true, status: 200, message: 'Product removed', data: {} };
         }
         return { success: false, status: 400, message: 'Product not found', data: {} };
@@ -145,7 +145,7 @@ const removeProduct = async (data) => {
     }
 }
 
-const updateProduct = async (data) => {
+const updateProduct = async (data, product_id) => { 
     let result = validateProduct(data);
     if (result.error) {
         return { "error": result.error.details };
@@ -163,12 +163,12 @@ const updateProduct = async (data) => {
         },
             {
                 where: {
-                    product_id: data?.product_id
+                    product_id: product_id
                 }
             }
         );
-        if (result?.affectedRows > 0) {
-            return { success: true, status: 200, message: 'Product removed', data: {} };
+        if (result[0] > 0) {
+            return { success: true, status: 200, message: 'Product updated', data: {} };
         }
         return { success: false, status: 400, message: 'Product not found', data: {} };
     }
@@ -181,8 +181,8 @@ const updateProduct = async (data) => {
 module.exports = {
     getAllOrders,
     getOrderDetails,
-    //updateOrder,
     createProduct,
     removeProduct,
     updateProduct
+    //updateOrder,
 }

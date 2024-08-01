@@ -2,20 +2,22 @@ const { orderSummary } = require('../services/cartServices');
 const { Response, Constants } = require('../services/constants');
 const { checkProductStock } = require('../services/orderServices');
 const { validateAddress, validateProductDetails } = require('../services/validations');
+const { updateProductQuantity} = require('../services/utils');
 require('dotenv').config({ path: '../.env' });
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_API_KEY);
 const { order } = require('../models/index');
-const { ifPaymentSuccess } = require('../services/paymentServices');
+const { ifPaymentSuccess, ifPaymentFailed } = require('../services/paymentServices');
 
 const calculateOrderAmount = async (shippingType, productDetails) => {
-    let obj = {shipping_type: shippingType, product_details: productDetails};
-    let { total_amount } = await orderSummary({body: obj})
+    let obj = { shipping_type: shippingType, product_details: productDetails };
+    let { total_amount } = await orderSummary({ body: obj })
     return total_amount || 0;
 };
 
 const createOrder = async (req, res) => {
     try {
+        console.info('user/create-order called.');
         const amount = req?.body?.amount;
         const { product_details } = req.body;
         const validated = validateAddress(req?.body?.address);
@@ -24,7 +26,7 @@ const createOrder = async (req, res) => {
             return res.status(400).send(new Response(false, 'Invalid address format', { "error": validated?.error.details }));
         }
         if (productValidation.error) {
-            return res.status(400).send(new Response(false, 'Invalid product_details format', { "error": productValidation?.error.details }));
+            return res.status(400).send(new Response(false, 'Invalid product details format', { "error": productValidation?.error.details }));
         }
         let productQuantities = {};
         for (let obj of req?.body?.product_details) {
@@ -35,8 +37,8 @@ const createOrder = async (req, res) => {
                 productQuantities[obj?.product_id] = obj?.quantity;
             }
         }
-        if (!checkProductStock(productQuantities)) {
-            return res.status(200).send(new Response(true, 'Some of the products are out of stock', {}));
+        if (!(await checkProductStock(productQuantities))) {
+            return res.status(200).send(new Response(true, 'Some products selected are out of stock', {}));
         }
         let calculatedAmount = await calculateOrderAmount(req?.body?.shipping_type, product_details);
         if (amount && typeof (amount) === 'number') {
@@ -49,6 +51,10 @@ const createOrder = async (req, res) => {
                 shipping_type: req?.body?.shipping_type,
                 address: req?.body?.address,
                 delivery_status: '',
+            });
+            const productsDetails = req?.body?.product_details;
+            productsDetails.forEach(element => {
+                updateProductQuantity(element?.product_id, element?.quantity);
             });
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: calculatedAmount,
@@ -70,7 +76,8 @@ const createOrder = async (req, res) => {
         }
     }
     catch (err) {
-        console.log(err);
+        console.error('Error while creating order', err);
+        return res.status(500).send(new Response(false, 'Internal Server error', {}));
     }
 };
 
@@ -89,15 +96,20 @@ const confirmOrder = (request, response) => {
                     endpointSecret
                 );
             } catch (err) {
-                console.log(`⚠️  Webhook signature verification failed.`, err.message);
+                console.error(`⚠️  Webhook signature verification failed.`, err.message);
                 return response.sendStatus(400);
             }
         }
 
         switch (event.type) {
             case 'payment_intent.succeeded':
-                const paymentIntent = event.data.object;
-                ifPaymentSuccess(paymentIntent);
+                ifPaymentSuccess(event.data.object);
+                break;
+            case 'payment_intent.canceled':
+                ifPaymentFailed(event.data.object);
+                break;
+            case 'payment_intent.payment_failed':
+                ifPaymentFailed(event.data.object);
                 break;
             case 'payment_method.attached':
                 const paymentMethod = event.data.object;

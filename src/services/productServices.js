@@ -11,7 +11,7 @@ const getProducts = async (data) => {
     };
         if (!(typeof(color_id[0]) === 'undefined')) {
             whereConditions.color_ids = { 
-                [Op.overlap]: color_id
+                [Op.overlap]: color_id 
             }
         }
         if (search) {
@@ -22,7 +22,7 @@ const getProducts = async (data) => {
         }
         if (sort_by) {
             if (sort_by === 'recent') {
-                sort_by = 'created_at';
+                sort_by = 'createdAt';
             }
         }
         const offset = (page - 1) * limit;
@@ -32,7 +32,7 @@ const getProducts = async (data) => {
         const products = await product.findAll({
             where: whereConditions,
             attributes: { exclude: ['createdAt', 'created_by', 'updated_by', 'updatedAt', 'deletedAt'] },
-            order: [[sort_by, 'ASC']],
+            order: [[sort_by, 'DESC']],
             limit: parseInt(limit),
             offset: offset,
         });
@@ -45,7 +45,7 @@ const getProducts = async (data) => {
                         obj["dataValues"]["sizes"].push(size_obj?.dataValues?.size_type);
                     }
                 }
-            })
+            });
         });
         return { success: true, products: products, totalPages: totalPages, current_page: page, total_productss: totalCount };
     }
@@ -93,13 +93,14 @@ const getProduct = async (productId) => {
             sizeValues.push(element.dataValues);
         });
         resultObj['sizes'] = sizeValues;
+
         let categoryy = await category.findOne({
             where: {
                 category_id: categoryId
             },
             attributes: ['category_id', 'category_name']
         });
-        resultObj['category'] = categoryy.dataValues;
+        resultObj['category'] = categoryy;
         if (result?.length) {
             return { success: true, message: "product details fetched", data: result };
         }
@@ -120,15 +121,15 @@ const getRecentProducts = async () => {
                     product_status: 'available'
                 },
                 attributes: { exclude: ['createdAt', 'created_by', 'updated_by', 'updatedAt', 'deletedAt'] },
-                order: [['created_at', 'DESC']],
+                order: [['createdAt', 'DESC']],
                 limit: 3
             }
         )
         return { success: true, products: products };
     }
     catch (err) {
-        console.log(err);
-        return { success: false, message: "Error occurred while fetching recent products" };
+        console.error('Error while fetching product details:', err);
+        return { success: false, message: "Error while fetching products" };
     }
 }
 
@@ -144,7 +145,7 @@ const getProductParameters = async () => {
             attributes: ['category_id', 'category_name']
         });
         return {
-            success: true, message: "product parameters fetched", data: {
+            success: true, message: "Product parameters fetched", data: {
                 colors: colors,
                 sizes: sizes,
                 categories: categories
@@ -153,8 +154,8 @@ const getProductParameters = async () => {
 
     }
     catch (e) {
-        console.error(e);
-        return { success: false, message: "Error occurred while fetching product parameters" };
+        console.error("Services: Error while fetching product parameters:", e);
+        return { success: false, message: "Error while fetching product parameters" };
 
     }
 }

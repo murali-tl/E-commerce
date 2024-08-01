@@ -19,9 +19,9 @@ const viewFilterOrders = async (data) => {
         else {
             const orders = await order.findAll({
                 where: {
-                    order_id: order_id,
                     user_id: data?.user_id
-                }
+                },
+                attributes: { exclude: ['createdAt', 'updated_by', 'updatedAt', 'deletedAt'] }
             });
             if (orders.length) {
                 return { success: true, status: 200, message: 'Orders fetched', data: orders };

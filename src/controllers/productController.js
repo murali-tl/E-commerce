@@ -2,7 +2,6 @@ const productService = require('../services/productServices.js');
 const reviewService = require('../services/reviewServices.js');
 const { Response } = require('../services/constants.js');
 
-
 const fetchProducts = async (req, res) => {
     try {
         console.info(`/list-products called`);
@@ -18,7 +17,6 @@ const fetchProducts = async (req, res) => {
         console.error("Product Controller: Error occurred while fetching product", e)
         return res.status(500).send(new Response(false, 'Internal server Error', {}));
     }
-
 }
 
 const fetchProduct = async (req, res) => {
@@ -30,7 +28,7 @@ const fetchProduct = async (req, res) => {
         }
         const product = await productService.getProduct(productId);
         if (!product?.success) {
-            return res.status(500).send(new Response(false, 'Error while fetching data', {}));
+            return res.status(500).send(new Response(false, 'Error while fetching product', {}));
         }
         return res.status(200).send(new Response(true, product?.message, product.data[0]));
     } catch (e) {
@@ -47,7 +45,7 @@ const fetchReviews = async (req, res) => {
         if (!result?.status) {
             return res.status(500).send(new Response(false, 'Error while fetching reviews', {}));
         }
-        return res.status(200).send(new Response(true, 'Product reviews fetched', { average_rating: result[1], reviews: result[0], ratings_count: result[2] }));
+        return res.status(200).send(new Response(true, 'Product reviews fetched', { average_rating: result?.data[1], reviews: result?.data[0], ratings_count: result?.data[2] }));
     }
     catch (e) {
         console.error("Product Controller: Error occurred while fetching Review", e)
@@ -60,7 +58,6 @@ const fetchRecentProducts = async (req, res) => {
         console.info(`/home called`);
         const products = await productService.getRecentProducts();
         if (!products?.success) {
-            console.log()
             return res.status(500).send(new Response(false, 'Error while fetching recent products', {}));
         }
         if (products?.products.length) {

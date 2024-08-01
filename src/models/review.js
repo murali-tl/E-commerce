@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   review.init({
-    role_id: {
+    review_id: {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4,
       primaryKey: true

@@ -41,7 +41,7 @@ const verifyOTP = async (data) => {
         });
         if(lastRow && userDetails){
             await user.update({
-                password: crypto.createHash('md5').update(new_password).digest('hex') // hash it  ---
+                password: crypto.createHash('md5').update(new_password).digest('hex')
             },
             {
                 where: {
@@ -53,7 +53,7 @@ const verifyOTP = async (data) => {
     return lastRow;
     }
     catch (err) {
-        console.log(err);
+        console.error('Error while verifying OTP', err);
         return  false;
     }
 }

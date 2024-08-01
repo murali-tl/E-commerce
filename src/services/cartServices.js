@@ -8,6 +8,9 @@ const insertIntoCart = async (data, userId) => {
                 user_id: userId
             }
         });
+        if (!cartDetails) {
+            return { status: 400, message: "User does not exist" };
+        }
         if (cartDetails) {
             const productDetails = await product.findOne({
                 where: {
@@ -15,6 +18,9 @@ const insertIntoCart = async (data, userId) => {
                     product_status: Constants?.PRODUCT_STATUS[0]
                 }
             });
+            if(!productDetails){
+                return { status: 200, message: "Product not found" };
+            }
             if (productDetails) {
                 const { product_id, size_id, color_id } = data;
                 let productObj = {
@@ -25,16 +31,16 @@ const insertIntoCart = async (data, userId) => {
                 // Check available stock in DB
                 let quantityInCart = 0;
                 cartDetails?.product_details?.forEach(productObj => {
-                    if(productObj?.product_id == product_id){
+                    if (productObj?.product_id == product_id) {
                         quantityInCart += productObj?.quantity;
                     }
                 });
                 let maxQuantity = productDetails?.quantity;
-                if(quantityInCart>0){
+                if (quantityInCart > 0) {
                     maxQuantity -= quantityInCart;
                 }
-                if((maxQuantity - data?.quantity )<0 ){
-                    return { status: 200, message: "Cannot update Quantity: Current quantity exceeds product Stock", data: { cart_size: cartDetails?.product_details?.length } };
+                if ((maxQuantity - data?.quantity) < 0) {
+                    return { status: 200, message: "Quantity exceeded stock limit", data: { cart_size: cartDetails?.product_details?.length } };
                 }
                 let product_details = [...cartDetails?.dataValues?.product_details];
                 let foundProduct = product_details.filter(element => {
@@ -61,7 +67,6 @@ const insertIntoCart = async (data, userId) => {
                     let newQuantity = foundProduct[0]?.quantity + data?.quantity;
                     productObj['quantity'] = newQuantity;
                     otherProducts.push(productObj);
-                    console.log('Inserted into cart');
                     await cart.update({
                         product_details: otherProducts
                     },
@@ -70,7 +75,7 @@ const insertIntoCart = async (data, userId) => {
                                 user_id: userId
                             }
                         });
-                    return { status: 200, message: "Product already exist... quantity updated", data: { cart_size: otherProducts?.length } };
+                    return { status: 200, message: "Product exist: quantity updated", data: { cart_size: otherProducts?.length } };
                 }
                 product_details.push(data);
                 await cart.update(
@@ -85,12 +90,6 @@ const insertIntoCart = async (data, userId) => {
                 );
                 return { status: 200, message: "product added to cart", data: { cart_size: product_details?.length } }
             }
-            else {
-                return { status: 200, message: "Product not found" };
-            }
-        }
-        else if (!cartDetails) {
-            return { status: 400, message: "User does not exist" };
         }
         else {
             return { status: 400, message: "Invalid details" };
@@ -109,13 +108,18 @@ const deleteFromCart = async (data, user_id) => {
                 user_id: user_id
             }
         });
-
+        if (!cartDetails) {
+            return { status: 400, message: "User does not exist" };
+        }
         if (cartDetails) {
             const productDetails = product.findOne({
                 where: {
                     product_id: data?.product_id
                 }
             });
+            if (!productDetails) {
+                return { status: 400, message: "Product not found" };
+            }
             if (productDetails) {
                 let product_details = [...cartDetails?.product_details];
                 let foundProduct = product_details.filter(element => {
@@ -126,7 +130,6 @@ const deleteFromCart = async (data, user_id) => {
                         color_id: color_id
                     };
                     return JSON.stringify(cartObj) === JSON.stringify(data)
-
                 });
                 if (foundProduct.length) {
                     product_details = product_details.filter(element => {
@@ -151,18 +154,11 @@ const deleteFromCart = async (data, user_id) => {
                     return { status: 200, message: "Product removed from cart" };
                 }
 
-                return { status: 400, message: "product does not exist in cart" };
+                return { status: 400, message: "Product does not exist in cart" };
             }
-            else {
-                return { status: 400, message: "Product not found" };
-            }
+
         }
-        else if (!cartDetails) {
-            return { status: 400, message: "User does not exist" };
-        }
-        else {
-            return { status: 400, message: "Invalid details" };
-        }
+        return { status: 400, message: "Invalid details" };
     }
     catch (err) {
         console.error(err);
@@ -188,8 +184,8 @@ const orderSummary = async (req) => {
             sub_amount += (element?.quantity * productItem?.price);
         });
         total_amount = sub_amount;
-        if (shipping_type && (shipping_type in Constants.SHIPPING_DETAILS)) {
-            total_amount += Constants.SHIPPING_DETAILS[shipping_type][1];
+        if (shipping_type && (shipping_type in Constants.SHIPPING_PRICES)) {
+            total_amount += Constants.SHIPPING_PRICES[shipping_type];
         }
         return { total_amount: total_amount, sub_amount: sub_amount };
     }
@@ -198,83 +194,9 @@ const orderSummary = async (req) => {
         return { "error": err };
     }
 }
-// currently on hold 
-// const updateCartProduct = async (data, userId) => {
-//     try {
-//         let cartDetails = await cart.findOne({
-//             where: {
-//                 user_id: userId
-//             }
-//         });
-//         if (!cartDetails) {
-//             return { status: 400, message: "User does not exist" };
-//         }
-//         if (cartDetails) {
-//             const productDetails = await product.findOne({
-//                 where: {
-//                     product_id: data?.product_id,
-//                     product_status: Constants?.PRODUCT_STATUS[0]
-//                 }
-//             });
-//             if (productDetails) {
-//                 const { product_id, size_id, color_id } = data;
-//                 let productObj = {
-//                     product_id: product_id,
-//                     size_id: size_id,
-//                     color_id: color_id
-//                 };
-//                 let product_details = [...cartDetails?.dataValues?.product_details];
-//                 let foundProduct = product_details.filter(element => {
-//                     let { product_id, size_id, color_id } = element;
-//                     let cartObj = {
-//                         product_id: product_id,
-//                         size_id: size_id,
-//                         color_id: color_id
-//                     };
-//                     return JSON.stringify(cartObj) === JSON.stringify(productObj)
-
-//                 });
-//                 if (foundProduct?.length) {
-//                     let otherProducts = product_details.filter(element => {
-//                         let { product_id, size_id, color_id } = element;
-//                         let cartObj = {
-//                             product_id: product_id,
-//                             size_id: size_id,
-//                             color_id: color_id
-//                         };
-//                         return JSON.stringify(cartObj) !== JSON.stringify(productObj)
-
-//                     });
-//                     productObj['quantity'] = data?.quantity;
-//                     otherProducts.push(productObj);
-//                     console.log('Inserted into cart');
-//                     await cart.update({
-//                         product_details: otherProducts
-//                     },
-//                         {
-//                             where: {
-//                                 user_id: userId
-//                             }
-//                         });
-//                     return { status: 200, message: "Product quantity updated", data: { cart_size: otherProducts?.length } };
-//                 }
-//             }
-//             return { status: 200, message: "Product not found" };
-//         }
-
-//         else {
-//             return { status: 400, message: "Invalid details" };
-//         }
-//     }
-//     catch (err) {
-//         console.error(err);
-//         return { "error": err };
-//     }
-// }
 
 module.exports = {
     insertIntoCart,
     deleteFromCart,
     orderSummary,
-    //updateCartProduct
 }

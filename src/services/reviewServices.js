@@ -44,8 +44,8 @@ const getReviews = async (productId) => {
 
     }
     catch (err) {
-        console.log('==', err);
-        return { status: false, message: "Error while fetching product reviews" };
+        console.error('Services: Error while fetcing review:', err);
+        return { status: false, message: "Error while fetching reviews" };
     }
 }
 
@@ -57,7 +57,7 @@ const addReview = async (data, user_id) => {
                 product_id: product_id
             }
         });
-        let reviewDetails = checkReview(user_id, product_id);
+        let reviewDetails = await checkReview(user_id, product_id);
         if (productDetails && !reviewDetails) {
             await review.create({
                 product_id: product_id,
@@ -77,12 +77,11 @@ const addReview = async (data, user_id) => {
                     product_id: product_id
                 }
             });
-
             const averageRating = result.dataValues.avg_rating || 0;
 
             await product.update(
                 { rating: averageRating },
-                { where: { id: product_id } }
+                { where: { product_id: product_id } }
             );
 
             let reviewDetails = checkReview(user_id, product_id);
@@ -93,6 +92,7 @@ const addReview = async (data, user_id) => {
         }
     }
     catch (err) {
+        console.error(err);
         return { "error": err }
     }
 
@@ -108,7 +108,7 @@ const updateReview = async (data) => {
         });
         if (review_id && reviewDetails) {
             let useful_count = 0, not_useful_count = 0, inappropriate_flag_count = 0;
-            if (typeof (is_useful) === 'boolean') {
+            if (typeof(is_useful) === 'boolean') {
                 useful_count = ((is_useful) ? 1 : 0);
                 not_useful_count = ((is_useful) ? 0 : 1);
             }
@@ -138,13 +138,13 @@ const updateReview = async (data) => {
 }
 
 const checkReview = async (userId, productId) => {
-    let review = await review.findOne({
+    let reviews = await review.findOne({
         where: {
             user_id: userId,
             product_id: productId
         }
     });
-    return review;
+    return reviews;
 }
 module.exports = {
     getReviews,

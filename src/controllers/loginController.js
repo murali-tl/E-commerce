@@ -1,29 +1,31 @@
-const { Response, Constants } = require('../services/constants');
+const { Response } = require('../services/constants');
 const { getUser, verifyOTP, generateAccessToken } = require('../services/loginServices');
 const jwt = require("jsonwebtoken");
 const { sendOTP } = require('../services/otpServices.js');
 require('dotenv').config({ path: '../.env' });
-const { isAdmin } = require('../services/validations.js')
+const { getRole, validateLoginDetails } = require('../services/validations.js')
 
 const login = async (req, res) => {
     try {
         console.info('/login called');
+        const validated = validateLoginDetails(req?.body);
+        if (validated?.error) {
+            return res.status(400).send(new Response(false, 'Invalid user details format', { "error": validated?.error }));
+        }
         const { email, password } = req?.body;
         const response = await getUser({ email: email, password: password });
         if (response?.length) {
             const user = { user_id: response[0].user_id };
             const accessToken = generateAccessToken(user);
             const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d' });
-            let role = (await isAdmin(user?.user_id)) ? Constants?.ADMIN : Constants?.CUSTOMER;
-            return res.status(200).send(new Response(true, 'Tokens Generated', { role: role,email: response[0]?.email, full_name: response[0]?.full_name, accessToken: accessToken, refreshToken: refreshToken }));
+            let role = (await getRole(user?.user_id));
+            return res.status(200).send(new Response(true, 'Tokens Generated', { role: role, email: response[0]?.email, full_name: response[0]?.full_name, accessToken: accessToken, refreshToken: refreshToken }));
         }
-        else {
-            return res.status(400).send(new Response(false, 'Invalid email or password', {}));
-        }
+        return res.status(400).send(new Response(false, 'Invalid email or password', {}));
     }
     catch (e) {
         console.error('Login Controller: Error occurred during login', e);
-        return res.status(500).send(new Response(false, 'Internal server Error',{}));
+        return res.status(500).send(new Response(false, 'Internal server Error', {}));
     }
 }
 
@@ -38,9 +40,7 @@ const resetPassword = async (req, res) => {
         if (lastRow) {
             return res.status(200).send(new Response(true, 'New password updated', {}));
         }
-        else {
-            return res.status(400).send(new Response(false, 'User details or OTP is incorrect', {}));
-        }
+        return res.status(400).send(new Response(false, 'User details or OTP is incorrect', {}));
     }
     catch (e) {
         console.error('Login Controller: Error occurred during reset password:', e);
