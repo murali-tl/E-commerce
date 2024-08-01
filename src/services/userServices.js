@@ -60,7 +60,8 @@ const getWishListDetails = async (userId) => {
         return { status: true, data: result };
     }
     catch (err) {
-        return { status: false, message: "Error occured while fetching Wishist details" };
+        console.error('UserServices: Error while fetching wishlist details: ', err)
+        return { status: false, message: "Error while fetching Wishist details" };
     }
 }
 

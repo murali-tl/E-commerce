@@ -498,7 +498,7 @@ paths:
                     type: string
                     example: ""
 
-  /products/{product_id}:
+  /products/:product_id:
     get:
       summary: "Get Product Details"
       description: "Fetch details of a specific product by product ID."
@@ -1236,7 +1236,7 @@ paths:
                 type: object
                 properties:
                 example: {}
-  /product/reviews/{product_id}:
+  /product/reviews/:product_id:
     get:
       summary: Fetch Reviews of a Product
       description: Fetch reviews associated with a specific product.
@@ -1413,7 +1413,7 @@ paths:
                 properties:
                 example: {}
 
-  /admin/edit-product:
+  /admin/edit-product/:product_id:
     put:
       summary: Update Product in Database
       description: Update an existing product in the database.
@@ -1432,8 +1432,6 @@ paths:
           schema:
             type: object
             properties:
-              product_id:
-                type: string
               product_name:
                 type: string
               images:
@@ -1489,7 +1487,7 @@ paths:
                     type: string
                     example: ""
 
-  /admin/delete-product/{product_id}:
+  /admin/delete-product/:product_id:
     delete:
       summary: Delete Product from Database
       description: Delete a product from the database.
@@ -1609,7 +1607,7 @@ paths:
                 properties:
                 example: {}
 
-  /admin/view-order/{order_id}:
+  /admin/view-order/:order_id:
     get:
       summary: Fetch Details of a Specific Order
       description: Retrieve details of a specific order from the database.

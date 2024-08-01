@@ -14,9 +14,9 @@ function authenticate(authHeader) {
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
             if (err) {
                 if (err.name === 'TokenExpiredError') {
-                    response = { status: 401, success: false, message: 'Access token is expired' };
+                    response = { status: 401, success: false, message: 'Access token expired' };
                 } else {
-                    response = { status: 401, success: false, message: 'Access token is invalid' };
+                    response = { status: 401, success: false, message: 'Access token invalid' };
                 }
             }
             response = { "status": 200, "success": true, "message": 'Token valid', "data": user };

@@ -107,12 +107,12 @@ const addToCart = async (req, res) => {
     console.info('/user/add-to-cart called.');
     const validated = validateCartDetails(req?.body);
     if (validated?.error) {
-      return res.status(400).send(new Response(false, 'Invalid product details while adding to cart', { "error": validated?.error }));
+      return res.status(400).send(new Response(false, 'Invalid product details.', { "error": validated?.error }));
     }
     const user_id = req?.user?.user_id;
     const { product_id, size_id, color_id, quantity } = req?.body;
     if(!quantity){
-      return res.status(400).send(new Response(false, 'Invalid product details while adding to cart: Quantity missing', { }));
+      return res.status(400).send(new Response(false, 'Quantity missing', { }));
     }
     let data = {
       product_id: product_id,
@@ -137,7 +137,7 @@ const removeFromCart = async (req, res) => {
     console.info('/user/remove-from-cart called');
     const validated = validateCartDetails(req?.body);
     if (validated?.error) {
-      return res.status(400).send(new Response(false, 'Invalid cart details while removing product', { "error": validated?.error }));
+      return res.status(400).send(new Response(false, 'Invalid product details.', { "error": validated?.error }));
     }
     const user_id = req?.user?.user_id;
     const { product_id, size_id, color_id } = req?.body;

@@ -114,7 +114,7 @@ const createProduct = async (data) => {
         return { success: true, status: 200, message: 'Product created', data: { product_id: productAdded?.product_id } };
     }
     catch (err) {
-        console.error(err);
+        console.error("Services: Error while adding product", err);
         return { success: false, message: " Error while creating new prodct", err };
     }
 }
@@ -145,7 +145,7 @@ const removeProduct = async (data) => {
     }
 }
 
-const updateProduct = async (data) => { 
+const updateProduct = async (data, product_id) => { 
     let result = validateProduct(data);
     if (result.error) {
         return { "error": result.error.details };
@@ -163,7 +163,7 @@ const updateProduct = async (data) => {
         },
             {
                 where: {
-                    product_id: data?.product_id
+                    product_id: product_id
                 }
             }
         );

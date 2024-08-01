@@ -97,7 +97,8 @@ const editProduct = async (req, res) => {
                 console.error('error occured in validating add product', validatedresult.error.details);
                 return res.status(500).send(new Response(false, 'Error occured in validating in updating product', { "err": validatedresult?.error.details }));
             }
-            const result = await updateProduct(req?.body);
+            const product_id = req?.params?.product_id;
+            const result = await updateProduct(req?.body, product_id);
             if (result?.error) {
                 return res.status(500).send(new Response(false, 'Error while updating product', {}));
             }

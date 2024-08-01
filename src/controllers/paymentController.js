@@ -26,7 +26,7 @@ const createOrder = async (req, res) => {
             return res.status(400).send(new Response(false, 'Invalid address format', { "error": validated?.error.details }));
         }
         if (productValidation.error) {
-            return res.status(400).send(new Response(false, 'Invalid product_details format', { "error": productValidation?.error.details }));
+            return res.status(400).send(new Response(false, 'Invalid product details format', { "error": productValidation?.error.details }));
         }
         let productQuantities = {};
         for (let obj of req?.body?.product_details) {
@@ -38,7 +38,7 @@ const createOrder = async (req, res) => {
             }
         }
         if (!(await checkProductStock(productQuantities))) {
-            return res.status(200).send(new Response(true, 'Some of the products are out of stock', {}));
+            return res.status(200).send(new Response(true, 'Some products selected are out of stock', {}));
         }
         let calculatedAmount = await calculateOrderAmount(req?.body?.shipping_type, product_details);
         if (amount && typeof (amount) === 'number') {

@@ -45,7 +45,7 @@ const getReviews = async (productId) => {
     }
     catch (err) {
         console.error('Services: Error while fetcing review:', err);
-        return { status: false, message: "Error while fetching product reviews" };
+        return { status: false, message: "Error while fetching reviews" };
     }
 }
 

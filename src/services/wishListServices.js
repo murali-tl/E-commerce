@@ -31,7 +31,7 @@ const insertIntoWishList = async (data) => {
                         },
                     },
                 );
-                return { success: true, message: 'updated product to wishList' };
+                return { success: true, message: 'Updated product to wishList' };
             }
             else {
                 return { success: true, message: "Product not found" };
@@ -80,12 +80,12 @@ const deleteFromWishList = async (data) => {
         }
         else {
 
-            return { success: true, message: 'product does not exist in wishList' };
+            return { success: true, message: 'Product does not exist in wishList' };
         }
     }
     catch (err) {
         console.error('Error occurred in deleting from wishList', e)
-        return { success: false, message: 'Error occurred in deleting from wishList' };
+        return { success: false, message: 'Error in deleting from wishList' };
     }
 }
 

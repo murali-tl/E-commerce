@@ -129,7 +129,7 @@ const getRecentProducts = async () => {
     }
     catch (err) {
         console.error('Error while fetching product details:', err);
-        return { success: false, message: "Error occurred while fetching recent products" };
+        return { success: false, message: "Error while fetching products" };
     }
 }
 
@@ -145,7 +145,7 @@ const getProductParameters = async () => {
             attributes: ['category_id', 'category_name']
         });
         return {
-            success: true, message: "product parameters fetched", data: {
+            success: true, message: "Product parameters fetched", data: {
                 colors: colors,
                 sizes: sizes,
                 categories: categories
@@ -154,8 +154,8 @@ const getProductParameters = async () => {
 
     }
     catch (e) {
-        console.error(e);
-        return { success: false, message: "Error occurred while fetching product parameters" };
+        console.error("Services: Error while fetching product parameters:", e);
+        return { success: false, message: "Error while fetching product parameters" };
 
     }
 }

@@ -40,7 +40,7 @@ const insertIntoCart = async (data, userId) => {
                     maxQuantity -= quantityInCart;
                 }
                 if ((maxQuantity - data?.quantity) < 0) {
-                    return { status: 200, message: "Cannot update Quantity: Current quantity exceeds product Stock", data: { cart_size: cartDetails?.product_details?.length } };
+                    return { status: 200, message: "Quantity exceeded stock limit", data: { cart_size: cartDetails?.product_details?.length } };
                 }
                 let product_details = [...cartDetails?.dataValues?.product_details];
                 let foundProduct = product_details.filter(element => {
@@ -75,7 +75,7 @@ const insertIntoCart = async (data, userId) => {
                                 user_id: userId
                             }
                         });
-                    return { status: 200, message: "Product already exist... quantity updated", data: { cart_size: otherProducts?.length } };
+                    return { status: 200, message: "Product exist: quantity updated", data: { cart_size: otherProducts?.length } };
                 }
                 product_details.push(data);
                 await cart.update(
@@ -154,7 +154,7 @@ const deleteFromCart = async (data, user_id) => {
                     return { status: 200, message: "Product removed from cart" };
                 }
 
-                return { status: 400, message: "product does not exist in cart" };
+                return { status: 400, message: "Product does not exist in cart" };
             }
 
         }

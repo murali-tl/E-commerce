@@ -28,7 +28,7 @@ const fetchProduct = async (req, res) => {
         }
         const product = await productService.getProduct(productId);
         if (!product?.success) {
-            return res.status(500).send(new Response(false, 'Error while fetching data', {}));
+            return res.status(500).send(new Response(false, 'Error while fetching product', {}));
         }
         return res.status(200).send(new Response(true, product?.message, product.data[0]));
     } catch (e) {
