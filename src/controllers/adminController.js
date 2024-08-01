@@ -1,6 +1,6 @@
 const { Response } = require("../services/constants");
 const { getAllOrders, getOrderDetails, createProduct, removeProduct, updateProduct } = require('../services/adminServices');
-const { validateProduct } = require('../services/validations');
+const { validateProduct, isValidBase64Images } = require('../services/validations');
 
 const fetchAllOrders = async (req, res) => {
     try {
@@ -58,7 +58,10 @@ const addProduct = async (req, res) => {
             let validatedresult = validateProduct(req?.body);
             if (validatedresult.error) {
                 console.error('error occured in validating add product', validatedresult.error.details);
-                return res.status(500).send(new Response(false, 'Error occured in validating adding new product', { "err": validatedresult?.error.details }));
+                return res.status(400).send(new Response(false, 'Error occured in validating adding new product', { "err": validatedresult?.error.details }));
+            }
+            if(!isValidBase64Images(req?.body?.images)){
+                return res.status(400).send(new Response(false, 'Invalid image format', {}));
             }
             const result = await createProduct(req?.body);
             if (!result?.success) {
@@ -95,7 +98,10 @@ const editProduct = async (req, res) => {
             let validatedresult = validateProduct(req?.body);
             if (validatedresult.error) {
                 console.error('error occured in validating add product', validatedresult.error.details);
-                return res.status(500).send(new Response(false, 'Error occured in validating in updating product', { "err": validatedresult?.error.details }));
+                return res.status(400).send(new Response(false, 'Error occured in validating in updating product', { "err": validatedresult?.error.details }));
+            }
+            if(!isValidBase64Images(req?.body?.images)){
+                return res.status(400).send(new Response(false, 'Invalid image format', {}));
             }
             const product_id = req?.params?.product_id;
             const result = await updateProduct(req?.body, product_id);

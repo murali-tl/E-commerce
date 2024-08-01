@@ -145,6 +145,16 @@ function validateUUID(obj) {
   return schema.validate(obj);
 }
 
+function isValidBase64Images(imageArr) {
+  const imageDataURLRegex = /^data:image\/(png|jpg|jpeg);base64,[A-Za-z0-9+/=]+$/;
+  for(let image of imageArr){
+    if(!(imageDataURLRegex.test(image))){
+      return false;
+    }
+  }
+  return true;
+}
+
 module.exports = {
   isCustomer,
   getRole,
@@ -156,5 +166,6 @@ module.exports = {
   validateAddress,
   validateProductDetails,
   validateCartDetails,
-  validateReview
+  validateReview,
+  isValidBase64Images
 }
