@@ -108,10 +108,11 @@ const getCartDetails = async (user_id) => {
                 },
                 attributes: { exclude: ['createdAt', 'updatedAt'] },
             });
+            const productIdS = cartDetails?.product_details?.map(item => item.product_id);
             const mappedProducts = [];
-            availableProductIds.forEach((productId, index) => {
+            productIdS.forEach((productId, index) => {
                 const productItem = products.find(item => item.product_id === productId);
-                const cartProduct = cartProducts[index];
+                const cartProduct = cartDetails?.product_details[index];
                 const sizeItem = sizes.find(item => item?.size_id === cartProduct?.size_id);
                 const colorItem = colors.find(item => item?.color_id === cartProduct?.color_id);
                 mappedProducts.push({
