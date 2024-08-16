@@ -156,10 +156,10 @@ const updateProduct = async (data, product_id) => {
             description: data?.description,
             images: data?.images,
             quantity: data?.quantity,
-            sizes: data?.sizes,
+            size_ids: data?.size_ids,
             price: data?.price,
-            colours: data?.colours,
-            category: data?.category,
+            color_ids: data?.color_ids,
+            category_id: data?.category_id,
         },
             {
                 where: {

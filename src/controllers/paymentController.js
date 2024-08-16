@@ -51,9 +51,9 @@ const createOrder = async (req, res) => {
                 address: req?.body?.address,
                 delivery_status: '',
             });
-           
+
             const paymentIntent = await stripe.paymentIntents.create({
-                amount: calculatedAmount,
+                amount: (calculatedAmount * 100),
                 currency: "usd",
                 metadata: {
                     user_id: req?.user?.user_id,
